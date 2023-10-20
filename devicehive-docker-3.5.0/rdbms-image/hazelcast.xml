@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.9.xsd"
+           xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <serialization>
+      <portable-version>0</portable-version>
+      <portable-factories>
+           <portable-factory factory-id="1">com.devicehive.model.DevicePortableFactory</portable-factory>
+      </portable-factories>
+   </serialization>
+   <map name="default">
+      <eviction-policy>LRU</eviction-policy>
+   </map>
+   <map name="NOTIFICATIONS-MAP">
+      <time-to-live-seconds>120</time-to-live-seconds>
+   </map>
+   <map name="COMMANDS-MAP">
+      <time-to-live-seconds>120</time-to-live-seconds>
+   </map>
+   <multimap name="default">
+      <backup-count>0</backup-count>
+      <async-backup-count>1</async-backup-count>
+      <value-collection-type>SET</value-collection-type>
+   </multimap>
+   <management-center enabled="true">
+      http://hazelcast-mancenter:8080/mancenter
+   </management-center>
+</hazelcast>
