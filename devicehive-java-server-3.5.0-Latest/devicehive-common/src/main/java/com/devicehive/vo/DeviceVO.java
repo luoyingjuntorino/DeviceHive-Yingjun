@@ -40,17 +40,17 @@ public class DeviceVO implements HiveEntity {
 
     @SerializedName("id")
     @ApiModelProperty(name = "id", dataType = "integer")
-    @JsonPolicyDef({DEVICE_PUBLISHED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, DEVICES_LISTED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, ICOMPONENT_PUBLISHED, DEVICES_LISTED})
     private String deviceId;
 
     @NotNull
     @Size(min = 1, max = 128, message = "Field name cannot be empty. The length of name should not be more than 128 symbols.")
     @SerializedName("name")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, DEVICES_LISTED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, ICOMPONENT_PUBLISHED, DEVICES_LISTED})
     private String name;
 
     @SerializedName("data")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, DEVICES_LISTED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, ICOMPONENT_PUBLISHED, DEVICES_LISTED})
     private JsonStringWrapper data;
 
     @SerializedName("networkId")
@@ -61,9 +61,13 @@ public class DeviceVO implements HiveEntity {
     @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, DEVICES_LISTED})
     private Long deviceTypeId;
 
+    @SerializedName("icomponentId")
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, DEVICES_LISTED})
+    private Long icomponentId;
+
     @SerializedName("isBlocked")
     @ApiModelProperty(name="isBlocked")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, DEVICES_LISTED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, ICOMPONENT_PUBLISHED, DEVICES_LISTED})
     private Boolean blocked;
 
     public Long getId() {
@@ -112,6 +116,14 @@ public class DeviceVO implements HiveEntity {
 
     public void setDeviceTypeId(Long deviceTypeId) {
         this.deviceTypeId = deviceTypeId;
+    }
+
+    public Long getIcomponentId() {
+        return icomponentId;
+    }
+
+    public void setIcomponentId(Long icomponentId) {
+        this.icomponentId = icomponentId;
     }
 
     public Boolean getBlocked() {

@@ -28,7 +28,6 @@ import com.devicehive.messages.handler.command.*;
 import com.devicehive.messages.handler.dao.count.*;
 import com.devicehive.messages.handler.dao.list.*;
 import com.devicehive.messages.handler.notification.NotificationSubscribeRequestHandler;
-import com.devicehive.messages.handler.command.CommandUnsubscribeRequestHandler;
 import com.devicehive.messages.handler.notification.NotificationInsertHandler;
 import com.devicehive.messages.handler.notification.NotificationSearchHandler;
 import com.devicehive.messages.handler.notification.NotificationUnsubscribeRequestHandler;
@@ -60,6 +59,8 @@ public class RequestHandlersMapper implements HandlersMapper {
     private final ListNetworkHandler listNetworkHandler;
     private final ListDeviceTypeHandler listDeviceTypeHandler;
     private final CountDeviceTypeHandler countDeviceTypeHandler;
+    private final ListIcomponentHandler listIcomponentHandler;
+    private final CountIcomponentHandler countIcomponentHandler;
     private final CountNetworkHandler countNetworkHandler;
     private final ListDeviceHandler listDeviceHandler;
     private final CountDeviceHandler countDeviceHandler;
@@ -85,12 +86,14 @@ public class RequestHandlersMapper implements HandlersMapper {
                                  CommandsUpdateHandler commandsUpdateHandler,
                                  ListNetworkHandler listNetworkHandler,
                                  ListDeviceTypeHandler listDeviceTypeHandler,
+                                 ListIcomponentHandler listIcomponentHandler,
                                  DeviceDeleteHandler deviceDeleteHandler,
                                  CommandSubscribeRequestHandler commandSubscribeRequestHandler,
                                  CommandUnsubscribeRequestHandler commandUnsubscribeRequestHandler,
                                  CommandUpdateSubscribeRequestHandler commandUpdateSubscribeRequestHandler,
                                  CountUserHandler countUserHandler,
                                  CountDeviceTypeHandler countDeviceTypeHandler,
+                                 CountIcomponentHandler countIcomponentHandler,
                                  CountNetworkHandler countNetworkHandler,
                                  CountDeviceHandler countDeviceHandler,
                                  PluginSubscribeRequestHandler pluginSubscribeRequestHandler,
@@ -109,12 +112,14 @@ public class RequestHandlersMapper implements HandlersMapper {
         this.commandsUpdateHandler = commandsUpdateHandler;
         this.listNetworkHandler = listNetworkHandler;
         this.listDeviceTypeHandler = listDeviceTypeHandler;
+        this.listIcomponentHandler = listIcomponentHandler;
         this.deviceDeleteHandler = deviceDeleteHandler;
         this.commandSubscribeRequestHandler = commandSubscribeRequestHandler;
         this.commandUnsubscribeRequestHandler = commandUnsubscribeRequestHandler;
         this.commandUpdateSubscribeRequestHandler = commandUpdateSubscribeRequestHandler;
         this.countUserHandler = countUserHandler;
         this.countDeviceTypeHandler = countDeviceTypeHandler;
+        this.countIcomponentHandler = countIcomponentHandler;
         this.countNetworkHandler = countNetworkHandler;
         this.countDeviceHandler = countDeviceHandler;
         this.pluginSubscribeRequestHandler = pluginSubscribeRequestHandler;
@@ -144,6 +149,8 @@ public class RequestHandlersMapper implements HandlersMapper {
                 .put(Action.LIST_NETWORK_REQUEST, listNetworkHandler)
                 .put(Action.LIST_DEVICE_TYPE_REQUEST, listDeviceTypeHandler)
                 .put(Action.COUNT_DEVICE_TYPE_REQUEST, countDeviceTypeHandler)
+                .put(Action.LIST_ICOMPONENT_REQUEST, listIcomponentHandler)
+                .put(Action.COUNT_ICOMPONENT_REQUEST, countIcomponentHandler)
                 .put(Action.COUNT_NETWORK_REQUEST, countNetworkHandler)
                 .put(Action.LIST_DEVICE_REQUEST, listDeviceHandler)
                 .put(Action.COUNT_DEVICE_REQUEST, countDeviceHandler)

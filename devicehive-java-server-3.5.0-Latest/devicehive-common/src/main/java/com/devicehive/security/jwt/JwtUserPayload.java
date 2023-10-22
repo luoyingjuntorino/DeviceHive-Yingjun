@@ -53,6 +53,7 @@ public class JwtUserPayload extends JwtPayload {
     public final static String USER_ID = "u";
     public final static String NETWORK_IDS = "n";
     public final static String DEVICE_TYPE_IDS = "dt";
+    public final static String ICOMPONENT_IDS = "cp";
     
     //Public claims
 
@@ -69,12 +70,17 @@ public class JwtUserPayload extends JwtPayload {
     @JsonProperty(DEVICE_TYPE_IDS)
     private Set<String> deviceTypeIds;
 
+    @SerializedName(ICOMPONENT_IDS)
+    @JsonProperty(ICOMPONENT_IDS)
+    private Set<String> icomponentIds;
+
     public JwtUserPayload(Long userId, Set<Integer> actions, Set<String> networkIds,
-                       Set<String> deviceTypeIds, Date expiration, Integer tokenType) {
+                       Set<String> deviceTypeIds, Set<String> icomponentIds, Date expiration, Integer tokenType) {
         super(actions, expiration, tokenType);
         this.userId = userId;
         this.networkIds = networkIds;
         this.deviceTypeIds = deviceTypeIds;
+        this.icomponentIds = icomponentIds;
     }
 
     public Long getUserId() {
@@ -101,6 +107,14 @@ public class JwtUserPayload extends JwtPayload {
         this.deviceTypeIds = deviceTypeIds;
     }
 
+    public Set<String> getIcomponentIds() {
+        return icomponentIds;
+    }
+
+    public void setIcomponentIds(Set<String> icomponentIds) {
+        this.icomponentIds = icomponentIds;
+    }
+
     @Override
     @JsonIgnore
     public boolean isUserPayload() {
@@ -115,13 +129,16 @@ public class JwtUserPayload extends JwtPayload {
         private Long userId;
         private Set<String> networkIds;
         private Set<String> deviceTypeIds;
+        private Set<String> icomponentIds;
         
         public JwtUserPayloadBuilder withPublicClaims(Long userId, Set<Integer> actions,
-                                        Set<String> networkIds, Set<String> deviceTypeIds) {
+                                        Set<String> networkIds, Set<String> deviceTypeIds,
+                                        Set<String> icomponentIds) {
             this.userId = userId;
             this.actions = actions;
             this.networkIds = networkIds;
             this.deviceTypeIds = deviceTypeIds;
+            this.icomponentIds = icomponentIds;
             return this;
         }
 
@@ -130,6 +147,7 @@ public class JwtUserPayload extends JwtPayload {
             this.actions = payload.getActions();
             this.networkIds = payload.getNetworkIds();
             this.deviceTypeIds = payload.getDeviceTypeIds();
+            this.icomponentIds = payload.getIcomponentIds();
             this.expiration = payload.getExpiration();
             return this;
         }
@@ -154,6 +172,11 @@ public class JwtUserPayload extends JwtPayload {
             return this;
         }
 
+        public JwtUserPayloadBuilder withIcomponentIds(Set<String> icomponentIds) {
+            this.icomponentIds = icomponentIds;
+            return this;
+        }
+
         public JwtUserPayloadBuilder withTokenType(Integer tokenType) {
             this.tokenType = tokenType;
             return this;
@@ -165,7 +188,7 @@ public class JwtUserPayload extends JwtPayload {
         }
 
         public JwtUserPayload buildPayload() {
-            return new JwtUserPayload(userId, actions, networkIds, deviceTypeIds, expiration, tokenType);
+            return new JwtUserPayload(userId, actions, networkIds, deviceTypeIds, icomponentIds, expiration, tokenType);
         }
     }
 }

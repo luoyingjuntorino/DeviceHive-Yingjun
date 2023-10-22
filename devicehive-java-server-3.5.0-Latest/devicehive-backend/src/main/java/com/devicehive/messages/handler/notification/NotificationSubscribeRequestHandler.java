@@ -85,6 +85,7 @@ public class NotificationSubscribeRequestHandler implements RequestHandler {
                 .map(t -> hazelcastService.find(filter.getDeviceId(),
                         Collections.singleton(filter.getNetworkId()),
                         Collections.singleton(filter.getDeviceTypeId()),
+                        Collections.singleton(filter.getIcomponentId()),
                         names, LIMIT, t, null, false, null, DeviceNotification.class))
                 .orElse(Collections.emptyList());
     }

@@ -45,17 +45,21 @@ public class SubscriptionInfo {
     private Set<Long> deviceTypeIds;
 
     @JsonPolicyDef(SUBSCRIPTIONS_LISTED)
+    private Set<Long> icomponentIds;
+
+    @JsonPolicyDef(SUBSCRIPTIONS_LISTED)
     private Set<String> names;
 
     @JsonPolicyDef(SUBSCRIPTIONS_LISTED)
     private Date timestamp;
 
-    public SubscriptionInfo(Long subscriptionId, String type, String deviceId, Set<Long> networkIds, Set<Long> deviceTypeIds, Set<String> names, Date timestamp) {
+    public SubscriptionInfo(Long subscriptionId, String type, String deviceId, Set<Long> networkIds, Set<Long> deviceTypeIds, Set<Long> icomponentIds, Set<String> names, Date timestamp) {
         this.subscriptionId = subscriptionId;
         this.type = type;
         this.deviceId = deviceId;
         this.networkIds = networkIds;
         this.deviceTypeIds = deviceTypeIds;
+        this.icomponentIds = icomponentIds;
         this.names = names;
         this.timestamp = timestamp;
     }
@@ -104,6 +108,14 @@ public class SubscriptionInfo {
         this.deviceTypeIds = deviceTypeIds;
     }
 
+    public Set<Long> getIcomponentIds() {
+        return icomponentIds;
+    }
+
+    public void setIcomponentIds(Set<Long> icomponentIds) {
+        this.icomponentIds = icomponentIds;
+    }
+
     public Set<String> getNames() {
         return names;
     }
@@ -144,6 +156,7 @@ public class SubscriptionInfo {
                 ", deviceId='" + deviceId + '\'' +
                 ", networkIds=" + networkIds +
                 ", deviceTypeIds=" + deviceTypeIds +
+                ", icomponentIds=" + icomponentIds +
                 ", names=" + names +
                 ", timestamp=" + timestamp +
                 '}';

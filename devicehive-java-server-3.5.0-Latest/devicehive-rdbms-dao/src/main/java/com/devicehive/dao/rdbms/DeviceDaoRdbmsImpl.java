@@ -24,6 +24,7 @@ import com.devicehive.auth.HivePrincipal;
 import com.devicehive.dao.DeviceDao;
 import com.devicehive.model.Device;
 import com.devicehive.model.DeviceType;
+import com.devicehive.model.Icomponent;
 import com.devicehive.model.Network;
 import com.devicehive.vo.DeviceVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,9 @@ public class DeviceDaoRdbmsImpl extends RdbmsGenericDao implements DeviceDao {
         if (device.getDeviceType() != null) {
             device.setDeviceType(reference(DeviceType.class, device.getDeviceType().getId()));
         }
+        if (device.getIcomponent() != null) {
+            device.setIcomponent(reference(Icomponent.class, device.getIcomponent().getId()));
+        }
         super.persist(device);
         vo.setId(device.getId());
     }
@@ -84,6 +88,9 @@ public class DeviceDaoRdbmsImpl extends RdbmsGenericDao implements DeviceDao {
         }
         if (device.getDeviceType() != null) {
             device.setDeviceType(reference(DeviceType.class, device.getDeviceType().getId()));
+        }
+        if (device.getIcomponent() != null) {
+            device.setIcomponent(reference(Icomponent.class, device.getIcomponent().getId()));
         }
         Device merged = super.merge(device);
         return Device.convertToVo(merged);

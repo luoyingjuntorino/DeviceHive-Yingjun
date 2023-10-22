@@ -60,6 +60,9 @@ public class UserUpdate implements HiveEntity {
     @ApiModelProperty(hidden = true)
     private Boolean allDeviceTypesAvailable;
 
+    @ApiModelProperty(hidden = true)
+    private Boolean allIcomponentsAvailable;
+
     public Optional<String> getLogin() {
         return Optional.ofNullable(login);
     }
@@ -116,6 +119,14 @@ public class UserUpdate implements HiveEntity {
         this.allDeviceTypesAvailable = allDeviceTypesAvailable;
     }
 
+    public Boolean getAllIcomponentsAvailable() {
+        return allIcomponentsAvailable;
+    }
+
+    public void setAllIcomponentsAvailable(Boolean allIcomponentsAvailable) {
+        this.allIcomponentsAvailable = allIcomponentsAvailable;
+    }
+
     @ApiModelProperty(hidden = true)
     public UserRole getRoleEnum() {
         return getRole().map(UserRole::getValueForIndex).orElse(null);
@@ -139,6 +150,9 @@ public class UserUpdate implements HiveEntity {
         }
         if (allDeviceTypesAvailable != null) {
             result.setAllDeviceTypesAvailable(allDeviceTypesAvailable);
+        }
+        if (allIcomponentsAvailable != null) {
+            result.setAllIcomponentsAvailable(allIcomponentsAvailable);
         }
         result.setStatus(getStatusEnum());
         result.setRole(getRoleEnum());

@@ -63,6 +63,10 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
     @JsonPolicyDef({NOTIFICATION_TO_CLIENT, NOTIFICATION_TO_DEVICE})
     private Long deviceTypeId;
 
+    @SerializedName("icomponentId")
+    @JsonPolicyDef({NOTIFICATION_TO_CLIENT, NOTIFICATION_TO_DEVICE})
+    private Long icomponentId;
+
     @SerializedName("timestamp")
     @JsonPolicyDef({NOTIFICATION_TO_CLIENT, NOTIFICATION_TO_DEVICE})
     @Temporal(TemporalType.TIMESTAMP)
@@ -128,6 +132,14 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         this.deviceTypeId = deviceTypeId;
     }
 
+    public Long getIcomponentId() {
+        return icomponentId;
+    }
+
+    public void setIcomponentId(Long icomponentId) {
+        this.icomponentId = icomponentId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -138,6 +150,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         if (deviceId != null ? !deviceId.equals(message.deviceId) : message.deviceId != null) return false;
         if (networkId != null ? !networkId.equals(message.networkId) : message.networkId != null) return false;
         if (deviceTypeId != null ? !deviceTypeId.equals(message.deviceTypeId) : message.deviceTypeId != null) return false;
+        if (icomponentId != null ? !icomponentId.equals(message.icomponentId) : message.icomponentId != null) return false;
         if (id != null ? !id.equals(message.id) : message.id != null) return false;
         if (notification != null ? !notification.equals(message.notification) : message.notification != null)
             return false;
@@ -154,6 +167,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         result = 31 * result + (deviceId != null ? deviceId.hashCode() : 0);
         result = 31 * result + (networkId != null ? networkId.hashCode() : 0);
         result = 31 * result + (deviceTypeId != null ? deviceTypeId.hashCode() : 0);
+        result = 31 * result + (icomponentId != null ? icomponentId.hashCode() : 0);
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
         return result;
@@ -167,6 +181,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
                 ", deviceId='" + deviceId + '\'' +
                 ", networkId='" + networkId + '\'' +
                 ", deviceTypeId='" + deviceTypeId + '\'' +
+                ", icomponentId='" + icomponentId + '\'' +
                 ", timestamp=" + timestamp +
                 ", parameters='" + parameters + '\'' +
                 '}';
@@ -197,6 +212,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         portableWriter.writeUTF("deviceId", deviceId);
         portableWriter.writeLong("networkId", Objects.nonNull(networkId) ? networkId : 0);
         portableWriter.writeLong("deviceTypeId", Objects.nonNull(deviceTypeId) ? deviceTypeId : 0);
+        portableWriter.writeLong("icomponentId", Objects.nonNull(icomponentId) ? icomponentId : 0);
         portableWriter.writeLong("timestamp", Objects.nonNull(timestamp) ? timestamp.getTime() :0);
         boolean parametersIsNotNull = Objects.nonNull(parameters) && Objects.nonNull(parameters.getJsonString());
         portableWriter.writeUTF("parameters", parametersIsNotNull ? parameters.getJsonString() : null);
@@ -209,6 +225,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         deviceId = portableReader.readUTF("deviceId");
         networkId = portableReader.readLong("networkId");
         deviceTypeId = portableReader.readLong("deviceTypeId");
+        icomponentId = portableReader.readLong("icomponentId");
         timestamp = new Date(portableReader.readLong("timestamp"));
         String parametersString = portableReader.readUTF("parameters");
         if (Objects.nonNull(parametersString)) {

@@ -32,6 +32,8 @@ public class FilterEntity {
 
     private String deviceTypeIds;
 
+    private String icomponentIds;
+
     private String names;
 
     private boolean returnCommands;
@@ -40,11 +42,12 @@ public class FilterEntity {
 
     private boolean returnNotifications;
 
-    public FilterEntity(String deviceId, String networkIds, String deviceTypeIds, String names, boolean returnCommands,
+    public FilterEntity(String deviceId, String networkIds, String deviceTypeIds, String icomponentIds, String names, boolean returnCommands,
                         boolean returnUpdatedCommands, boolean returnNotifications) {
         this.deviceId = deviceId;
         this.networkIds = networkIds;
         this.deviceTypeIds = deviceTypeIds;
+        this.icomponentIds = icomponentIds;
         this.names = names;
         this.returnCommands = returnCommands;
         this.returnUpdatedCommands = returnUpdatedCommands;
@@ -81,10 +84,13 @@ public class FilterEntity {
         deviceTypeIds = filters[2];
         if (deviceTypeIds.equals(ANY)) deviceTypeIds = null;
 
-        deviceId = filters[3];
+        icomponentIds = filters[3];
+        if (icomponentIds.equals(ANY)) icomponentIds = null;
+
+        deviceId = filters[4];
         if (deviceId.equals(ANY)) deviceId = null;
 
-        names = filters[4];
+        names = filters[5];
         if (names.equals(ANY)) names = null;
     }
 
@@ -110,6 +116,14 @@ public class FilterEntity {
 
     public void setDeviceTypeIds(String deviceTypeIds) {
         this.deviceTypeIds = deviceTypeIds;
+    }
+    
+    public String getIcomponentIds() {
+        return icomponentIds;
+    }
+
+    public void setIcomponentIds(String icomponentIds) {
+        this.icomponentIds = icomponentIds;
     }
 
     public String getNames() {

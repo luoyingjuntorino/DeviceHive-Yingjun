@@ -225,7 +225,7 @@ public class PluginRegisterService {
         }
 
         final boolean isFilterUpdated = pluginUpdateQuery.getDeviceId() != null || pluginUpdateQuery.getNetworkIds() != null ||
-                pluginUpdateQuery.getDeviceTypeIds() != null || pluginUpdateQuery.getNames() != null ||
+                pluginUpdateQuery.getDeviceTypeIds() != null || pluginUpdateQuery.getIcomponentIds() != null || pluginUpdateQuery.getNames() != null ||
                 pluginUpdateQuery.isReturnCommands() != null ||
                 pluginUpdateQuery.isReturnUpdatedCommands() != null ||
                 pluginUpdateQuery.isReturnNotifications() != null;

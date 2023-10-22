@@ -23,6 +23,7 @@ package com.devicehive.dao;
 import com.devicehive.vo.NetworkVO;
 import com.devicehive.vo.UserVO;
 import com.devicehive.vo.UserWithDeviceTypeVO;
+import com.devicehive.vo.UserWithIcomponentVO;
 import com.devicehive.vo.UserWithNetworkVO;
 
 import javax.validation.constraints.NotNull;
@@ -40,6 +41,8 @@ public interface UserDao {
 
     UserWithDeviceTypeVO getWithDeviceTypeById(long id);
 
+    UserWithIcomponentVO getWithIcomponentById(long id);
+
     int deleteById(long id);
 
     UserVO find(Long id);
@@ -55,6 +58,12 @@ public interface UserDao {
     UserVO allowAllDeviceTypes(@NotNull UserWithDeviceTypeVO existingUser);
 
     UserVO disallowAllDeviceTypes(@NotNull UserVO existingUser);
+
+    void unassignIcomponent(@NotNull UserVO existingUser, @NotNull long deviceId);
+
+    UserVO allowAllIcomponents(@NotNull UserWithIcomponentVO existingUser);
+
+    UserVO disallowAllIcomponents(@NotNull UserVO existingUser);
 
     List<UserVO> list(String login, String loginPattern, Integer role, Integer status, String sortField,
                        boolean sortOrderAsc, Integer take, Integer skip);

@@ -23,6 +23,7 @@ package com.devicehive.service;
 import com.devicehive.configuration.Constants;
 import com.devicehive.configuration.Messages;
 import com.devicehive.dao.DeviceTypeDao;
+import com.devicehive.dao.IcomponentDao;
 import com.devicehive.dao.NetworkDao;
 import com.devicehive.dao.UserDao;
 import com.devicehive.exceptions.ActionNotAllowedException;
@@ -70,6 +71,7 @@ public class UserService extends BaseUserService {
     private static final String PASSWORD_REGEXP = "^.{6,128}$";
 
     private final DeviceTypeDao deviceTypeDao;
+    private final IcomponentDao icomponentDao;
     private final RpcClient rpcClient;
 
     private BaseNetworkService networkService;
@@ -78,6 +80,7 @@ public class UserService extends BaseUserService {
     public UserService(PasswordProcessor passwordService,
                        NetworkDao networkDao,
                        DeviceTypeDao deviceTypeDao,
+                       IcomponentDao icomponentDao,
                        UserDao userDao,
                        TimestampService timestampService,
                        ConfigurationService configurationService,
@@ -85,6 +88,7 @@ public class UserService extends BaseUserService {
                        RpcClient rpcClient) {
         super(passwordService, userDao, networkDao, timestampService, configurationService, hiveValidator);
         this.deviceTypeDao = deviceTypeDao;
+        this.icomponentDao = icomponentDao;
         this.rpcClient = rpcClient;
     }
 
@@ -241,6 +245,74 @@ public class UserService extends BaseUserService {
         return userDao.disallowAllDeviceTypes(existingUser);
     }
 
+    /**
+     * Allows user access to given icomponent
+     *
+     * @param userId id of user
+     * @param icomponentId id of icomponent
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void assignIcomponent(@NotNull long userId, @NotNull long icomponentId) {
+        UserVO existingUser = userDao.find(userId);
+        if (existingUser == null) {
+            logger.error("Can't assign icomponent with id {}: user {} not found", icomponentId, userId);
+            throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
+        }
+        if (existingUser.getAllIcomponentsAvailable()) {
+            throw new HiveException(String.format(Messages.ICOMPONENT_ASSIGNMENT_NOT_ALLOWED, userId), FORBIDDEN.getStatusCode());
+        }
+        IcomponentWithUsersAndDevicesVO existingIcomponent = icomponentDao.findWithUsers(icomponentId).orElse(null);
+        if (Objects.isNull(existingIcomponent)) {
+            throw new HiveException(String.format(Messages.ICOMPONENT_NOT_FOUND, icomponentId), NOT_FOUND.getStatusCode());
+        }
+
+        icomponentDao.assignToIcomponent(existingIcomponent, existingUser);
+    }
+
+    /**
+     * Revokes user access to given icomponent
+     *
+     * @param userId id of user
+     * @param icomponentId id of icomponent
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void unassignIcomponent(@NotNull long userId, @NotNull long icomponentId) {
+        UserVO existingUser = userDao.find(userId);
+        if (existingUser == null) {
+            logger.error("Can't unassign icomponent with id {}: user {} not found", icomponentId, userId);
+            throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
+        }
+        if (existingUser.getAllIcomponentsAvailable()) {
+            throw new HiveException(String.format(Messages.ICOMPONENT_ASSIGNMENT_NOT_ALLOWED, userId), FORBIDDEN.getStatusCode());
+        }
+        IcomponentVO existingIcomponent = icomponentDao.find(icomponentId);
+        if (existingIcomponent == null) {
+            logger.error("Can't unassign user with id {}: icomponent {} not found", userId, icomponentId);
+            throw new HiveException(String.format(Messages.ICOMPONENT_NOT_FOUND, icomponentId), NOT_FOUND.getStatusCode());
+        }
+        userDao.unassignIcomponent(existingUser, icomponentId);
+    }
+
+    @Transactional
+    public UserVO allowAllIcomponents(@NotNull long userId) {
+        UserWithIcomponentVO existingUser = userDao.getWithIcomponentById(userId);
+        if (existingUser == null) {
+            logger.error("Can't allow all icomponents: user {} not found", userId);
+            throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
+        }
+        return userDao.allowAllIcomponents(existingUser);
+    }
+
+    @Transactional
+    public UserVO disallowAllIcomponents(@NotNull long userId) {
+        UserVO existingUser = userDao.find(userId);
+        if (existingUser == null) {
+            logger.error("Can't disallow all icomponents: user {} not found", userId);
+            throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
+        }
+        return userDao.disallowAllIcomponents(existingUser);
+    }
+
     public CompletableFuture<List<UserVO>> list(ListUserRequest request) {
         return list(request.getLogin(), request.getLoginPattern(), request.getRole(), request.getStatus(), request.getSortField(),
                 request.getSortOrder(), request.getTake(), request.getSkip());
@@ -318,6 +390,9 @@ public class UserService extends BaseUserService {
 
         if (user.getAllDeviceTypesAvailable() == null) {
             user.setAllDeviceTypesAvailable(true);
+        }
+        if (user.getAllIcomponentsAvailable() == null) {
+            user.setAllIcomponentsAvailable(true);
         }
         userDao.persist(user);
         return user;

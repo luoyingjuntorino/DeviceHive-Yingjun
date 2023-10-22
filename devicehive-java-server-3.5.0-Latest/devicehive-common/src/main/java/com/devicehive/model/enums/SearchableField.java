@@ -28,6 +28,7 @@ public enum SearchableField {
     DEVICE_IDS("deviceId"), //need this duplication to separate cases of single and multiple deviceId usage
     NETWORK_IDS("networkId"),
     DEVICE_TYPE_IDS("deviceTypeId"),
+    ICOMPONENT_IDS("icomponentId"),
     NOTIFICATION("notification"),
     COMMAND("command"),
     STATUS("status"),

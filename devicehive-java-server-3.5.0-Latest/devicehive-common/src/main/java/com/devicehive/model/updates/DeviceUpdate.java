@@ -38,11 +38,11 @@ public class DeviceUpdate implements HiveEntity {
 
     @Size(min = 1, max = 128, message = "Field name cannot be empty. The length of name should not be more than 128 symbols.")
     @SerializedName("name")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, ICOMPONENT_PUBLISHED})
     private String name;
 
     @SerializedName("data")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, ICOMPONENT_PUBLISHED})
     private JsonStringWrapper data;
 
     @SerializedName("networkId")
@@ -52,6 +52,10 @@ public class DeviceUpdate implements HiveEntity {
     @SerializedName("deviceTypeId")
     @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED})
     private Long deviceTypeId;
+
+    @SerializedName("icomponentId")
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED})
+    private Long icomponentId;
 
     @JsonPolicyDef({DEVICE_SUBMITTED, DEVICE_PUBLISHED})
     @SerializedName("isBlocked")
@@ -89,6 +93,14 @@ public class DeviceUpdate implements HiveEntity {
         this.deviceTypeId = deviceTypeId;
     }
 
+    public Optional<Long> getIcomponentId() {
+        return Optional.ofNullable(icomponentId);
+    }
+
+    public void setIcomponentId(Long icomponentId) {
+        this.icomponentId = icomponentId;
+    }
+
     public Optional<Boolean> getBlocked() {
         return Optional.ofNullable(blocked);
     }
@@ -113,6 +125,9 @@ public class DeviceUpdate implements HiveEntity {
         }
         if (this.deviceTypeId != null){
             device.setDeviceTypeId(this.deviceTypeId);
+        }
+        if (this.icomponentId != null){
+            device.setIcomponentId(this.icomponentId);
         }
         if (this.blocked != null){
             device.setBlocked(this.blocked);

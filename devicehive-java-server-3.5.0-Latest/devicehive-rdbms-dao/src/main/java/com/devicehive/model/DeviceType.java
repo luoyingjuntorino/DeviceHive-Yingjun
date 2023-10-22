@@ -51,7 +51,8 @@ import static com.devicehive.json.strategies.JsonPolicyDef.Policy.*;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DeviceType implements HiveEntity {
 
-    private static final long serialVersionUID = -4534503697839217385L;
+    // private static final long serialVersionUID = -4534503697839217385L;
+    private static final long serialVersionUID = -4534583697839217385L;
 
     @SerializedName("id")
     @Id

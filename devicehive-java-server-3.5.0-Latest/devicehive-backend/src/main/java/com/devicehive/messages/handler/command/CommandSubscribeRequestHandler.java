@@ -88,6 +88,7 @@ public class CommandSubscribeRequestHandler implements RequestHandler {
                 .map(t -> hazelcastService.find(filter.getDeviceId(),
                         Collections.singleton(filter.getNetworkId()),
                         Collections.singleton(filter.getDeviceTypeId()),
+                        Collections.singleton(filter.getIcomponentId()),
                         names, limit, t, null, returnUpdated, null, DeviceCommand.class))
                 .orElse(Collections.emptyList());
     }

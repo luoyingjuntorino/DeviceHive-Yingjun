@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
  * Subnets - if present, represents the set of ips that the principal has permission to access
  * Networks - if present, represents the set of networks that the principal has permission to access
  * Device types - if present, represents the set of the device types that the principal has permission to access
+ * Icomponents - if present, represents the set of the icomponents that the principal has permission to access
  * Devices - if present, represents the set of the devices that the principal has permission to access
  */
 public class HivePrincipal implements Principal, Portable {
@@ -52,27 +53,35 @@ public class HivePrincipal implements Principal, Portable {
     private Set<HiveAction> actions;
     private Set<Long> networkIds;
     private Set<Long> deviceTypeIds;
+    private Set<Long> icomponentIds;
     private PluginVO plugin;
     private Boolean allNetworksAvailable = false;
     private Boolean allDeviceTypesAvailable = true;
+    private Boolean allIcomponentsAvailable = true;
 
     public HivePrincipal(UserVO user,
                          Set<HiveAction> actions,
                          Set<Long> networkIds,
                          Set<Long> deviceTypeIds,
+                         Set<Long> icomponentIds,
                          PluginVO plugin,
                          Boolean allNetworksAvailable,
-                         Boolean allDeviceTypesAvailable) {
+                         Boolean allDeviceTypesAvailable,
+                         Boolean allIcomponentsAvailable) {
         this.user = user;
         this.actions = actions;
         this.networkIds = networkIds;
         this.deviceTypeIds = deviceTypeIds;
+        this.icomponentIds = icomponentIds;
         this.plugin = plugin;
         if (allNetworksAvailable != null) {
             this.allNetworksAvailable = allNetworksAvailable;
         }
         if (allDeviceTypesAvailable != null) {
             this.allDeviceTypesAvailable = allDeviceTypesAvailable;
+        }
+        if (allIcomponentsAvailable != null) {
+            this.allIcomponentsAvailable = allIcomponentsAvailable;
         }
     }
 
@@ -120,6 +129,14 @@ public class HivePrincipal implements Principal, Portable {
         this.deviceTypeIds = deviceTypeIds;
     }
 
+    public Set<Long> getIcomponentIds() {
+        return icomponentIds;
+    }
+
+    public void setIcomponentIds(Set<Long> icomponentIds) {
+        this.icomponentIds = icomponentIds;
+    }
+
     public PluginVO getPlugin() {
         return plugin;
     }
@@ -144,12 +161,24 @@ public class HivePrincipal implements Principal, Portable {
         this.allDeviceTypesAvailable = allDeviceTypesAvailable;
     }
 
+    public Boolean areAllIcomponentsAvailable() {
+        return allIcomponentsAvailable;
+    }
+
+    public void setAllIcomponentsAvailable(Boolean allIcomponentsAvailable) {
+        this.allIcomponentsAvailable = allIcomponentsAvailable;
+    }
+
     public boolean hasAccessToNetwork(long networkId) {
         return allNetworksAvailable || networkIds.contains(networkId);
     }
 
     public boolean hasAccessToDeviceType(long deviceTypeId) {
         return allDeviceTypesAvailable || deviceTypeIds.contains(deviceTypeId);
+    }
+
+    public boolean hasAccessToIcomponent(long icomponentId) {
+        return allIcomponentsAvailable || icomponentIds.contains(icomponentId);
     }
 
     @Override
@@ -166,12 +195,15 @@ public class HivePrincipal implements Principal, Portable {
         if (deviceTypeIds != null) {
             return deviceTypeIds.toString();
         }
+        if (icomponentIds != null) {
+            return icomponentIds.toString();
+        }
 
         return "anonymousPrincipal";
     }
 
     public boolean isAuthenticated() {
-        if (user != null || actions != null || networkIds != null || deviceTypeIds != null) {
+        if (user != null || actions != null || networkIds != null || deviceTypeIds != null || icomponentIds != null) {
             return true;
         }
         throw new InvalidPrincipalException("Unauthorized");
@@ -199,8 +231,10 @@ public class HivePrincipal implements Principal, Portable {
         // write only required fields for com.devicehive.model.eventbus.Filter
         writer.writeBoolean("allNetworksAvailable", allNetworksAvailable);
         writer.writeBoolean("allDeviceTypesAvailable", allDeviceTypesAvailable);
+        writer.writeBoolean("allIcomponentsAvailable", allIcomponentsAvailable);
         writer.writeLongArray("networkIds", networkIds != null ? networkIds.stream().mapToLong(Long::longValue).toArray() : new long[0]);
         writer.writeLongArray("deviceTypeIds", deviceTypeIds != null ? deviceTypeIds.stream().mapToLong(Long::longValue).toArray() : new long[0]);
+        writer.writeLongArray("icomponentIds", icomponentIds != null ? icomponentIds.stream().mapToLong(Long::longValue).toArray() : new long[0]);
     }
 
     @Override
@@ -208,7 +242,9 @@ public class HivePrincipal implements Principal, Portable {
         // read only required fields for com.devicehive.model.eventbus.Filter
         allNetworksAvailable = reader.readBoolean("allNetworksAvailable");
         allNetworksAvailable = reader.readBoolean("allDeviceTypesAvailable");
+        allNetworksAvailable = reader.readBoolean("allIcomponentsAvailable");
         networkIds = Arrays.stream(reader.readLongArray("networkIds")).boxed().collect(Collectors.toSet());
         deviceTypeIds = Arrays.stream(reader.readLongArray("deviceTypeIds")).boxed().collect(Collectors.toSet());
+        icomponentIds = Arrays.stream(reader.readLongArray("icomponentIds")).boxed().collect(Collectors.toSet());
     }
 }

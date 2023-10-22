@@ -102,14 +102,15 @@ public class CommandHandlers {
         final Set<String> names = gson.fromJson(request.getAsJsonArray(NAMES), JsonTypes.STRING_SET_TYPE);
         Set<Long> networks = gson.fromJson(request.getAsJsonArray(NETWORK_IDS), JsonTypes.LONG_SET_TYPE);
         Set<Long> deviceTypes = gson.fromJson(request.getAsJsonArray(DEVICE_TYPE_IDS), JsonTypes.LONG_SET_TYPE);
+        Set<Long> icomponents = gson.fromJson(request.getAsJsonArray(ICOMPONENT_IDS), JsonTypes.LONG_SET_TYPE);
         final Integer limit = Optional.ofNullable(gson.fromJson(request.get(LIMIT), Integer.class)).orElse(DEFAULT_TAKE);
         final Boolean returnUpdated = Optional.ofNullable(gson.fromJson(request.get(RETURN_UPDATED_COMMANDS), Boolean.class))
                 .orElse(DEFAULT_RETURN_UPDATED_COMMANDS);
 
         logger.debug("command/subscribe requested for device: {}. Networks: {}. Device types: {}. Timestamp: {}. Names {} Session: {}",
-                deviceId, networks, deviceTypes, timestamp, names, session);
+                deviceId, networks, deviceTypes, icomponents, timestamp, names, session);
 
-        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, COMMAND_EVENT.name(), names, authentication);
+        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, icomponents, COMMAND_EVENT.name(), names, authentication);
 
         if (!filters.isEmpty()) {
             BiConsumer<DeviceCommand, Long> callback = (command, subscriptionId) -> {
@@ -121,12 +122,12 @@ public class CommandHandlers {
                     .sendSubscribeRequest(filters, names, timestamp, returnUpdated, limit, callback);
 
             logger.debug("command/subscribe done for devices: {}. Networks: {}. Device types: {}. Timestamp: {}. Names {} Session: {}",
-                    deviceId, networks, deviceTypes, timestamp, names, session.getId());
+                    deviceId, networks, deviceTypes, icomponents, timestamp, names, session.getId());
 
             ((CopyOnWriteArraySet) session
                     .getAttributes()
                     .get(SUBSCRIPTION_SET_NAME))
-                    .add(new SubscriptionInfo(pair.getLeft(), COMMAND, deviceId, networks, deviceTypes, names, timestamp));
+                    .add(new SubscriptionInfo(pair.getLeft(), COMMAND, deviceId, networks, deviceTypes, icomponents, names, timestamp));
 
             pair.getRight()
                     .thenAccept(collection -> {
@@ -136,7 +137,7 @@ public class CommandHandlers {
                         collection.forEach(cmd -> clientHandler.sendMessage(createCommandMessage(cmd, pair.getLeft(), returnUpdated), session));
                     });
         } else {
-            throw new HiveException(NO_ACCESS_TO_DEVICE_TYPES_OR_NETWORKS, SC_FORBIDDEN);
+            throw new HiveException(NO_ACCESS_TO_DEVICE_TYPES_OR_NETWORKS_OR_ICOMPONENTS, SC_FORBIDDEN);
         }
     }
 

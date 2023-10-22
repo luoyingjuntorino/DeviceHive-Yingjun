@@ -36,6 +36,7 @@ import java.io.IOException;
 
 import static com.devicehive.configuration.Constants.DEVICE_ID;
 import static com.devicehive.configuration.Constants.DEVICE_TYPE_ID;
+import static com.devicehive.configuration.Constants.ICOMPONENT_ID;
 import static com.devicehive.configuration.Constants.NETWORK_ID;
 
 @Component
@@ -50,6 +51,7 @@ public class WebSocketRequestProcessor {
     private final DeviceHandlers deviceHandlers;
     private final NetworkHandlers networkHandlers;
     private final DeviceTypeHandlers deviceTypeHandlers;
+    private final IcomponentHandlers icomponentHandlers;
     private final UserHandlers userHandlers;
     private final Gson gson;
 
@@ -63,6 +65,7 @@ public class WebSocketRequestProcessor {
                                      DeviceHandlers deviceHandlers,
                                      NetworkHandlers networkHandlers,
                                      DeviceTypeHandlers deviceTypeHandlers,
+                                     IcomponentHandlers icomponentHandlers,
                                      UserHandlers userHandlers,
                                      Gson gson) {
         this.commonHandlers = commonHandlers;
@@ -74,6 +77,7 @@ public class WebSocketRequestProcessor {
         this.deviceHandlers = deviceHandlers;
         this.networkHandlers = networkHandlers;
         this.deviceTypeHandlers = deviceTypeHandlers;
+        this.icomponentHandlers = icomponentHandlers;
         this.userHandlers = userHandlers;
         this.gson = gson;
     }
@@ -83,6 +87,7 @@ public class WebSocketRequestProcessor {
         final String deviceId = gson.fromJson(request.get(DEVICE_ID), String.class);
         final Long networkId = gson.fromJson(request.get(NETWORK_ID), Long.class);
         final Long deviceTypeId = gson.fromJson(request.get(DEVICE_TYPE_ID), Long.class);
+        final Long icomponentId = gson.fromJson(request.get(ICOMPONENT_ID), Long.class);
         
         switch (action) {
             case SERVER_INFO:
@@ -202,6 +207,24 @@ public class WebSocketRequestProcessor {
             case DEVICE_TYPE_DELETE:
                 deviceTypeHandlers.processDeviceTypeDelete(deviceTypeId, request, session);
                 break;
+            case ICOMPONENT_LIST:
+                icomponentHandlers.processIcomponentList(request, session);
+                break;
+            case ICOMPONENT_COUNT:
+                icomponentHandlers.processIcomponentCount(request, session);
+                break;
+            case ICOMPONENT_GET:
+                icomponentHandlers.processIcomponentGet(icomponentId, request, session);
+                break;
+            case ICOMPONENT_INSERT:
+                icomponentHandlers.processIcomponentInsert(request, session);
+                break;
+            case ICOMPONENT_UPDATE:
+                icomponentHandlers.processIcomponentUpdate(icomponentId, request, session);
+                break;
+            case ICOMPONENT_DELETE:
+                icomponentHandlers.processIcomponentDelete(icomponentId, request, session);
+                break;
             case USER_LIST:
                 userHandlers.processUserList(request, session);
                 break;
@@ -252,6 +275,24 @@ public class WebSocketRequestProcessor {
                 break;
             case USER_DISALLOW_ALL_DEVICE_TYPES:
                 userHandlers.processUserDisallowAllDeviceTypes(request, session);
+                break;
+            case USER_GET_ICOMPONENT:
+                userHandlers.processUserGetIcomponent(request, session);
+                break;
+            case USER_GET_ICOMPONENTS:
+                userHandlers.processUserGetIcomponents(request, session);
+                break;
+            case USER_ASSIGN_ICOMPONENT:
+                userHandlers.processUserAssignIcomponent(request, session);
+                break;
+            case USER_UNASSIGN_ICOMPONENT:
+                userHandlers.processUserUnassignIcomponent(request, session);
+                break;
+            case USER_ALLOW_ALL_ICOMPONENTS:
+                userHandlers.processUserAllowAllIcomponents(request, session);
+                break;
+            case USER_DISALLOW_ALL_ICOMPONENTS:
+                userHandlers.processUserDisallowAllIcomponents(request, session);
                 break;
             case EMPTY: default:
                 throw new JsonParseException("'action' field could not be parsed to known endpoint");
@@ -306,6 +347,12 @@ public class WebSocketRequestProcessor {
         DEVICE_TYPE_GET("devicetype/get"),
         DEVICE_TYPE_DELETE("devicetype/delete"),
         DEVICE_TYPE_UPDATE("devicetype/update"),
+        ICOMPONENT_LIST("icomponent/list"),
+        ICOMPONENT_COUNT("icomponent/count"),
+        ICOMPONENT_INSERT("icomponent/insert"),
+        ICOMPONENT_GET("icomponent/get"),
+        ICOMPONENT_DELETE("icomponent/delete"),
+        ICOMPONENT_UPDATE("icomponent/update"),
         USER_LIST("user/list"),
         USER_COUNT("user/count"),
         USER_GET("user/get"),
@@ -323,6 +370,12 @@ public class WebSocketRequestProcessor {
         USER_UNASSIGN_DEVICE_TYPE("user/unassignDeviceType"),
         USER_ALLOW_ALL_DEVICE_TYPES("user/allowAllDeviceTypes"),
         USER_DISALLOW_ALL_DEVICE_TYPES("user/disallowAllDeviceTypes"),
+        USER_GET_ICOMPONENT("user/getIcomponent"),
+        USER_GET_ICOMPONENTS("user/getIcomponents"),
+        USER_ASSIGN_ICOMPONENT("user/assignIcomponent"),
+        USER_UNASSIGN_ICOMPONENT("user/unassignIcomponent"),
+        USER_ALLOW_ALL_ICOMPONENTS("user/allowAllIcomponents"),
+        USER_DISALLOW_ALL_ICOMPONENTS("user/disallowAllIcomponents"),
         EMPTY("");
 
         private String value;

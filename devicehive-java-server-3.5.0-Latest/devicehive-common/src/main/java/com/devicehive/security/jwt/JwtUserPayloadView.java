@@ -45,6 +45,7 @@ public class JwtUserPayloadView<T> implements HiveEntity {
     private final static String ACTIONS = "actions";
     private final static String NETWORK_IDS = "networkIds";
     private final static String DEVICE_TYPE_IDS = "deviceTypeIds";
+    private final static String ICOMPONENT_IDS = "icomponentIds";
     private final static String EXPIRATION = "expiration";
     private final static String REFRESH_EXPIRATION = "refreshExpiration";
     private final static String TOKEN_TYPE = "tokenType";
@@ -66,6 +67,10 @@ public class JwtUserPayloadView<T> implements HiveEntity {
     @SerializedName(DEVICE_TYPE_IDS)
     private Set<String> deviceTypeIds;
 
+    @JsonProperty(ICOMPONENT_IDS)
+    @SerializedName(ICOMPONENT_IDS)
+    private Set<String> icomponentIds;
+
     @JsonProperty(EXPIRATION)
     @SerializedName(EXPIRATION)
     private Date expiration;
@@ -79,11 +84,12 @@ public class JwtUserPayloadView<T> implements HiveEntity {
     private TokenType tokenType;
 
     public JwtUserPayloadView(Long userId, Set<T> actions, Set<String> networkIds,
-            Set<String> deviceTypeIds, Date expiration, Date refreshExpiration, TokenType tokenType) {
+            Set<String> deviceTypeIds, Set<String> icomponentIds, Date expiration, Date refreshExpiration, TokenType tokenType) {
         this.userId = userId;
         this.actions = actions;
         this.networkIds = networkIds;
         this.deviceTypeIds = deviceTypeIds;
+        this.icomponentIds = icomponentIds;
         this.expiration = expiration;
         this.refreshExpiration = refreshExpiration;
         this.tokenType = tokenType;
@@ -119,6 +125,14 @@ public class JwtUserPayloadView<T> implements HiveEntity {
 
     public void setDeviceTypeIds(Set<String> deviceTypeIds) {
         this.deviceTypeIds = deviceTypeIds;
+    }
+
+    public Set<String> getIcomponentIds() {
+        return icomponentIds;
+    }
+
+    public void setIcomponentIds(Set<String> icomponentIds) {
+        this.icomponentIds = icomponentIds;
     }
 
     public Date getExpiration() {
@@ -162,7 +176,7 @@ public class JwtUserPayloadView<T> implements HiveEntity {
                         .collect(Collectors.toSet()))
                 .orElse(ImmutableSet.of(NONE.getId()));
         
-        return new JwtUserPayload(userId, actionIds, networkIds, deviceTypeIds, expiration, null);
+        return new JwtUserPayload(userId, actionIds, networkIds, deviceTypeIds, icomponentIds, expiration, null);
     }
 
     public static Builder newBuilder() {
@@ -174,16 +188,18 @@ public class JwtUserPayloadView<T> implements HiveEntity {
         private Set<T> actions;
         private Set<String> networkIds;
         private Set<String> deviceTypeIds;
+        private Set<String> icomponentIds;
         private Date expiration;
         private Date refreshExpiration;
         private TokenType tokenType;
 
         public Builder withPublicClaims(Long userId, Set<T> actions,
-                                        Set<String> networkIds, Set<String> deviceTypeIds) {
+                                        Set<String> networkIds, Set<String> deviceTypeIds, Set<String> icomponentIds) {
             this.userId = userId;
             this.actions = actions;
             this.networkIds = networkIds;
             this.deviceTypeIds = deviceTypeIds;
+            this.icomponentIds = icomponentIds;
             return this;
         }
 
@@ -192,6 +208,7 @@ public class JwtUserPayloadView<T> implements HiveEntity {
             this.actions = payload.getActions();
             this.networkIds = payload.getNetworkIds();
             this.deviceTypeIds = payload.getDeviceTypeIds();
+            this.icomponentIds = payload.getIcomponentIds();
             this.expiration = payload.getExpiration();
             this.refreshExpiration = payload.getRefreshExpiration();
             return this;
@@ -217,6 +234,11 @@ public class JwtUserPayloadView<T> implements HiveEntity {
             return this;
         }
 
+        public Builder withIcomponentIds(Set<String> icomponentIds) {
+            this.icomponentIds = icomponentIds;
+            return this;
+        }
+
         public Builder withTokenType(TokenType tokenType) {
             this.tokenType = tokenType;
             return this;
@@ -233,7 +255,7 @@ public class JwtUserPayloadView<T> implements HiveEntity {
         }
 
         public JwtUserPayloadView<T> buildPayload() {
-            return new JwtUserPayloadView<T>(userId, actions, networkIds, deviceTypeIds, expiration, refreshExpiration, tokenType);
+            return new JwtUserPayloadView<T>(userId, actions, networkIds, deviceTypeIds, icomponentIds, expiration, refreshExpiration, tokenType);
         }
     }
 }

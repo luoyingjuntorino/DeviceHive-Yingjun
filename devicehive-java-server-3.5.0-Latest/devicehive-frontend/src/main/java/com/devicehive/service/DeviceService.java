@@ -66,6 +66,7 @@ public class DeviceService extends BaseDeviceService {
     private final DeviceNotificationService deviceNotificationService;
     private final BaseNetworkService networkService;
     private final DeviceTypeService deviceTypeService;
+    private final IcomponentService icomponentService;
     private final UserService userService;
     private final TimestampService timestampService;
 
@@ -73,6 +74,7 @@ public class DeviceService extends BaseDeviceService {
     public DeviceService(DeviceNotificationService deviceNotificationService,
                          BaseNetworkService networkService,
                          DeviceTypeService deviceTypeService,
+                         IcomponentService icomponentService,
                          UserService userService,
                          TimestampService timestampService,
                          DeviceDao deviceDao,
@@ -81,6 +83,7 @@ public class DeviceService extends BaseDeviceService {
         this.deviceNotificationService = deviceNotificationService;
         this.networkService = networkService;
         this.deviceTypeService = deviceTypeService;
+        this.icomponentService = icomponentService;
         this.userService = userService;
         this.timestampService = timestampService;
     }
@@ -233,12 +236,26 @@ public class DeviceService extends BaseDeviceService {
                         throw new ActionNotAllowedException(Messages.NO_ACCESS_TO_DEVICE_TYPE);
                     }
                 });
+        Long icomponentId = deviceUpdate.getIcomponentId()
+                .map(id -> {
+                    if (!icomponentService.isIcomponentExists(id)) {
+                        throw new IllegalParametersException(Messages.INVALID_REQUEST_PARAMETERS);
+                    }
+                    return id;
+                }).orElseGet(() -> {
+                    if (principal.areAllIcomponentsAvailable() || (principal.getIcomponentIds() != null && !principal.getIcomponentIds().isEmpty())) {
+                        return icomponentService.findDefaultIcomponent(principal.getIcomponentIds());
+                    } else {
+                        throw new ActionNotAllowedException(Messages.NO_ACCESS_TO_ICOMPONENT);
+                    }
+                });
         // TODO [requies a lot of details]!
         DeviceVO existingDevice = deviceDao.findById(deviceId);
         if (existingDevice == null) {
             DeviceVO device = deviceUpdate.convertTo(deviceId);
             device.setNetworkId(networkId);
             device.setDeviceTypeId(deviceTypeId);
+            device.setIcomponentId(icomponentId);
             if (device.getBlocked() == null) {
                 device.setBlocked(false);
             }
@@ -257,6 +274,9 @@ public class DeviceService extends BaseDeviceService {
             }
             if (deviceUpdate.getDeviceTypeId().isPresent()){
                 existingDevice.setDeviceTypeId(deviceTypeId);
+            }
+            if (deviceUpdate.getIcomponentId().isPresent()){
+                existingDevice.setIcomponentId(icomponentId);
             }
             if (deviceUpdate.getName().isPresent()){
                 existingDevice.setName(deviceUpdate.getName().get());

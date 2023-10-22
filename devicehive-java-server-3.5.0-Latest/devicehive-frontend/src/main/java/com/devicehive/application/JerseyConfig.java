@@ -49,6 +49,7 @@ public class JerseyConfig extends ResourceConfig {
                 DeviceResourceImpl.class,
                 NetworkResourceImpl.class,
                 DeviceTypeResourceImpl.class,
+                IcomponentResourceImpl.class,
                 WelcomeResourceImpl.class,
                 UserResourceImpl.class);
 

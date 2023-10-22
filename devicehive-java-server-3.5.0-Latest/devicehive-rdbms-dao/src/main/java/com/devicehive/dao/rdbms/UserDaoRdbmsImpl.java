@@ -22,6 +22,7 @@ package com.devicehive.dao.rdbms;
 
 import com.devicehive.dao.UserDao;
 import com.devicehive.model.DeviceType;
+import com.devicehive.model.Icomponent;
 import com.devicehive.model.Network;
 import com.devicehive.model.User;
 import com.devicehive.vo.*;
@@ -114,6 +115,27 @@ public class UserDaoRdbmsImpl extends RdbmsGenericDao implements UserDao {
     }
 
     @Override
+    public UserWithIcomponentVO getWithIcomponentById(long id) {
+        User user = createNamedQuery(User.class, "User.getWithIcomponentsById", of(CacheConfig.get()))
+                .setParameter("id", id)
+                .getResultList()
+                .stream().findFirst().orElse(null);
+        if (user == null) {
+            return null;
+        }
+        UserVO vo = User.convertToVo(user);
+        UserWithIcomponentVO userWithIcomponentVO = UserWithIcomponentVO.fromUserVO(vo);
+        //TODO [rafa] change here to bulk fetch data
+        if (user.getIcomponents() != null) {
+            for (Icomponent icomponent : user.getIcomponents()) {
+                IcomponentVO icomponentVO = Icomponent.convertIcomponent(icomponent);
+                userWithIcomponentVO.getIcomponents().add(icomponentVO);
+            }
+        }
+        return userWithIcomponentVO;
+    }
+
+    @Override
     public int deleteById(long id) {
         return createNamedQuery("User.deleteById", of(CacheConfig.bypass()))
                 .setParameter("id", id)
@@ -185,6 +207,41 @@ public class UserDaoRdbmsImpl extends RdbmsGenericDao implements UserDao {
     public UserVO disallowAllDeviceTypes(UserVO existingUser) {
         User entity = User.convertToEntity(existingUser);
         entity.setAllDeviceTypesAvailable(false);
+        User merge = super.merge(entity);
+        return User.convertToVo(merge);
+    }
+
+    @Override
+    public void unassignIcomponent(@NotNull UserVO existingUser, @NotNull long icomponentId) {
+        createNamedQuery(Icomponent.class, "Icomponent.findWithUsers", of(CacheConfig.refresh()))
+                .setParameter("id", icomponentId)
+                .getResultList()
+                .stream().findFirst()
+                .ifPresent(existingIcomponent -> {
+                    User usr = new User();
+                    usr.setId(existingUser.getId());
+                    existingIcomponent.getUsers().remove(usr);
+                    merge(existingIcomponent);
+                });
+    }
+
+    @Override
+    public UserVO allowAllIcomponents(UserWithIcomponentVO existingUser) {
+        User entity = User.convertToEntity(existingUser);
+        entity.setAllIcomponentsAvailable(true);
+        //TODO - add single named query to avoid cycling through all icomponents
+        for (Icomponent cp: entity.getIcomponents()) {
+            unassignIcomponent(existingUser, cp.getId());
+        }
+        entity.setIcomponents(Collections.EMPTY_SET);
+        User merge = super.merge(entity);
+        return User.convertToVo(merge);
+    }
+
+    @Override
+    public UserVO disallowAllIcomponents(UserVO existingUser) {
+        User entity = User.convertToEntity(existingUser);
+        entity.setAllIcomponentsAvailable(false);
         User merge = super.merge(entity);
         return User.convertToVo(merge);
     }

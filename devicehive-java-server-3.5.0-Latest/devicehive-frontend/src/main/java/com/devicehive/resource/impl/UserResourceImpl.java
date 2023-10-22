@@ -26,12 +26,15 @@ import com.devicehive.json.strategies.JsonPolicyDef;
 import com.devicehive.model.ErrorResponse;
 import com.devicehive.model.enums.UserRole;
 import com.devicehive.model.response.UserDeviceTypeResponse;
+import com.devicehive.model.response.UserIcomponentResponse;
 import com.devicehive.model.response.UserNetworkResponse;
 import com.devicehive.model.updates.UserUpdate;
 import com.devicehive.resource.UserResource;
 import com.devicehive.resource.util.ResponseFactory;
 import com.devicehive.service.BaseDeviceTypeService;
 import com.devicehive.service.DeviceTypeService;
+import com.devicehive.service.BaseIcomponentService;
+import com.devicehive.service.IcomponentService;
 import com.devicehive.service.UserService;
 import com.devicehive.util.HiveValidator;
 import com.devicehive.vo.*;
@@ -50,6 +53,7 @@ import java.util.Objects;
 import static com.devicehive.configuration.Constants.ID;
 import static com.devicehive.configuration.Constants.LOGIN;
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.DEVICE_TYPES_LISTED;
+import static com.devicehive.json.strategies.JsonPolicyDef.Policy.ICOMPONENTS_LISTED;
 import static javax.ws.rs.core.Response.Status.*;
 
 @Service
@@ -59,12 +63,14 @@ public class UserResourceImpl implements UserResource {
 
     private final UserService userService;
     private final DeviceTypeService deviceTypeService;
+    private final IcomponentService icomponentService;
     private final HiveValidator hiveValidator;
 
     @Autowired
-    public UserResourceImpl(UserService userService, DeviceTypeService deviceTypeService, HiveValidator hiveValidator) {
+    public UserResourceImpl(UserService userService, DeviceTypeService deviceTypeService, IcomponentService icomponentService, HiveValidator hiveValidator) {
         this.userService = userService;
         this.deviceTypeService = deviceTypeService;
+        this.icomponentService = icomponentService;
         this.hiveValidator = hiveValidator;
     }
 
@@ -325,6 +331,92 @@ public class UserResourceImpl implements UserResource {
     @Override
     public Response disallowAllDeviceTypes(long id) {
         userService.disallowAllDeviceTypes(id);
+        return ResponseFactory.response(NO_CONTENT);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Response getIcomponent(long id, long icomponentId) {
+        UserWithIcomponentVO existingUser = userService.findUserWithIcomponent(id);
+        if (existingUser == null) {
+            logger.error("Can't get icomponent with id {}: user {} not found", icomponentId, id);
+            ErrorResponse errorResponseEntity = new ErrorResponse(NOT_FOUND.getStatusCode(),
+                    String.format(Messages.USER_NOT_FOUND, id));
+            return ResponseFactory.response(NOT_FOUND, errorResponseEntity);
+        }
+
+        if (existingUser.getAllIcomponentsAvailable()) {
+            IcomponentVO icomponentVO = icomponentService.getWithDevices(icomponentId);
+            if (icomponentVO != null) {
+                return ResponseFactory.response(OK, UserIcomponentResponse.fromIcomponent(icomponentVO), JsonPolicyDef.Policy.ICOMPONENTS_LISTED);
+            }
+        }
+
+        for (IcomponentVO icomponent : existingUser.getIcomponents()) {
+            if (icomponent.getId() == icomponentId) {
+                return ResponseFactory.response(OK, UserIcomponentResponse.fromIcomponent(icomponent), JsonPolicyDef.Policy.ICOMPONENTS_LISTED);
+            }
+        }
+        ErrorResponse errorResponseEntity = new ErrorResponse(NOT_FOUND.getStatusCode(),
+                String.format(Messages.USER_ICOMPONENT_NOT_FOUND, icomponentId, id));
+        return ResponseFactory.response(NOT_FOUND, errorResponseEntity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getIcomponents(long id, @Suspended final AsyncResponse asyncResponse) {
+        UserWithIcomponentVO existingUser = userService.findUserWithIcomponent(id);
+        if (existingUser == null) {
+            logger.error("Can't get icomponents for user with id {}: user not found", id);
+            ErrorResponse errorResponseEntity = new ErrorResponse(NOT_FOUND.getStatusCode(),
+                    String.format(Messages.USER_NOT_FOUND, id));
+            asyncResponse.resume(ResponseFactory.response(NOT_FOUND, errorResponseEntity));
+        } else {
+            if (existingUser.getAllIcomponentsAvailable()) {
+                icomponentService.listAll().thenApply(icomponentVOS -> {
+                    logger.debug("User list request proceed successfully");
+                    return ResponseFactory.response(OK, icomponentVOS, JsonPolicyDef.Policy.ICOMPONENTS_LISTED);
+                }).thenAccept(asyncResponse::resume);
+            } else if (!existingUser.getAllIcomponentsAvailable() && (existingUser.getIcomponents() == null || existingUser.getIcomponents().isEmpty())) {
+                logger.warn("Unable to get list for empty icomponents");
+                asyncResponse.resume(ResponseFactory.response(OK, Collections.<IcomponentVO>emptyList(), ICOMPONENTS_LISTED));
+            } else {
+                asyncResponse.resume(ResponseFactory.response(OK, existingUser.getIcomponents(), JsonPolicyDef.Policy.ICOMPONENTS_LISTED));
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Response assignIcomponent(long id, long icomponentId) {
+        userService.assignIcomponent(id, icomponentId);
+        return ResponseFactory.response(NO_CONTENT);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Response unassignIcomponent(long id, long icomponentId) {
+        userService.unassignIcomponent(id, icomponentId);
+        return ResponseFactory.response(NO_CONTENT);
+    }
+
+    @Override
+    public Response allowAllIcomponents(long id) {
+        userService.allowAllIcomponents(id);
+        return ResponseFactory.response(NO_CONTENT);
+    }
+
+    @Override
+    public Response disallowAllIcomponents(long id) {
+        userService.disallowAllIcomponents(id);
         return ResponseFactory.response(NO_CONTENT);
     }
 

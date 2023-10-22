@@ -34,7 +34,7 @@ public abstract class FilterRegistry {
 
     /**
      * Table for holding subscription request id (i.e. subscriber) for particular filter.
-     * First key is comma-separated string combination of networkId, deviceTypeId and deviceId,
+     * First key is comma-separated string combination of networkId, deviceTypeId, icomponentId and deviceId,
      * second key is comma-separated string combination of eventName and name.
      */
     private final Table<String, String, Set<Subscriber>> subscriberTable = HashBasedTable.create();
@@ -85,7 +85,7 @@ public abstract class FilterRegistry {
     }
 
     public void unregisterDevice(DeviceVO device) {
-        final Filter deviceFilter = new Filter(device.getNetworkId(), device.getDeviceTypeId(), device.getDeviceId(), null, null);
+        final Filter deviceFilter = new Filter(device.getNetworkId(), device.getDeviceTypeId(), device.getIcomponentId(), device.getDeviceId(), null, null);
         subscriberTable.row(deviceFilter.getFirstKey()).clear();
     }
 

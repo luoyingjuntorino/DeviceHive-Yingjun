@@ -158,20 +158,21 @@ public class DeviceNotificationResourceImpl implements DeviceNotificationResourc
     @Override
     public void poll(final String deviceId, final String namesString, final String timestamp,
                      final long timeout, final AsyncResponse asyncResponse) throws Exception {
-        poll(timeout, deviceId, null, null, namesString, timestamp, asyncResponse);
+        poll(timeout, deviceId, null, null, null, namesString, timestamp, asyncResponse);
     }
 
     @Override
-    public void pollMany(final long timeout, String deviceIdsString, String networkIdsString, final String deviceTypeIdsString,
+    public void pollMany(final long timeout, String deviceIdsString, String networkIdsString, final String deviceTypeIdsString, final String icomponentIdsString,
                          final String namesString, final String timestamp, final AsyncResponse asyncResponse)
             throws Exception {
-        poll(timeout, deviceIdsString, networkIdsString, deviceTypeIdsString, namesString, timestamp, asyncResponse);
+        poll(timeout, deviceIdsString, networkIdsString, deviceTypeIdsString, icomponentIdsString, namesString, timestamp, asyncResponse);
     }
 
     private void poll(final long timeout,
                       final String deviceId,
                       final String networkIdsCsv,
                       final String deviceTypeIdsCsv,
+                      final String icomponentIdsCsv,
                       final String namesCsv,
                       final String timestamp,
                       final AsyncResponse asyncResponse) throws InterruptedException {
@@ -203,6 +204,12 @@ public class DeviceNotificationResourceImpl implements DeviceNotificationResourc
                         .map(dt -> gson.fromJson(dt, Long.class))
                         .collect(Collectors.toSet())
                 ).orElse(null);
+        Set<Long> icomponents = Optional.ofNullable(StringUtils.split(icomponentIdsCsv, ','))
+                .map(Arrays::asList)
+                .map(list -> list.stream()
+                        .map(cp -> gson.fromJson(cp, Long.class))
+                        .collect(Collectors.toSet())
+                ).orElse(null);
 
         BiConsumer<DeviceNotification, Long> callback = (notification, subscriptionId) -> {
             if (!asyncResponse.isDone()) {
@@ -213,7 +220,7 @@ public class DeviceNotificationResourceImpl implements DeviceNotificationResourc
             }
         };
 
-        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, NOTIFICATION_EVENT.name(), names, authentication);
+        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, icomponents, NOTIFICATION_EVENT.name(), names, authentication);
 
         if (!filters.isEmpty()) {
             Pair<Long, CompletableFuture<List<DeviceNotification>>> pair = notificationService

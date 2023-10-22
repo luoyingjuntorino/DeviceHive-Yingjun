@@ -72,14 +72,17 @@ public class JwtTokenService {
     public JwtTokenVO createJwtToken(@NotNull UserVO user) {
         Set<String> networkIds = new HashSet<>();
         Set<String> deviceTypeIds = new HashSet<>();
+        Set<String> icomponentIds = new HashSet<>();
         Set<Integer> actions = new HashSet<>();
         if (user.isAdmin()) {
             networkIds.add("*");
             deviceTypeIds.add("*");
+            icomponentIds.add("*");
             actions.add(ANY.getId());
         } else {
             UserWithNetworkVO userWithNetwork = userService.findUserWithNetworks(user.getId());
             UserWithDeviceTypeVO userWithDeviceType = userService.findUserWithDeviceType(user.getId());
+            UserWithIcomponentVO userWithIcomponent = userService.findUserWithIcomponent(user.getId());
 //          TODO: check if needed
             userService.refreshUserLoginData(user);
 
@@ -99,6 +102,16 @@ public class JwtTokenService {
                     });
                 }
             }
+            if (userWithIcomponent.getAllIcomponentsAvailable()) {
+                icomponentIds.add("*");
+            } else {
+                Set<IcomponentVO> icomponents = userWithIcomponent.getIcomponents();
+                if (!icomponents.isEmpty()) {
+                    icomponents.forEach(icomponent -> {
+                        icomponentIds.add(icomponent.getId().toString());
+                    });
+                }
+            }
             actions = getIdSet(getClientHiveActions());
         }
 
@@ -108,6 +121,7 @@ public class JwtTokenService {
                 .withActions(actions)
                 .withNetworkIds(networkIds)
                 .withDeviceTypeIds(deviceTypeIds)
+                .withIcomponentIds(icomponentIds)
                 .buildPayload();
 
         JwtUserPayload refreshPayload = JwtUserPayload.newBuilder().withPayload(accessPayload)

@@ -23,6 +23,7 @@ package com.devicehive.json;
 
 import com.devicehive.json.adapters.*;
 import com.devicehive.json.strategies.AnnotatedStrategy;
+import com.devicehive.json.strategies.JsonPolicyDef.Policy;
 import com.devicehive.model.enums.*;
 import com.devicehive.model.eventbus.events.CommandEvent;
 import com.devicehive.model.eventbus.events.CommandUpdateEvent;
@@ -110,6 +111,10 @@ public class GsonFactory {
                 .registerSubtype(ListDeviceTypeRequest.class, Action.LIST_DEVICE_TYPE_REQUEST.ordinal())
                 .registerSubtype(ListDeviceTypeResponse.class, Action.LIST_DEVICE_TYPE_RESPONSE.ordinal())
                 .registerSubtype(CountDeviceTypeRequest.class, Action.COUNT_DEVICE_TYPE_REQUEST.ordinal())
+
+                .registerSubtype(ListIcomponentRequest.class, Action.LIST_ICOMPONENT_REQUEST.ordinal())
+                .registerSubtype(ListIcomponentResponse.class, Action.LIST_ICOMPONENT_RESPONSE.ordinal())
+                .registerSubtype(CountIcomponentRequest.class, Action.COUNT_ICOMPONENT_REQUEST.ordinal())
 
                 .registerSubtype(ListDeviceRequest.class, Action.LIST_DEVICE_REQUEST.ordinal())
                 .registerSubtype(ListDeviceResponse.class, Action.LIST_DEVICE_RESPONSE.ordinal())

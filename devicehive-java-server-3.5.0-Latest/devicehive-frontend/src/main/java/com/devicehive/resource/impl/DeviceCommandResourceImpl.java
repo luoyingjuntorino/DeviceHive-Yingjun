@@ -103,20 +103,21 @@ public class DeviceCommandResourceImpl implements DeviceCommandResource {
     public void poll(final String deviceId, final String namesString, final String timestamp,
             boolean returnUpdatedCommands, final long timeout, final int limit, final AsyncResponse asyncResponse)
             throws Exception {
-        poll(timeout, deviceId, null, null, namesString, timestamp, returnUpdatedCommands, limit, asyncResponse);
+        poll(timeout, deviceId, null, null, null, namesString, timestamp, returnUpdatedCommands, limit, asyncResponse);
     }
 
     @Override
-    public void pollMany(final String deviceId, final String networkIdsString, final String deviceTypeIdsString,
+    public void pollMany(final String deviceId, final String networkIdsString, final String deviceTypeIdsString, final String icomponentIdsString,
             final String namesString, final String timestamp, final long timeout, final int limit, final AsyncResponse asyncResponse)
             throws Exception {
-        poll(timeout, deviceId, networkIdsString, deviceTypeIdsString, namesString, timestamp, false, limit, asyncResponse);
+        poll(timeout, deviceId, networkIdsString, deviceTypeIdsString, icomponentIdsString, namesString, timestamp, false, limit, asyncResponse);
     }
 
     private void poll(final long timeout,
                       final String deviceId,
                       final String networkIdsCsv,
                       final String deviceTypeIdsCsv,
+                      final String icomponentIdsCsv,
                       final String namesCsv,
                       final String timestamp,
                       final boolean returnUpdated,
@@ -150,6 +151,12 @@ public class DeviceCommandResourceImpl implements DeviceCommandResource {
                         .map(dt -> gson.fromJson(dt, Long.class))
                         .collect(Collectors.toSet())
                 ).orElse(null);
+        Set<Long> icomponents = Optional.ofNullable(StringUtils.split(icomponentIdsCsv, ','))
+                .map(Arrays::asList)
+                .map(list -> list.stream()
+                        .map(cp -> gson.fromJson(cp, Long.class))
+                        .collect(Collectors.toSet())
+                ).orElse(null);
 
         BiConsumer<DeviceCommand, Long> callback = (command, subscriptionId) -> {
             if (!asyncResponse.isDone()) {
@@ -160,7 +167,7 @@ public class DeviceCommandResourceImpl implements DeviceCommandResource {
             }
         };
 
-        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, COMMAND_EVENT.name(), names, authentication);
+        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, icomponents, COMMAND_EVENT.name(), names, authentication);
 
         if (!filters.isEmpty()) {
             Pair<Long, CompletableFuture<List<DeviceCommand>>> pair = commandService

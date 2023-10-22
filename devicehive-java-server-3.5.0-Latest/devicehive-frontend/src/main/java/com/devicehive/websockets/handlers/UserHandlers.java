@@ -27,12 +27,15 @@ import com.devicehive.exceptions.HiveException;
 import com.devicehive.messages.handler.WebSocketClientHandler;
 import com.devicehive.model.enums.UserRole;
 import com.devicehive.model.response.UserDeviceTypeResponse;
+import com.devicehive.model.response.UserIcomponentResponse;
 import com.devicehive.model.response.UserNetworkResponse;
 import com.devicehive.model.rpc.CountUserRequest;
 import com.devicehive.model.rpc.ListUserRequest;
 import com.devicehive.model.updates.UserUpdate;
 import com.devicehive.service.BaseDeviceTypeService;
 import com.devicehive.service.DeviceTypeService;
+import com.devicehive.service.BaseIcomponentService;
+import com.devicehive.service.IcomponentService;
 import com.devicehive.service.UserService;
 import com.devicehive.util.HiveValidator;
 import com.devicehive.vo.*;
@@ -63,6 +66,7 @@ public class UserHandlers {
 
     private final UserService userService;
     private final DeviceTypeService deviceTypeService;
+    private final IcomponentService icomponentService;
     private final HiveValidator hiveValidator;
     private final WebSocketClientHandler clientHandler;
     private final Gson gson;
@@ -70,11 +74,13 @@ public class UserHandlers {
     @Autowired
     public UserHandlers(UserService userService,
                         DeviceTypeService deviceTypeService,
+                        IcomponentService icomponentService,
                         HiveValidator hiveValidator,
                         WebSocketClientHandler clientHandler,
                         Gson gson) {
         this.userService = userService;
         this.deviceTypeService = deviceTypeService;
+        this.icomponentService = icomponentService;
         this.hiveValidator = hiveValidator;
         this.clientHandler = clientHandler;
         this.gson = gson;
@@ -452,6 +458,137 @@ public class UserHandlers {
         }
 
         userService.disallowAllDeviceTypes(userId);
+        clientHandler.sendMessage(request, new WebSocketResponse(), session);
+    }
+
+    @HiveWebsocketAuth
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'GET_ICOMPONENT')")
+    public void processUserGetIcomponent(JsonObject request, WebSocketSession session) {
+        Long userId = gson.fromJson(request.get(USER_ID), Long.class);
+        if (userId == null) {
+            logger.error(Messages.USER_ID_REQUIRED);
+            throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        Long icomponentId = gson.fromJson(request.get(ICOMPONENT_ID), Long.class);
+        if (icomponentId == null) {
+            logger.error(Messages.ICOMPONENT_ID_REQUIRED);
+            throw new HiveException(Messages.ICOMPONENT_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        UserWithIcomponentVO existingUser = userService.findUserWithIcomponent(userId);
+        if (existingUser == null) {
+            logger.error("Can't get icomponent with id {}: user {} not found", icomponentId, userId);
+            throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
+        }
+
+        for (IcomponentVO icomponent : existingUser.getIcomponents()) {
+            if (icomponentId.equals(icomponent.getId())) {
+                WebSocketResponse response = new WebSocketResponse();
+                response.addValue(ICOMPONENT, UserIcomponentResponse.fromIcomponent(icomponent), ICOMPONENTS_LISTED);
+                clientHandler.sendMessage(request, response, session);
+                return;
+            }
+        }
+
+        clientHandler.sendErrorResponse(request, NOT_FOUND.getStatusCode(),
+                String.format(Messages.USER_ICOMPONENT_NOT_FOUND, icomponentId, userId), session);
+    }
+
+    @HiveWebsocketAuth
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    public void processUserGetIcomponents(JsonObject request, WebSocketSession session) {
+        Long userId = gson.fromJson(request.get(USER_ID), Long.class);
+        if (userId == null) {
+            logger.error(Messages.USER_ID_REQUIRED);
+            throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        final UserWithIcomponentVO existingUser = userService.findUserWithIcomponent(userId);
+        if (existingUser == null) {
+            logger.error("Can't get icomponents for user with id {}: user not found", userId);
+            throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
+        }
+
+        final WebSocketResponse response = new WebSocketResponse();
+        if (existingUser.getAllIcomponentsAvailable()) {
+            icomponentService.listAll().thenAccept(cp -> {
+                logger.debug("Icomponents list request proceed successfully");
+                response.addValue(ICOMPONENTS, cp, ICOMPONENTS_LISTED);
+                clientHandler.sendMessage(request, response, session);
+            });
+        } else {
+            if (!existingUser.getAllIcomponentsAvailable() && (existingUser.getIcomponents() == null || existingUser.getIcomponents().isEmpty())) {
+                logger.warn("Unable to get list for empty icomponents");
+                response.addValue(ICOMPONENTS, Collections.emptyList(), ICOMPONENTS_LISTED);
+            } else {
+                response.addValue(ICOMPONENTS, existingUser.getIcomponents(), ICOMPONENTS_LISTED);
+            }
+            clientHandler.sendMessage(request, response, session);
+        }
+    }
+
+    @HiveWebsocketAuth
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    public void processUserAssignIcomponent(JsonObject request, WebSocketSession session) {
+        Long userId = gson.fromJson(request.get(USER_ID), Long.class);
+        if (userId == null) {
+            logger.error(Messages.USER_ID_REQUIRED);
+            throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        Long icomponentId = gson.fromJson(request.get(ICOMPONENT_ID), Long.class);
+        if (icomponentId == null) {
+            logger.error(Messages.ICOMPONENT_ID_REQUIRED);
+            throw new HiveException(Messages.ICOMPONENT_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        userService.assignIcomponent(userId, icomponentId);
+        clientHandler.sendMessage(request, new WebSocketResponse(), session);
+    }
+
+    @HiveWebsocketAuth
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    public void processUserUnassignIcomponent(JsonObject request, WebSocketSession session) {
+        Long userId = gson.fromJson(request.get(USER_ID), Long.class);
+        if (userId == null) {
+            logger.error(Messages.USER_ID_REQUIRED);
+            throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        Long icomponentId = gson.fromJson(request.get(ICOMPONENT_ID), Long.class);
+        if (icomponentId == null) {
+            logger.error(Messages.ICOMPONENT_ID_REQUIRED);
+            throw new HiveException(Messages.ICOMPONENT_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        userService.unassignIcomponent(userId, icomponentId);
+        clientHandler.sendMessage(request, new WebSocketResponse(), session);
+    }
+
+    @HiveWebsocketAuth
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    public void processUserAllowAllIcomponents(JsonObject request, WebSocketSession session) {
+        Long userId = gson.fromJson(request.get(USER_ID), Long.class);
+        if (userId == null) {
+            logger.error(Messages.USER_ID_REQUIRED);
+            throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        userService.allowAllIcomponents(userId);
+        clientHandler.sendMessage(request, new WebSocketResponse(), session);
+    }
+
+    @HiveWebsocketAuth
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    public void processUserDisallowAllIcomponents(JsonObject request, WebSocketSession session) {
+        Long userId = gson.fromJson(request.get(USER_ID), Long.class);
+        if (userId == null) {
+            logger.error(Messages.USER_ID_REQUIRED);
+            throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        }
+
+        userService.disallowAllIcomponents(userId);
         clientHandler.sendMessage(request, new WebSocketResponse(), session);
     }
 

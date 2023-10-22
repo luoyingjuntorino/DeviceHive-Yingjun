@@ -61,7 +61,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static com.devicehive.configuration.Constants.*;
-import static com.devicehive.configuration.Messages.NO_ACCESS_TO_DEVICE_TYPES_OR_NETWORKS;
+import static com.devicehive.configuration.Messages.NO_ACCESS_TO_DEVICE_TYPES_OR_NETWORKS_OR_ICOMPONENTS;
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.NOTIFICATION_TO_CLIENT;
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.NOTIFICATION_TO_DEVICE;
 import static com.devicehive.model.rpc.NotificationSearchRequest.createNotificationSearchRequest;
@@ -102,12 +102,13 @@ public class NotificationHandlers {
         final Date timestamp = gson.fromJson(request.get(Constants.TIMESTAMP), Date.class);
         Set<Long> networks = gson.fromJson(request.getAsJsonArray(NETWORK_IDS), JsonTypes.LONG_SET_TYPE);
         Set<Long> deviceTypes = gson.fromJson(request.getAsJsonArray(DEVICE_TYPE_IDS), JsonTypes.LONG_SET_TYPE);
+        Set<Long> icomponents = gson.fromJson(request.getAsJsonArray(ICOMPONENT_IDS), JsonTypes.LONG_SET_TYPE);
         final Set<String> names = gson.fromJson(request.get(Constants.NAMES), JsonTypes.STRING_SET_TYPE);
 
-        logger.debug("notification/subscribe requested for device: {}. Networks: {}. Device types: {}. Timestamp: {}. Names {} Session: {}",
-                deviceId, networks, deviceTypes, timestamp, names, session);
+        logger.debug("notification/subscribe requested for device: {}. Networks: {}. Device types: {}. Icomponents: {}. Timestamp: {}. Names {} Session: {}",
+                deviceId, networks, deviceTypes, icomponents, timestamp, names, session);
 
-        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, NOTIFICATION_EVENT.name(), names, authentication);
+        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, icomponents, NOTIFICATION_EVENT.name(), names, authentication);
 
         if (!filters.isEmpty()) {
             BiConsumer<DeviceNotification, Long> callback = (notification, subscriptionId) -> {
@@ -118,13 +119,13 @@ public class NotificationHandlers {
             Pair<Long, CompletableFuture<List<DeviceNotification>>> pair = notificationService
                     .subscribe(filters, names, timestamp, callback);
 
-            logger.debug("notification/subscribe done for devices: {}. Networks: {}. Device types: {}. Timestamp: {}. Names {} Session: {}",
-                    deviceId, networks, deviceTypes, timestamp, names, session.getId());
+            logger.debug("notification/subscribe done for devices: {}. Networks: {}. Device types: {}. Icomponents: {}. Timestamp: {}. Names {} Session: {}",
+                    deviceId, networks, deviceTypes, icomponents, timestamp, names, session.getId());
 
             ((CopyOnWriteArraySet) session
                     .getAttributes()
                     .get(SUBSCRIPTION_SET_NAME))
-                    .add(new SubscriptionInfo(pair.getLeft(), NOTIFICATION, deviceId, networks, deviceTypes, names, timestamp));
+                    .add(new SubscriptionInfo(pair.getLeft(), NOTIFICATION, deviceId, networks, deviceTypes, icomponents, names, timestamp));
 
             pair.getRight().thenAccept(collection -> {
                 WebSocketResponse response = new WebSocketResponse();
@@ -136,7 +137,7 @@ public class NotificationHandlers {
                 });
             });
         } else {
-            throw new HiveException(NO_ACCESS_TO_DEVICE_TYPES_OR_NETWORKS, SC_FORBIDDEN);
+            throw new HiveException(NO_ACCESS_TO_DEVICE_TYPES_OR_NETWORKS_OR_ICOMPONENTS, SC_FORBIDDEN);
         }
     }
 

@@ -37,6 +37,8 @@ public class Filter implements Portable {
 
     private Long deviceTypeId;
 
+    private Long icomponentId;
+
     private String deviceId;
 
     private String eventName;
@@ -47,9 +49,10 @@ public class Filter implements Portable {
 
     }
 
-    public Filter(Long networkId, Long deviceTypeId, String deviceId, String eventName, String name) {
+    public Filter(Long networkId, Long deviceTypeId, Long icomponentId, String deviceId, String eventName, String name) {
         this.networkId = networkId;
         this.deviceTypeId = deviceTypeId;
+        this.icomponentId = icomponentId;
         this.deviceId = deviceId;
         this.eventName = eventName;
         this.name = name;
@@ -69,6 +72,14 @@ public class Filter implements Portable {
 
     public void setDeviceTypeId(Long deviceTypeId) {
         this.deviceTypeId = deviceTypeId;
+    }
+
+    public Long getIcomponentId() {
+        return icomponentId;
+    }
+
+    public void setIcomponentId(Long icomponentId) {
+        this.icomponentId = icomponentId;
     }
 
     public String getDeviceId() {
@@ -100,6 +111,7 @@ public class Filter implements Portable {
 
         joiner.add(networkId != null ? networkId.toString() : "*")
                 .add(deviceTypeId != null ? deviceTypeId.toString() : "*")
+                .add(icomponentId != null ? icomponentId.toString() : "*")
                 .add(deviceId != null ? deviceId : "*");
 
         return joiner.toString();
@@ -110,6 +122,7 @@ public class Filter implements Portable {
 
         joiner.add(networkId != null ? networkId.toString() : "*")
                 .add(deviceTypeId != null ? deviceTypeId.toString() : "*")
+                .add(icomponentId != null ? icomponentId.toString() : "*")
                 .add("*");
 
         return joiner.toString();
@@ -131,6 +144,7 @@ public class Filter implements Portable {
         Filter that = (Filter) o;
         return Objects.equals(networkId, that.networkId) &&
                 Objects.equals(deviceTypeId, that.deviceTypeId) &&
+                Objects.equals(icomponentId, that.icomponentId) &&
                 Objects.equals(deviceId, that.deviceId) &&
                 Objects.equals(eventName, that.eventName) &&
                 Objects.equals(name, that.name);
@@ -138,7 +152,7 @@ public class Filter implements Portable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(networkId, deviceTypeId, deviceId, eventName, name);
+        return Objects.hash(networkId, deviceTypeId, icomponentId, deviceId, eventName, name);
     }
 
     @Override
@@ -146,6 +160,7 @@ public class Filter implements Portable {
         return "Filter{" +
                 "networkId=" + networkId +
                 ", deviceTypeId=" + deviceTypeId +
+                ", icomponentId=" + icomponentId +
                 ", deviceId=" + deviceId +
                 ", eventName=" + eventName +
                 ", name=" + name +
@@ -166,6 +181,7 @@ public class Filter implements Portable {
     public void writePortable(PortableWriter writer) throws IOException {
         writer.writeLong("networkId", Objects.nonNull(networkId) ? networkId : 0);
         writer.writeLong("deviceTypeId", Objects.nonNull(deviceTypeId) ? deviceTypeId : 0);
+        writer.writeLong("icomponentId", Objects.nonNull(icomponentId) ? icomponentId : 0);
         writer.writeUTF("deviceId", deviceId);
         writer.writeUTF("eventName", eventName);
         writer.writeUTF("name", name);
@@ -175,6 +191,7 @@ public class Filter implements Portable {
     public void readPortable(PortableReader reader) throws IOException {
         networkId = reader.readLong("networkId");
         deviceTypeId = reader.readLong("deviceTypeId");
+        icomponentId = reader.readLong("icomponentId");
         deviceId = reader.readUTF("deviceId");
         eventName = reader.readUTF("eventName");
         name = reader.readUTF("name");

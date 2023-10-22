@@ -84,6 +84,11 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
             POST_COMMAND_TO_DEVICE, COMMAND_LISTED})
     private Long deviceTypeId;
 
+    @SerializedName("icomponentId")
+    @JsonPolicyDef({COMMAND_FROM_CLIENT, COMMAND_TO_DEVICE, COMMAND_UPDATE_TO_CLIENT, COMMAND_UPDATE_FROM_DEVICE,
+            POST_COMMAND_TO_DEVICE, COMMAND_LISTED})
+    private Long icomponentId;
+
     @SerializedName("parameters")
     @JsonPolicyDef({COMMAND_FROM_CLIENT, COMMAND_TO_DEVICE, COMMAND_UPDATE_TO_CLIENT, COMMAND_UPDATE_FROM_DEVICE,
             POST_COMMAND_TO_DEVICE, COMMAND_LISTED})
@@ -176,6 +181,14 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         this.deviceTypeId = deviceTypeId;
     }
 
+    public Long getIcomponentId() {
+        return icomponentId;
+    }
+
+    public void setIcomponentId(Long icomponentId) {
+        this.icomponentId = icomponentId;
+    }
+
     public JsonStringWrapper getParameters() {
         return parameters;
     }
@@ -227,6 +240,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         if (deviceId != null ? !deviceId.equals(message.deviceId) : message.deviceId != null) return false;
         if (networkId != null ? !networkId.equals(message.networkId) : message.networkId != null) return false;
         if (deviceTypeId != null ? !deviceTypeId.equals(message.deviceTypeId) : message.deviceTypeId != null) return false;
+        if (icomponentId != null ? !icomponentId.equals(message.icomponentId) : message.icomponentId != null) return false;
         if (id != null ? !id.equals(message.id) : message.id != null) return false;
         if (isUpdated != null ? !isUpdated.equals(message.isUpdated) : message.isUpdated != null) return false;
         if (lifetime != null ? !lifetime.equals(message.lifetime) : message.lifetime != null) return false;
@@ -248,6 +262,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         result1 = 31 * result1 + (deviceId != null ? deviceId.hashCode() : 0);
         result1 = 31 * result1 + (networkId != null ? networkId.hashCode() : 0);
         result1 = 31 * result1 + (deviceTypeId != null ? deviceTypeId.hashCode() : 0);
+        result1 = 31 * result1 + (icomponentId != null ? icomponentId.hashCode() : 0);
         result1 = 31 * result1 + (parameters != null ? parameters.hashCode() : 0);
         result1 = 31 * result1 + (lifetime != null ? lifetime.hashCode() : 0);
         result1 = 31 * result1 + (status != null ? status.hashCode() : 0);
@@ -267,6 +282,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
                 ", deviceId='" + deviceId + '\'' +
                 ", networkId='" + networkId + '\'' +
                 ", deviceTypeId='" + deviceTypeId + '\'' +
+                ", icomponentId='" + icomponentId + '\'' +
                 ", parameters=" + parameters +
                 ", lifetime=" + lifetime +
                 ", status='" + status + '\'' +
@@ -303,6 +319,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         portableWriter.writeUTF("deviceId", deviceId);
         portableWriter.writeLong("networkId", Objects.nonNull(networkId) ? networkId : 0);
         portableWriter.writeLong("deviceTypeId", Objects.nonNull(deviceTypeId) ? deviceTypeId : 0);
+        portableWriter.writeLong("icomponentId", Objects.nonNull(icomponentId) ? icomponentId : 0);
         boolean parametersIsNotNull = Objects.nonNull(parameters) && Objects.nonNull(parameters.getJsonString());
         portableWriter.writeUTF("parameters", parametersIsNotNull ? parameters.getJsonString() : null);
         portableWriter.writeInt("lifetime", Objects.nonNull(lifetime) ? lifetime : 0);
@@ -322,6 +339,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         deviceId = portableReader.readUTF("deviceId");
         networkId = portableReader.readLong("networkId");
         deviceTypeId = portableReader.readLong("deviceTypeId");
+        icomponentId = portableReader.readLong("icomponentId");
         String parametersString = portableReader.readUTF("parameters");
         if (Objects.nonNull(parametersString)) {
             parameters = new JsonStringWrapper(parametersString);

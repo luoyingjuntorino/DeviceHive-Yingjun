@@ -22,6 +22,7 @@ package com.devicehive.resource;
 
 import com.devicehive.json.strategies.JsonPolicyDef;
 import com.devicehive.model.response.UserDeviceTypeResponse;
+import com.devicehive.model.response.UserIcomponentResponse;
 import com.devicehive.model.response.EntityCountResponse;
 import com.devicehive.model.response.UserNetworkResponse;
 import com.devicehive.model.updates.UserUpdate;
@@ -510,6 +511,165 @@ public interface UserResource {
             @ApiResponse(code = 404, message = "If user or device type not found.")
     })
     Response disallowAllDeviceTypes(
+            @ApiParam(name = "id", value = "User identifier.", required = true)
+            @PathParam("id")
+                    long id);
+
+    /**
+     * Method returns following body in case of success (status 200): <code> { "id": 5, "name":
+     * "icomponent name", "description": "short description of icomponent" } </code> in case, there is no such
+     * icomponent, or user, or user doesn't have access
+     *
+     * @param id            user id
+     * @param icomponentId  icomponent id
+     */
+    @GET
+    @Path("/{id}/icomponent/{icomponentId}")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'GET_ICOMPONENT')")
+    @ApiOperation(value = "Get user's icomponent", notes = "Gets information about user/icomponent association.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "If successful, this method returns a Icomponent resource in the response body.", response = UserIcomponentResponse.class),
+            @ApiResponse(code = 401, message = "If request is not authorized"),
+            @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
+            @ApiResponse(code = 404, message = "If user or icomponent not found")
+    })
+    Response getIcomponent(
+            @ApiParam(name = "id", value = "User identifier.", required = true)
+            @PathParam("id")
+                    long id,
+            @ApiParam(name = "icomponentId", value = "Icomponent identifier.", required = true)
+            @PathParam("icomponentId")
+                    long icomponentId);
+
+    /**
+     * Method returns the collection of available Icomponents in case of success (status 200): <code> [{ "id": 5, "name":
+     * "icomponent name", "description": "short description of icomponent" }] </code>  and empty list in case, there is no available
+     * icomponent, or user, or user doesn't have access
+     *
+     * @param id            user id
+     */
+    @GET
+    @Path("/{id}/icomponent")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    @ApiOperation(value = "Get user's icomponents", notes = "Gets information about user's icomponents association.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "If successful, this method returns a list of Icomponents resource in the response body.", response = UserIcomponentResponse.class),
+            @ApiResponse(code = 401, message = "If request is not authorized"),
+            @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
+            @ApiResponse(code = 404, message = "If user not found")
+    })
+    void getIcomponents(
+            @ApiParam(name = "id", value = "User identifier.", required = true)
+            @PathParam("id")
+                    long id,
+            @Suspended final AsyncResponse asyncResponse);
+
+    /**
+     * Adds user permission on icomponent.
+     * Request body must be empty. Returns Empty body.
+     *
+     * @param id            user id
+     * @param icomponentId  icomponent id
+     */
+    @PUT
+    @Path("/{id}/icomponent/{icomponentId}")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    @ApiOperation(value = "Assign icomponent", notes = "Associates icomponent with the user.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "If successful, this method returns an empty response body."),
+            @ApiResponse(code = 401, message = "If request is not authorized"),
+            @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
+            @ApiResponse(code = 404, message = "If user or icomponent not found")
+    })
+    Response assignIcomponent(
+            @ApiParam(name = "id", value = "User identifier.", required = true)
+            @PathParam("id")
+                    long id,
+            @ApiParam(name = "icomponentId", value = "Icomponent identifier.", required = true)
+            @PathParam("icomponentId")
+                    long icomponentId);
+
+    /**
+     * Removes user permissions on icomponent.
+     *
+     * @param id            user id
+     * @param icomponentId  icomponent id
+     * @return Empty body. Status 204 in case of success, 404 otherwise
+     */
+    @DELETE
+    @Path("/{id}/icomponent/{icomponentId}")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    @ApiOperation(value = "Unassign icomponent", notes = "Removes association between icomponent and user.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "If successful, this method returns an empty response body."),
+            @ApiResponse(code = 401, message = "If request is not authorized"),
+            @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
+            @ApiResponse(code = 404, message = "If user or icomponent not found.")
+    })
+    Response unassignIcomponent(
+            @ApiParam(name = "id", value = "User identifier.", required = true)
+            @PathParam("id")
+                    long id,
+            @ApiParam(name = "icomponentId", value = "Icomponent identifier.", required = true)
+            @PathParam("icomponentId")
+                    long icomponentId);
+
+    /**
+     * Adds user permission for all icomponents.
+     * Request body must be empty. Returns Empty body.
+     *
+     * @param id            user id
+     */
+    @PUT
+    @Path("/{id}/icomponent/all")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    @ApiOperation(value = "Assign all icomponents", notes = "Gives user permission to access all icomponents")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "If successful, this method returns an empty response body."),
+            @ApiResponse(code = 401, message = "If request is not authorized"),
+            @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
+            @ApiResponse(code = 404, message = "If user or icomponent not found")
+    })
+    Response allowAllIcomponents(
+            @ApiParam(name = "id", value = "User identifier.", required = true)
+            @PathParam("id")
+                    long id);
+
+    /**
+     * Removes user permissions to access all icomponents.
+     *
+     * @param id            user id
+     * @return Empty body. Status 204 in case of success, 404 otherwise
+     */
+    @DELETE
+    @Path("/{id}/icomponent/all")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_ICOMPONENT')")
+    @ApiOperation(value = "Unassign all icomponents", notes = "Removes user permission to access all icomponents.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "If successful, this method returns an empty response body."),
+            @ApiResponse(code = 401, message = "If request is not authorized"),
+            @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
+            @ApiResponse(code = 404, message = "If user or icomponent not found.")
+    })
+    Response disallowAllIcomponents(
             @ApiParam(name = "id", value = "User identifier.", required = true)
             @PathParam("id")
                     long id);

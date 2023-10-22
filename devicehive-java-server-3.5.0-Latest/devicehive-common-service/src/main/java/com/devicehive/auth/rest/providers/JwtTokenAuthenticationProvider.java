@@ -105,6 +105,9 @@ public class JwtTokenAuthenticationProvider implements AuthenticationProvider {
                     if (!userVO.getAllDeviceTypesAvailable()) {
                         principal.setAllDeviceTypesAvailable(false);
                     }
+                    if (!userVO.getAllIcomponentsAvailable()) {
+                        principal.setAllIcomponentsAvailable(false);
+                    }
                 }
 
                 Set<String> networkIds = userJwtPayload.getNetworkIds();
@@ -126,6 +129,18 @@ public class JwtTokenAuthenticationProvider implements AuthenticationProvider {
                         principal.setDeviceTypeIds(deviceTypeIds.stream().map(Long::valueOf).collect(Collectors.toSet()));
                     }
                 }
+
+                Set<String> icomponentIds = userJwtPayload.getIcomponentIds();
+                if (icomponentIds != null) {
+                    if (icomponentIds.contains("*")) {
+                        principal.setAllIcomponentsAvailable(true);
+                    } else if (userVO != null && userVO.getAllIcomponentsAvailable()) {
+                        principal.setAllIcomponentsAvailable(true);
+                    } else {
+                        principal.setIcomponentIds(icomponentIds.stream().map(Long::valueOf).collect(Collectors.toSet()));
+                    }
+                }
+
             } else {
                 JwtPluginPayload pluginJwtPayload = (JwtPluginPayload) jwtPayload;
                 final String topic = pluginJwtPayload.getTopic();
@@ -154,6 +169,13 @@ public class JwtTokenAuthenticationProvider implements AuthenticationProvider {
                             principal.setAllDeviceTypesAvailable(false);
                             principal.setDeviceTypeIds(userWithDeviceTypeVO.getDeviceTypes().stream()
                                     .map(DeviceTypeVO::getId).collect(Collectors.toSet()));
+                        }
+
+                        UserWithIcomponentVO userWithIcomponentVO = userService.findUserWithIcomponent(existingPlugin.getUserId());
+                        if (!userWithIcomponentVO.getAllIcomponentsAvailable()) {
+                            principal.setAllIcomponentsAvailable(false);
+                            principal.setIcomponentIds(userWithIcomponentVO.getIcomponents().stream()
+                                    .map(IcomponentVO::getId).collect(Collectors.toSet()));
                         }
 
                     }

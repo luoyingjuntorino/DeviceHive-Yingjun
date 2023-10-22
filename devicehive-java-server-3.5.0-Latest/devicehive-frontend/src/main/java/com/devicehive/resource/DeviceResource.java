@@ -87,7 +87,7 @@ public interface DeviceResource {
             @ApiParam(name = "networkName", value = "Filter by associated network name.")
             @QueryParam("networkName")
             String networkName,
-            @ApiParam(name = "sortField", value = "Result list sort field.", allowableValues = "Name,Network,Status,Devicetype")
+            @ApiParam(name = "sortField", value = "Result list sort field.", allowableValues = "Name,Network,Status,Devicetype,Icomponent")
             @QueryParam("sortField")
             String sortField,
             @ApiParam(name = "sortOrder", value = "Result list sort order. The sortField should be specified.", allowableValues = "ASC,DESC")

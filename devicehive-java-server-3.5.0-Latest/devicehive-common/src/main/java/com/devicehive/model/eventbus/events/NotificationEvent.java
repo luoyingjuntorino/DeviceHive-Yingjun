@@ -49,11 +49,13 @@ public class NotificationEvent extends Event {
     public Collection<Filter> getApplicableFilters() {
         Filter deviceFilter = new Filter(notification.getNetworkId(),
                 notification.getDeviceTypeId(),
+                notification.getIcomponentId(),
                 notification.getDeviceId(),
                 Action.NOTIFICATION_EVENT.name(),
                 null);
         Filter deviceWithNameFilter = new Filter(notification.getNetworkId(),
                 notification.getDeviceTypeId(),
+                notification.getIcomponentId(),
                 notification.getDeviceId(),
                 Action.NOTIFICATION_EVENT.name(),
                 notification.getNotification());

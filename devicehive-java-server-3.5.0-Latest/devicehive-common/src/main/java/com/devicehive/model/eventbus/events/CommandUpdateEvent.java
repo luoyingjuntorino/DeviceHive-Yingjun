@@ -41,11 +41,13 @@ public class CommandUpdateEvent extends Event {
     public Collection<Filter> getApplicableFilters() {
         Filter deviceFilter = new Filter(command.getNetworkId(),
                 command.getDeviceTypeId(),
+                command.getIcomponentId(),
                 command.getId().toString(),
                 Action.COMMAND_UPDATE_EVENT.name(),
                 null);
         Filter deviceWithNameFilter = new Filter(command.getNetworkId(),
                 command.getDeviceTypeId(),
+                command.getIcomponentId(),
                 command.getId().toString(),
                 Action.COMMAND_UPDATE_EVENT.name(),
                 command.getCommand());

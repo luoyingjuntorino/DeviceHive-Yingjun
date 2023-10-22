@@ -25,8 +25,10 @@ import com.devicehive.json.strategies.JsonPolicyDef;
 import com.devicehive.model.enums.UserRole;
 import com.devicehive.model.enums.UserStatus;
 import com.devicehive.vo.DeviceTypeVO;
+import com.devicehive.vo.IcomponentVO;
 import com.devicehive.vo.UserVO;
 import com.devicehive.vo.UserWithDeviceTypeVO;
+import com.devicehive.vo.UserWithIcomponentVO;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,6 +51,7 @@ import static com.devicehive.json.strategies.JsonPolicyDef.Policy.*;
         @NamedQuery(name = "User.hasAccessToDevice", query = "select count(distinct n) from Network n join n.devices d join n.users u where u.id = :user and d.deviceId = :deviceId"),
         @NamedQuery(name = "User.getWithNetworksById", query = "select u from User u left join fetch u.networks where u.id = :id"),
         @NamedQuery(name = "User.getWithDeviceTypesById", query = "select u from User u left join fetch u.deviceTypes where u.id = :id"),
+        @NamedQuery(name = "User.getWithIcomponentsById", query = "select u from User u left join fetch u.icomponents where u.id = :id"),
         @NamedQuery(name = "User.deleteById", query = "delete from User u where u.id = :id")
 })
 @Cacheable
@@ -103,6 +106,11 @@ public class User implements HiveEntity {
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<DeviceType> deviceTypes;
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
+    @JsonPolicyDef({USER_PUBLISHED})
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<Icomponent> icomponents;
+
     @Column(name = "last_login")
     @SerializedName("lastLogin")
     @JsonPolicyDef({USER_PUBLISHED, USERS_LISTED, USER_SUBMITTED})
@@ -127,6 +135,10 @@ public class User implements HiveEntity {
     @JsonPolicyDef({USER_PUBLISHED, USERS_LISTED, USER_SUBMITTED})
     private Boolean allDeviceTypesAvailable;
 
+    @Column(name = "all_icomponents_available")
+    @SerializedName("allIcomponentsAvailable")
+    @JsonPolicyDef({USER_PUBLISHED, USERS_LISTED, USER_SUBMITTED})
+    private Boolean allIcomponentsAvailable;
     /**
      * @return true, if user is admin
      */
@@ -206,6 +218,14 @@ public class User implements HiveEntity {
         this.deviceTypes = deviceTypes;
     }
 
+    public Set<Icomponent> getIcomponents() {
+        return icomponents;
+    }
+
+    public void setIcomponents(Set<Icomponent> icomponents) {
+        this.icomponents = icomponents;
+    }
+
     public Integer getLoginAttempts() {
         return loginAttempts;
     }
@@ -236,6 +256,14 @@ public class User implements HiveEntity {
 
     public void setAllDeviceTypesAvailable(Boolean allDeviceTypesAvailable) {
         this.allDeviceTypesAvailable = allDeviceTypesAvailable;
+    }
+
+    public Boolean getAllIcomponentsAvailable() {
+        return allIcomponentsAvailable;
+    }
+
+    public void setAllIcomponentsAvailable(Boolean allIcomponentsAvailable) {
+        this.allIcomponentsAvailable = allIcomponentsAvailable;
     }
 
     @Override
@@ -276,6 +304,7 @@ public class User implements HiveEntity {
             vo.setStatus(dc.getStatus());
             vo.setIntroReviewed(dc.getIntroReviewed());
             vo.setAllDeviceTypesAvailable(dc.getAllDeviceTypesAvailable());
+            vo.setAllIcomponentsAvailable(dc.getAllIcomponentsAvailable());
         }
         return vo;
     }
@@ -296,6 +325,7 @@ public class User implements HiveEntity {
             vo.setStatus(dc.getStatus());
             vo.setIntroReviewed(dc.getIntroReviewed());
             vo.setAllDeviceTypesAvailable(dc.getAllDeviceTypesAvailable());
+            vo.setAllIcomponentsAvailable(dc.getAllIcomponentsAvailable());
         }
         return vo;
     }
@@ -321,6 +351,32 @@ public class User implements HiveEntity {
             for (DeviceTypeVO deviceTypeVO : dc.getDeviceTypes()) {
                 DeviceType deviceType = DeviceType.convert(deviceTypeVO);
                 vo.getDeviceTypes().add(deviceType);
+            }
+        }
+        return vo;
+    }
+
+    public static User convertToEntity(UserWithIcomponentVO dc) {
+        User vo = null;
+        if (dc != null) {
+            vo = new User();
+            vo.setData(dc.getData());
+            vo.setId(dc.getId());
+            vo.setLastLogin(dc.getLastLogin());
+            vo.setLogin(dc.getLogin());
+            vo.setLoginAttempts(dc.getLoginAttempts());
+            vo.setPasswordHash(dc.getPasswordHash());
+            vo.setPasswordSalt(dc.getPasswordSalt());
+            vo.setRole(dc.getRole());
+            vo.setStatus(dc.getStatus());
+            vo.setIntroReviewed(dc.getIntroReviewed());
+            vo.setAllIcomponentsAvailable(dc.getAllIcomponentsAvailable());
+
+            vo.setIcomponents(new HashSet<>());
+
+            for (IcomponentVO icomponentVO : dc.getIcomponents()) {
+                Icomponent icomponent = Icomponent.convert(icomponentVO);
+                vo.getIcomponents().add(icomponent);
             }
         }
         return vo;

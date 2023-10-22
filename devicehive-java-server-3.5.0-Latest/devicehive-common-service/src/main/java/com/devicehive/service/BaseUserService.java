@@ -35,6 +35,7 @@ import com.devicehive.vo.NetworkVO;
 import com.devicehive.vo.NetworkWithUsersAndDevicesVO;
 import com.devicehive.vo.UserVO;
 import com.devicehive.vo.UserWithDeviceTypeVO;
+import com.devicehive.vo.UserWithIcomponentVO;
 import com.devicehive.vo.UserWithNetworkVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,6 +129,18 @@ public class BaseUserService {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public UserWithDeviceTypeVO findUserWithDeviceType(@NotNull long id) {
         return userDao.getWithDeviceTypeById(id);
+    }
+
+    /**
+     * Retrieves user with icomponents by id, if there is no icomponents user has
+     * access to icomponents will be represented by empty set
+     *
+     * @param id user id
+     * @return User model with icomponents, or null, if there is no such user
+     */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public UserWithIcomponentVO findUserWithIcomponent(@NotNull long id) {
+        return userDao.getWithIcomponentById(id);
     }
 
     @Transactional
