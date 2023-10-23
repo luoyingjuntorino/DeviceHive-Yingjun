@@ -33,7 +33,7 @@ import java.util.Optional;
 import static com.devicehive.configuration.Constants.DEFAULT_SKIP;
 import static com.devicehive.configuration.Constants.DEFAULT_TAKE;
 
-public class ListDeviceTypeRequest extends Body {
+public class ListIexperimentRequest extends Body {
 
     private String name;
     private String namePattern;
@@ -43,19 +43,19 @@ public class ListDeviceTypeRequest extends Body {
     private Integer skip;
     private Optional<HivePrincipal> principal;
 
-    public ListDeviceTypeRequest() {
-        super(Action.LIST_DEVICE_TYPE_REQUEST);
+    public ListIexperimentRequest() {
+        super(Action.LIST_IEXPERIMENT_REQUEST);
     }
 
-    public static ListDeviceTypeRequest createListDeviceTypeRequest(JsonObject request) {
-        ListDeviceTypeRequest listDeviceTypeRequest = new GsonBuilder()
+    public static ListIexperimentRequest createListIexperimentRequest(JsonObject request) {
+        ListIexperimentRequest listIexperimentRequest = new GsonBuilder()
                 .excludeFieldsWithModifiers(Modifier.PROTECTED)
                 .create()
-                .fromJson(request, ListDeviceTypeRequest.class);
-        listDeviceTypeRequest.setTake(Optional.ofNullable(listDeviceTypeRequest.getTake()).orElse(DEFAULT_TAKE));
-        listDeviceTypeRequest.setSkip(Optional.ofNullable(listDeviceTypeRequest.getSkip()).orElse(DEFAULT_SKIP));
+                .fromJson(request, ListIexperimentRequest.class);
+        listIexperimentRequest.setTake(Optional.ofNullable(listIexperimentRequest.getTake()).orElse(DEFAULT_TAKE));
+        listIexperimentRequest.setSkip(Optional.ofNullable(listIexperimentRequest.getSkip()).orElse(DEFAULT_SKIP));
 
-        return listDeviceTypeRequest;
+        return listIexperimentRequest;
     }
 
     public boolean isSortOrderAsc() {

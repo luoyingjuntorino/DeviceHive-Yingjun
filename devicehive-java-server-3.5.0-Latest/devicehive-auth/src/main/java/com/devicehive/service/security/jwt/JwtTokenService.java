@@ -71,17 +71,17 @@ public class JwtTokenService {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public JwtTokenVO createJwtToken(@NotNull UserVO user) {
         Set<String> networkIds = new HashSet<>();
-        Set<String> deviceTypeIds = new HashSet<>();
+        Set<String> iexperimentIds = new HashSet<>();
         Set<String> icomponentIds = new HashSet<>();
         Set<Integer> actions = new HashSet<>();
         if (user.isAdmin()) {
             networkIds.add("*");
-            deviceTypeIds.add("*");
+            iexperimentIds.add("*");
             icomponentIds.add("*");
             actions.add(ANY.getId());
         } else {
             UserWithNetworkVO userWithNetwork = userService.findUserWithNetworks(user.getId());
-            UserWithDeviceTypeVO userWithDeviceType = userService.findUserWithDeviceType(user.getId());
+            UserWithIexperimentVO userWithIexperiment = userService.findUserWithIexperiment(user.getId());
             UserWithIcomponentVO userWithIcomponent = userService.findUserWithIcomponent(user.getId());
 //          TODO: check if needed
             userService.refreshUserLoginData(user);
@@ -92,13 +92,13 @@ public class JwtTokenService {
                     networkIds.add(network.getId().toString());
                 });
             }
-            if (userWithDeviceType.getAllDeviceTypesAvailable()) {
-                deviceTypeIds.add("*");
+            if (userWithIexperiment.getAllIexperimentsAvailable()) {
+                iexperimentIds.add("*");
             } else {
-                Set<DeviceTypeVO> deviceTypes = userWithDeviceType.getDeviceTypes();
-                if (!deviceTypes.isEmpty()) {
-                    deviceTypes.forEach(deviceType -> {
-                        deviceTypeIds.add(deviceType.getId().toString());
+                Set<IexperimentVO> iexperiments = userWithIexperiment.getIexperiments();
+                if (!iexperiments.isEmpty()) {
+                    iexperiments.forEach(iexperiment -> {
+                        iexperimentIds.add(iexperiment.getId().toString());
                     });
                 }
             }
@@ -120,7 +120,7 @@ public class JwtTokenService {
                 .withUserId(user.getId())
                 .withActions(actions)
                 .withNetworkIds(networkIds)
-                .withDeviceTypeIds(deviceTypeIds)
+                .withIexperimentIds(iexperimentIds)
                 .withIcomponentIds(icomponentIds)
                 .buildPayload();
 

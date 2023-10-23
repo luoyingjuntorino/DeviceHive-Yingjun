@@ -30,22 +30,22 @@ import javax.validation.constraints.Size;
 
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.*;
 
-public class DeviceTypeVO implements HiveEntity {
+public class IexperimentVO implements HiveEntity {
 
     @SerializedName("id")
-    @JsonPolicyDef({DEVICE_PUBLISHED, USER_PUBLISHED, DEVICE_TYPES_LISTED, DEVICE_TYPE_PUBLISHED, DEVICE_TYPE_SUBMITTED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, USER_PUBLISHED, IEXPERIMENTS_LISTED, IEXPERIMENT_PUBLISHED, IEXPERIMENT_SUBMITTED})
     private Long id;
 
     @SerializedName("name")
     @NotNull(message = "name field cannot be null.")
     @Size(min = 1, max = 128, message = "Field cannot be empty. The length of name should not be more than 128 " +
             "symbols.")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, DEVICE_TYPES_LISTED, DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, IEXPERIMENTS_LISTED, IEXPERIMENT_PUBLISHED})
     private String name;
 
     @SerializedName("description")
     @Size(max = 128, message = "The length of description should not be more than 128 symbols.")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, DEVICE_TYPES_LISTED, DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, IEXPERIMENTS_LISTED, IEXPERIMENT_PUBLISHED})
     private String description;
 
     @ApiModelProperty(hidden = true)
@@ -92,9 +92,9 @@ public class DeviceTypeVO implements HiveEntity {
             return false;
         }
 
-        DeviceTypeVO deviceType = (DeviceTypeVO) o;
+        IexperimentVO iexperiment = (IexperimentVO) o;
 
-        return !(id != null ? !id.equals(deviceType.id) : deviceType.id != null);
+        return !(id != null ? !id.equals(iexperiment.id) : iexperiment.id != null);
 
     }
 

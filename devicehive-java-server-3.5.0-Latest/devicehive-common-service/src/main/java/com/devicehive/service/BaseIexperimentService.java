@@ -23,22 +23,22 @@ package com.devicehive.service;
 import com.devicehive.auth.HiveAuthentication;
 import com.devicehive.auth.HivePrincipal;
 import com.devicehive.configuration.Messages;
-import com.devicehive.dao.DeviceTypeDao;
+import com.devicehive.dao.IexperimentDao;
 import com.devicehive.exceptions.ActionNotAllowedException;
 import com.devicehive.exceptions.IllegalParametersException;
 import com.devicehive.model.response.EntityCountResponse;
-import com.devicehive.model.rpc.CountDeviceTypeRequest;
+import com.devicehive.model.rpc.CountIexperimentRequest;
 import com.devicehive.model.rpc.CountResponse;
-import com.devicehive.model.rpc.ListDeviceTypeRequest;
-import com.devicehive.model.rpc.ListDeviceTypeResponse;
-import com.devicehive.model.updates.DeviceTypeUpdate;
+import com.devicehive.model.rpc.ListIexperimentRequest;
+import com.devicehive.model.rpc.ListIexperimentResponse;
+import com.devicehive.model.updates.IexperimentUpdate;
 import com.devicehive.service.helpers.ResponseConsumer;
 import com.devicehive.shim.api.Request;
 import com.devicehive.shim.api.Response;
 import com.devicehive.shim.api.client.RpcClient;
 import com.devicehive.util.HiveValidator;
-import com.devicehive.vo.DeviceTypeVO;
-import com.devicehive.vo.DeviceTypeWithUsersAndDevicesVO;
+import com.devicehive.vo.IexperimentVO;
+import com.devicehive.vo.IexperimentWithUsersAndDevicesVO;
 import com.devicehive.vo.DeviceVO;
 import com.devicehive.vo.UserVO;
 import org.slf4j.Logger;
@@ -59,28 +59,28 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 @Component
-public class BaseDeviceTypeService {
-    private static final Logger logger = LoggerFactory.getLogger(BaseDeviceTypeService.class);
+public class BaseIexperimentService {
+    private static final Logger logger = LoggerFactory.getLogger(BaseIexperimentService.class);
 
-    protected final DeviceTypeDao deviceTypeDao;
+    protected final IexperimentDao iexperimentDao;
     protected final RpcClient rpcClient;
 
     @Autowired
-    public BaseDeviceTypeService(DeviceTypeDao deviceTypeDao,
+    public BaseIexperimentService(IexperimentDao iexperimentDao,
                                  RpcClient rpcClient) {
-        this.deviceTypeDao = deviceTypeDao;
+        this.iexperimentDao = iexperimentDao;
         this.rpcClient = rpcClient;
 
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public DeviceTypeWithUsersAndDevicesVO getWithDevices(@NotNull Long deviceTypeId) {
+    public IexperimentWithUsersAndDevicesVO getWithDevices(@NotNull Long iexperimentId) {
         HivePrincipal principal = (HivePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Set<Long> permittedDeviceTypes = principal.getDeviceTypeIds();
+        Set<Long> permittedIexperiments = principal.getIexperimentIds();
         Set<Long> permittedNetworks = principal.getNetworkIds();
 
-        Optional<DeviceTypeWithUsersAndDevicesVO> result = of(principal)
+        Optional<IexperimentWithUsersAndDevicesVO> result = of(principal)
                 .flatMap(pr -> {
                     if (pr.getUser() != null) {
                         return of(pr.getUser());
@@ -89,26 +89,26 @@ public class BaseDeviceTypeService {
                     }
                 }).flatMap(user -> {
                     Long idForFiltering = user.isAdmin() ? null : user.getId();
-                    if (user.getAllDeviceTypesAvailable()) {
+                    if (user.getAllIexperimentsAvailable()) {
                         idForFiltering = null;
                     }
-                    List<DeviceTypeWithUsersAndDevicesVO> found = deviceTypeDao.getDeviceTypesByIdsAndUsers(idForFiltering,
-                            Collections.singleton(deviceTypeId), permittedDeviceTypes);
+                    List<IexperimentWithUsersAndDevicesVO> found = iexperimentDao.getIexperimentsByIdsAndUsers(idForFiltering,
+                            Collections.singleton(iexperimentId), permittedIexperiments);
                     return found.stream().findFirst();
-                }).map(deviceType -> {
+                }).map(iexperiment -> {
                     if (permittedNetworks != null && !permittedNetworks.isEmpty()) {
-                        Set<DeviceVO> allowed = deviceType.getDevices().stream()
+                        Set<DeviceVO> allowed = iexperiment.getDevices().stream()
                                 .filter(device -> permittedNetworks.contains(device.getNetworkId()))
                                 .collect(Collectors.toSet());
-                        deviceType.setDevices(allowed);
+                        iexperiment.setDevices(allowed);
                     }
-                    return deviceType;
+                    return iexperiment;
                 });
 
         return result.orElse(null);
     }
 
-    public CompletableFuture<List<DeviceTypeVO>> list(String name,
+    public CompletableFuture<List<IexperimentVO>> list(String name,
                                                       String namePattern,
                                                       String sortField,
                                                       String sortOrder,
@@ -117,7 +117,7 @@ public class BaseDeviceTypeService {
                                                       HivePrincipal principal) {
         Optional<HivePrincipal> principalOpt = ofNullable(principal);
 
-        ListDeviceTypeRequest request = new ListDeviceTypeRequest();
+        ListIexperimentRequest request = new ListIexperimentRequest();
         request.setName(name);
         request.setNamePattern(namePattern);
         request.setSortField(sortField);
@@ -129,11 +129,11 @@ public class BaseDeviceTypeService {
         return list(request);
     }
 
-    public CompletableFuture<List<DeviceTypeVO>> list(ListDeviceTypeRequest request) {
+    public CompletableFuture<List<IexperimentVO>> list(ListIexperimentRequest request) {
         CompletableFuture<Response> future = new CompletableFuture<>();
 
         rpcClient.call(Request.newBuilder().withBody(request).build(), new ResponseConsumer(future));
 
-        return future.thenApply(r -> ((ListDeviceTypeResponse) r.getBody()).getDeviceTypes());
+        return future.thenApply(r -> ((ListIexperimentResponse) r.getBody()).getIexperiments());
     }
 }

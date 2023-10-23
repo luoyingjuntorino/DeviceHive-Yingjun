@@ -20,13 +20,13 @@ package com.devicehive.messages.handler.dao.list;
  * #L%
  */
 
-import com.devicehive.dao.DeviceTypeDao;
-import com.devicehive.model.rpc.ListDeviceTypeRequest;
-import com.devicehive.model.rpc.ListDeviceTypeResponse;
+import com.devicehive.dao.IexperimentDao;
+import com.devicehive.model.rpc.ListIexperimentRequest;
+import com.devicehive.model.rpc.ListIexperimentResponse;
 import com.devicehive.shim.api.Request;
 import com.devicehive.shim.api.Response;
 import com.devicehive.shim.api.server.RequestHandler;
-import com.devicehive.vo.DeviceTypeVO;
+import com.devicehive.vo.IexperimentVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,24 +34,24 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class ListDeviceTypeHandler implements RequestHandler {
+public class ListIexperimentHandler implements RequestHandler {
 
-    private DeviceTypeDao deviceTypeDao;
+    private IexperimentDao iexperimentDao;
 
     @Autowired
-    public void setDeviceTypeDao(DeviceTypeDao deviceTypeDao) {
-        this.deviceTypeDao = deviceTypeDao;
+    public void setIexperimentDao(IexperimentDao iexperimentDao) {
+        this.iexperimentDao = iexperimentDao;
     }
 
     @Override
     public Response handle(Request request) {
-        final ListDeviceTypeRequest req = (ListDeviceTypeRequest) request.getBody();
+        final ListIexperimentRequest req = (ListIexperimentRequest) request.getBody();
 
-        final List<DeviceTypeVO> deviceTypes = deviceTypeDao.list(req.getName(),
+        final List<IexperimentVO> iexperiments = iexperimentDao.list(req.getName(),
                 req.getNamePattern(), req.getSortField(), req.isSortOrderAsc(), req.getTake(), req.getSkip(), req.getPrincipal());
 
         return Response.newBuilder()
-                .withBody(new ListDeviceTypeResponse(deviceTypes))
+                .withBody(new ListIexperimentResponse(iexperiments))
                 .buildSuccess();
     }
 }

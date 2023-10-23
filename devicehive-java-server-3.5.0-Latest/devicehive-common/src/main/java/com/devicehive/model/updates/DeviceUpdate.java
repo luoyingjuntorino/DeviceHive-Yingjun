@@ -38,20 +38,20 @@ public class DeviceUpdate implements HiveEntity {
 
     @Size(min = 1, max = 128, message = "Field name cannot be empty. The length of name should not be more than 128 symbols.")
     @SerializedName("name")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, ICOMPONENT_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, IEXPERIMENT_PUBLISHED, ICOMPONENT_PUBLISHED})
     private String name;
 
     @SerializedName("data")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, DEVICE_TYPE_PUBLISHED, ICOMPONENT_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, NETWORK_PUBLISHED, IEXPERIMENT_PUBLISHED, ICOMPONENT_PUBLISHED})
     private JsonStringWrapper data;
 
     @SerializedName("networkId")
     @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED})
     private Long networkId;
 
-    @SerializedName("deviceTypeId")
+    @SerializedName("iexperimentId")
     @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED})
-    private Long deviceTypeId;
+    private Long iexperimentId;
 
     @SerializedName("icomponentId")
     @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED})
@@ -85,12 +85,12 @@ public class DeviceUpdate implements HiveEntity {
         this.networkId = networkId;
     }
 
-    public Optional<Long> getDeviceTypeId() {
-        return Optional.ofNullable(deviceTypeId);
+    public Optional<Long> getIexperimentId() {
+        return Optional.ofNullable(iexperimentId);
     }
 
-    public void setDeviceTypeId(Long deviceTypeId) {
-        this.deviceTypeId = deviceTypeId;
+    public void setIexperimentId(Long iexperimentId) {
+        this.iexperimentId = iexperimentId;
     }
 
     public Optional<Long> getIcomponentId() {
@@ -123,8 +123,8 @@ public class DeviceUpdate implements HiveEntity {
         if (this.networkId != null){
             device.setNetworkId(this.networkId);
         }
-        if (this.deviceTypeId != null){
-            device.setDeviceTypeId(this.deviceTypeId);
+        if (this.iexperimentId != null){
+            device.setIexperimentId(this.iexperimentId);
         }
         if (this.icomponentId != null){
             device.setIcomponentId(this.icomponentId);

@@ -22,20 +22,20 @@ package com.devicehive.model.rpc;
 
 import com.devicehive.shim.api.Action;
 import com.devicehive.shim.api.Body;
-import com.devicehive.vo.DeviceTypeVO;
+import com.devicehive.vo.IexperimentVO;
 
 import java.util.List;
 
-public class ListDeviceTypeResponse extends Body {
+public class ListIexperimentResponse extends Body {
 
-    private List<DeviceTypeVO> deviceTypes;
+    private List<IexperimentVO> iexperiments;
 
-    public ListDeviceTypeResponse(List<DeviceTypeVO> networks) {
-        super(Action.LIST_DEVICE_TYPE_RESPONSE);
-        this.deviceTypes = networks;
+    public ListIexperimentResponse(List<IexperimentVO> networks) {
+        super(Action.LIST_IEXPERIMENT_RESPONSE);
+        this.iexperiments = networks;
     }
 
-    public List<DeviceTypeVO> getDeviceTypes() {
-        return deviceTypes;
+    public List<IexperimentVO> getIexperiments() {
+        return iexperiments;
     }
 }

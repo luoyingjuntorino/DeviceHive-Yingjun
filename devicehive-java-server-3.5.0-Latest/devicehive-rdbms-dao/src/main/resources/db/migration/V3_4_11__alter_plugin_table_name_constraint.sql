@@ -55,7 +55,31 @@ INSERT INTO icomponent (name, description)
 INSERT INTO user_icomponent (user_id, icomponent_id) VALUES (1, 1);
 UPDATE device SET icomponent_id = 1 WHERE device_id = 'e50d6085-2aba-48e9-b1c3-73c673e414be';
 
+-- Insert some default icomponents
+INSERT INTO icomponent (name, description)
+  VALUES
+  ('Room', 'Room icomponent');
 
+INSERT INTO icomponent (name, description)
+  VALUES
+  ('Wall', 'Wall icomponent');
+
+INSERT INTO icomponent (name, description)
+  VALUES
+  ('Floor', 'Floor icomponent');
+
+INSERT INTO icomponent (name, description)
+  VALUES
+  ('Ceiling', 'Ceiling icomponent');
+
+INSERT INTO icomponent (name, description)
+  VALUES
+  ('Door', 'Door icomponent');
+
+INSERT INTO icomponent (name, description)
+  VALUES
+  ('HVAC', 'HVAC icomponent');
+  
 -- Add allIcomponentsAvailable column to users
 ALTER TABLE dh_user ADD COLUMN all_icomponents_available BOOLEAN DEFAULT TRUE;
 

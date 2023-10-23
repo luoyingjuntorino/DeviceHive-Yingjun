@@ -27,7 +27,7 @@ public enum SearchableField {
     LAST_UPDATED("lastUpdated"),
     DEVICE_IDS("deviceId"), //need this duplication to separate cases of single and multiple deviceId usage
     NETWORK_IDS("networkId"),
-    DEVICE_TYPE_IDS("deviceTypeId"),
+    IEXPERIMENT_IDS("iexperimentId"),
     ICOMPONENT_IDS("icomponentId"),
     NOTIFICATION("notification"),
     COMMAND("command"),

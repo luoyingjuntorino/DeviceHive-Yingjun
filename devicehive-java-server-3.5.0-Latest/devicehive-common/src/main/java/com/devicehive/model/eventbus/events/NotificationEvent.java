@@ -48,13 +48,13 @@ public class NotificationEvent extends Event {
     @Override
     public Collection<Filter> getApplicableFilters() {
         Filter deviceFilter = new Filter(notification.getNetworkId(),
-                notification.getDeviceTypeId(),
+                notification.getIexperimentId(),
                 notification.getIcomponentId(),
                 notification.getDeviceId(),
                 Action.NOTIFICATION_EVENT.name(),
                 null);
         Filter deviceWithNameFilter = new Filter(notification.getNetworkId(),
-                notification.getDeviceTypeId(),
+                notification.getIexperimentId(),
                 notification.getIcomponentId(),
                 notification.getDeviceId(),
                 Action.NOTIFICATION_EVENT.name(),

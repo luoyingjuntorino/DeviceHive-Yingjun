@@ -23,7 +23,7 @@ package com.devicehive.dao.rdbms;
 import com.devicehive.auth.HivePrincipal;
 import com.devicehive.dao.DeviceDao;
 import com.devicehive.model.Device;
-import com.devicehive.model.DeviceType;
+import com.devicehive.model.Iexperiment;
 import com.devicehive.model.Icomponent;
 import com.devicehive.model.Network;
 import com.devicehive.vo.DeviceVO;
@@ -69,8 +69,8 @@ public class DeviceDaoRdbmsImpl extends RdbmsGenericDao implements DeviceDao {
         if (device.getNetwork() != null) {
             device.setNetwork(reference(Network.class, device.getNetwork().getId()));
         }
-        if (device.getDeviceType() != null) {
-            device.setDeviceType(reference(DeviceType.class, device.getDeviceType().getId()));
+        if (device.getIexperiment() != null) {
+            device.setIexperiment(reference(Iexperiment.class, device.getIexperiment().getId()));
         }
         if (device.getIcomponent() != null) {
             device.setIcomponent(reference(Icomponent.class, device.getIcomponent().getId()));
@@ -86,8 +86,8 @@ public class DeviceDaoRdbmsImpl extends RdbmsGenericDao implements DeviceDao {
         if (device.getNetwork() != null) {
             device.setNetwork(reference(Network.class, device.getNetwork().getId()));
         }
-        if (device.getDeviceType() != null) {
-            device.setDeviceType(reference(DeviceType.class, device.getDeviceType().getId()));
+        if (device.getIexperiment() != null) {
+            device.setIexperiment(reference(Iexperiment.class, device.getIexperiment().getId()));
         }
         if (device.getIcomponent() != null) {
             device.setIcomponent(reference(Icomponent.class, device.getIcomponent().getId()));

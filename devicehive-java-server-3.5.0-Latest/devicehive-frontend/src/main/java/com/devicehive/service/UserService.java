@@ -22,7 +22,7 @@ package com.devicehive.service;
 
 import com.devicehive.configuration.Constants;
 import com.devicehive.configuration.Messages;
-import com.devicehive.dao.DeviceTypeDao;
+import com.devicehive.dao.IexperimentDao;
 import com.devicehive.dao.IcomponentDao;
 import com.devicehive.dao.NetworkDao;
 import com.devicehive.dao.UserDao;
@@ -70,7 +70,7 @@ public class UserService extends BaseUserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private static final String PASSWORD_REGEXP = "^.{6,128}$";
 
-    private final DeviceTypeDao deviceTypeDao;
+    private final IexperimentDao iexperimentDao;
     private final IcomponentDao icomponentDao;
     private final RpcClient rpcClient;
 
@@ -79,7 +79,7 @@ public class UserService extends BaseUserService {
     @Autowired
     public UserService(PasswordProcessor passwordService,
                        NetworkDao networkDao,
-                       DeviceTypeDao deviceTypeDao,
+                       IexperimentDao iexperimentDao,
                        IcomponentDao icomponentDao,
                        UserDao userDao,
                        TimestampService timestampService,
@@ -87,7 +87,7 @@ public class UserService extends BaseUserService {
                        HiveValidator hiveValidator,
                        RpcClient rpcClient) {
         super(passwordService, userDao, networkDao, timestampService, configurationService, hiveValidator);
-        this.deviceTypeDao = deviceTypeDao;
+        this.iexperimentDao = iexperimentDao;
         this.icomponentDao = icomponentDao;
         this.rpcClient = rpcClient;
     }
@@ -178,71 +178,71 @@ public class UserService extends BaseUserService {
     }
 
     /**
-     * Allows user access to given device type
+     * Allows user access to given iexperiment
      *
      * @param userId id of user
-     * @param deviceTypeId id of device type
+     * @param iexperimentId id of iexperiment
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public void assignDeviceType(@NotNull long userId, @NotNull long deviceTypeId) {
+    public void assignIexperiment(@NotNull long userId, @NotNull long iexperimentId) {
         UserVO existingUser = userDao.find(userId);
         if (existingUser == null) {
-            logger.error("Can't assign device type with id {}: user {} not found", deviceTypeId, userId);
+            logger.error("Can't assign iexperiment with id {}: user {} not found", iexperimentId, userId);
             throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
         }
-        if (existingUser.getAllDeviceTypesAvailable()) {
-            throw new HiveException(String.format(Messages.DEVICE_TYPE_ASSIGNMENT_NOT_ALLOWED, userId), FORBIDDEN.getStatusCode());
+        if (existingUser.getAllIexperimentsAvailable()) {
+            throw new HiveException(String.format(Messages.IEXPERIMENT_ASSIGNMENT_NOT_ALLOWED, userId), FORBIDDEN.getStatusCode());
         }
-        DeviceTypeWithUsersAndDevicesVO existingDeviceType = deviceTypeDao.findWithUsers(deviceTypeId).orElse(null);
-        if (Objects.isNull(existingDeviceType)) {
-            throw new HiveException(String.format(Messages.DEVICE_TYPE_NOT_FOUND, deviceTypeId), NOT_FOUND.getStatusCode());
+        IexperimentWithUsersAndDevicesVO existingIexperiment = iexperimentDao.findWithUsers(iexperimentId).orElse(null);
+        if (Objects.isNull(existingIexperiment)) {
+            throw new HiveException(String.format(Messages.IEXPERIMENT_NOT_FOUND, iexperimentId), NOT_FOUND.getStatusCode());
         }
 
-        deviceTypeDao.assignToDeviceType(existingDeviceType, existingUser);
+        iexperimentDao.assignToIexperiment(existingIexperiment, existingUser);
     }
 
     /**
-     * Revokes user access to given device type
+     * Revokes user access to given iexperiment
      *
      * @param userId id of user
-     * @param deviceTypeId id of device type
+     * @param iexperimentId id of iexperiment
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public void unassignDeviceType(@NotNull long userId, @NotNull long deviceTypeId) {
+    public void unassignIexperiment(@NotNull long userId, @NotNull long iexperimentId) {
         UserVO existingUser = userDao.find(userId);
         if (existingUser == null) {
-            logger.error("Can't unassign device type with id {}: user {} not found", deviceTypeId, userId);
+            logger.error("Can't unassign iexperiment with id {}: user {} not found", iexperimentId, userId);
             throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
         }
-        if (existingUser.getAllDeviceTypesAvailable()) {
-            throw new HiveException(String.format(Messages.DEVICE_TYPE_ASSIGNMENT_NOT_ALLOWED, userId), FORBIDDEN.getStatusCode());
+        if (existingUser.getAllIexperimentsAvailable()) {
+            throw new HiveException(String.format(Messages.IEXPERIMENT_ASSIGNMENT_NOT_ALLOWED, userId), FORBIDDEN.getStatusCode());
         }
-        DeviceTypeVO existingDeviceType = deviceTypeDao.find(deviceTypeId);
-        if (existingDeviceType == null) {
-            logger.error("Can't unassign user with id {}: device type {} not found", userId, deviceTypeId);
-            throw new HiveException(String.format(Messages.DEVICE_TYPE_NOT_FOUND, deviceTypeId), NOT_FOUND.getStatusCode());
+        IexperimentVO existingIexperiment = iexperimentDao.find(iexperimentId);
+        if (existingIexperiment == null) {
+            logger.error("Can't unassign user with id {}: iexperiment {} not found", userId, iexperimentId);
+            throw new HiveException(String.format(Messages.IEXPERIMENT_NOT_FOUND, iexperimentId), NOT_FOUND.getStatusCode());
         }
-        userDao.unassignDeviceType(existingUser, deviceTypeId);
+        userDao.unassignIexperiment(existingUser, iexperimentId);
     }
 
     @Transactional
-    public UserVO allowAllDeviceTypes(@NotNull long userId) {
-        UserWithDeviceTypeVO existingUser = userDao.getWithDeviceTypeById(userId);
+    public UserVO allowAllIexperiments(@NotNull long userId) {
+        UserWithIexperimentVO existingUser = userDao.getWithIexperimentById(userId);
         if (existingUser == null) {
-            logger.error("Can't allow all device types: user {} not found", userId);
+            logger.error("Can't allow all iexperiments: user {} not found", userId);
             throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
         }
-        return userDao.allowAllDeviceTypes(existingUser);
+        return userDao.allowAllIexperiments(existingUser);
     }
 
     @Transactional
-    public UserVO disallowAllDeviceTypes(@NotNull long userId) {
+    public UserVO disallowAllIexperiments(@NotNull long userId) {
         UserVO existingUser = userDao.find(userId);
         if (existingUser == null) {
-            logger.error("Can't disallow all device types: user {} not found", userId);
+            logger.error("Can't disallow all iexperiments: user {} not found", userId);
             throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
         }
-        return userDao.disallowAllDeviceTypes(existingUser);
+        return userDao.disallowAllIexperiments(existingUser);
     }
 
     /**
@@ -388,8 +388,8 @@ public class UserService extends BaseUserService {
             user.setIntroReviewed(false);
         }
 
-        if (user.getAllDeviceTypesAvailable() == null) {
-            user.setAllDeviceTypesAvailable(true);
+        if (user.getAllIexperimentsAvailable() == null) {
+            user.setAllIexperimentsAvailable(true);
         }
         if (user.getAllIcomponentsAvailable() == null) {
             user.setAllIcomponentsAvailable(true);

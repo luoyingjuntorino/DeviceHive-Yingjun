@@ -25,11 +25,11 @@ import com.devicehive.auth.HivePrincipal;
 import com.devicehive.model.FilterEntity;
 import com.devicehive.model.eventbus.Filter;
 import com.devicehive.model.query.PluginReqisterQuery;
-import com.devicehive.model.rpc.ListDeviceTypeRequest;
+import com.devicehive.model.rpc.ListIexperimentRequest;
 import com.devicehive.model.rpc.ListIcomponentRequest;
 import com.devicehive.model.rpc.ListNetworkRequest;
 import com.devicehive.model.rpc.PluginSubscribeRequest;
-import com.devicehive.vo.DeviceTypeVO;
+import com.devicehive.vo.IexperimentVO;
 import com.devicehive.vo.IcomponentVO;
 import com.devicehive.vo.DeviceVO;
 import com.devicehive.vo.NetworkVO;
@@ -76,7 +76,7 @@ public class FilterService {
     private Set<Filter> createFilters(FilterEntity filterEntity) {
         final HiveAuthentication authentication = (HiveAuthentication) SecurityContextHolder.getContext().getAuthentication();
         return filterService.getFilterList(filterEntity.getDeviceId(), toLongSet(filterEntity.getNetworkIds()),
-                toLongSet(filterEntity.getDeviceTypeIds()), toLongSet(filterEntity.getIcomponentIds()),
+                toLongSet(filterEntity.getIexperimentIds()), toLongSet(filterEntity.getIcomponentIds()),
                 null, toStringSet(filterEntity.getNames()), authentication);
     }
 }

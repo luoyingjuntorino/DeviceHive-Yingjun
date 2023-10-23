@@ -217,7 +217,7 @@ public class DeviceCommandService {
                 logger.warn("Unknown action received from backend {}", resAction);
             }
         };
-        Filter filter = new Filter(device.getNetworkId(), device.getDeviceTypeId(), device.getIcomponentId(), Long.toString(commandId), COMMAND_UPDATE_EVENT.name(), null);
+        Filter filter = new Filter(device.getNetworkId(), device.getIexperimentId(), device.getIcomponentId(), Long.toString(commandId), COMMAND_UPDATE_EVENT.name(), null);
         rpcClient.call(Request.newBuilder()
                 .withBody(new CommandUpdateSubscribeRequest(commandId, device.getDeviceId(), subscriptionId, filter))
                 .build(), responseConsumer);
@@ -257,7 +257,7 @@ public class DeviceCommandService {
         command.setId(Math.abs(new Random().nextInt()));
         command.setDeviceId(device.getDeviceId());
         command.setNetworkId(device.getNetworkId());
-        command.setDeviceTypeId(device.getDeviceTypeId());
+        command.setIexperimentId(device.getIexperimentId());
         command.setIcomponentId(device.getIcomponentId());
         command.setIsUpdated(false);
 

@@ -21,7 +21,7 @@ package com.devicehive.resource;
  */
 
 import com.devicehive.json.strategies.JsonPolicyDef;
-import com.devicehive.model.response.UserDeviceTypeResponse;
+import com.devicehive.model.response.UserIexperimentResponse;
 import com.devicehive.model.response.UserIcomponentResponse;
 import com.devicehive.model.response.EntityCountResponse;
 import com.devicehive.model.response.UserNetworkResponse;
@@ -358,70 +358,70 @@ public interface UserResource {
 
     /**
      * Method returns following body in case of success (status 200): <code> { "id": 5, "name":
-     * "device type name", "description": "short description of device type" } </code> in case, there is no such
-     * device type, or user, or user doesn't have access
+     * "iexperiment name", "description": "short description of iexperiment" } </code> in case, there is no such
+     * iexperiment, or user, or user doesn't have access
      *
      * @param id            user id
-     * @param deviceTypeId  device type id
+     * @param iexperimentId  iexperiment id
      */
     @GET
-    @Path("/{id}/devicetype/{deviceTypeId}")
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'GET_DEVICE_TYPE')")
-    @ApiOperation(value = "Get user's device type", notes = "Gets information about user/devicetype association.")
+    @Path("/{id}/iexperiment/{iexperimentId}")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'GET_IEXPERIMENT')")
+    @ApiOperation(value = "Get user's iexperiment", notes = "Gets information about user/iexperiment association.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "If successful, this method returns a DeviceType resource in the response body.", response = UserDeviceTypeResponse.class),
+            @ApiResponse(code = 200, message = "If successful, this method returns a Iexperiment resource in the response body.", response = UserIexperimentResponse.class),
             @ApiResponse(code = 401, message = "If request is not authorized"),
             @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
-            @ApiResponse(code = 404, message = "If user or device type not found")
+            @ApiResponse(code = 404, message = "If user or iexperiment not found")
     })
-    Response getDeviceType(
+    Response getIexperiment(
             @ApiParam(name = "id", value = "User identifier.", required = true)
             @PathParam("id")
                     long id,
-            @ApiParam(name = "deviceTypeId", value = "Device type identifier.", required = true)
-            @PathParam("deviceTypeId")
-                    long deviceTypeId);
+            @ApiParam(name = "iexperimentId", value = "Iexperiment identifier.", required = true)
+            @PathParam("iexperimentId")
+                    long iexperimentId);
 
     /**
-     * Method returns the collection of available Device Types in case of success (status 200): <code> [{ "id": 5, "name":
-     * "device type name", "description": "short description of device type" }] </code>  and empty list in case, there is no available
-     * device type, or user, or user doesn't have access
+     * Method returns the collection of available Iexperiments in case of success (status 200): <code> [{ "id": 5, "name":
+     * "iexperiment name", "description": "short description of iexperiment" }] </code>  and empty list in case, there is no available
+     * iexperiment, or user, or user doesn't have access
      *
      * @param id            user id
      */
     @GET
-    @Path("/{id}/devicetype")
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    @ApiOperation(value = "Get user's device types", notes = "Gets information about user's devicetypes association.")
+    @Path("/{id}/iexperiment")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    @ApiOperation(value = "Get user's iexperiments", notes = "Gets information about user's iexperiments association.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "If successful, this method returns a list of DeviceTypes resource in the response body.", response = UserDeviceTypeResponse.class),
+            @ApiResponse(code = 200, message = "If successful, this method returns a list of Iexperiments resource in the response body.", response = UserIexperimentResponse.class),
             @ApiResponse(code = 401, message = "If request is not authorized"),
             @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
             @ApiResponse(code = 404, message = "If user not found")
     })
-    void getDeviceTypes(
+    void getIexperiments(
             @ApiParam(name = "id", value = "User identifier.", required = true)
             @PathParam("id")
                     long id,
             @Suspended final AsyncResponse asyncResponse);
 
     /**
-     * Adds user permission on device type.
+     * Adds user permission on iexperiment.
      * Request body must be empty. Returns Empty body.
      *
      * @param id            user id
-     * @param deviceTypeId  device type id
+     * @param iexperimentId  iexperiment id
      */
     @PUT
-    @Path("/{id}/devicetype/{deviceTypeId}")
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    @ApiOperation(value = "Assign device type", notes = "Associates device type with the user.")
+    @Path("/{id}/iexperiment/{iexperimentId}")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    @ApiOperation(value = "Assign iexperiment", notes = "Associates iexperiment with the user.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
     })
@@ -429,27 +429,27 @@ public interface UserResource {
             @ApiResponse(code = 204, message = "If successful, this method returns an empty response body."),
             @ApiResponse(code = 401, message = "If request is not authorized"),
             @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
-            @ApiResponse(code = 404, message = "If user or device type not found")
+            @ApiResponse(code = 404, message = "If user or iexperiment not found")
     })
-    Response assignDeviceType(
+    Response assignIexperiment(
             @ApiParam(name = "id", value = "User identifier.", required = true)
             @PathParam("id")
                     long id,
-            @ApiParam(name = "deviceTypeId", value = "Device type identifier.", required = true)
-            @PathParam("deviceTypeId")
-                    long deviceTypeId);
+            @ApiParam(name = "iexperimentId", value = "Iexperiment identifier.", required = true)
+            @PathParam("iexperimentId")
+                    long iexperimentId);
 
     /**
-     * Removes user permissions on device type.
+     * Removes user permissions on iexperiment.
      *
      * @param id            user id
-     * @param deviceTypeId  device type id
+     * @param iexperimentId  iexperiment id
      * @return Empty body. Status 204 in case of success, 404 otherwise
      */
     @DELETE
-    @Path("/{id}/devicetype/{deviceTypeId}")
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    @ApiOperation(value = "Unassign device type", notes = "Removes association between device type and user.")
+    @Path("/{id}/iexperiment/{iexperimentId}")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    @ApiOperation(value = "Unassign iexperiment", notes = "Removes association between iexperiment and user.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
     })
@@ -457,26 +457,26 @@ public interface UserResource {
             @ApiResponse(code = 204, message = "If successful, this method returns an empty response body."),
             @ApiResponse(code = 401, message = "If request is not authorized"),
             @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
-            @ApiResponse(code = 404, message = "If user or device type not found.")
+            @ApiResponse(code = 404, message = "If user or iexperiment not found.")
     })
-    Response unassignDeviceType(
+    Response unassignIexperiment(
             @ApiParam(name = "id", value = "User identifier.", required = true)
             @PathParam("id")
                     long id,
-            @ApiParam(name = "deviceTypeId", value = "Device type identifier.", required = true)
-            @PathParam("deviceTypeId")
-                    long deviceTypeId);
+            @ApiParam(name = "iexperimentId", value = "Iexperiment identifier.", required = true)
+            @PathParam("iexperimentId")
+                    long iexperimentId);
 
     /**
-     * Adds user permission for all device types.
+     * Adds user permission for all iexperiments.
      * Request body must be empty. Returns Empty body.
      *
      * @param id            user id
      */
     @PUT
-    @Path("/{id}/devicetype/all")
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    @ApiOperation(value = "Assign all device types", notes = "Gives user permission to access all device types")
+    @Path("/{id}/iexperiment/all")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    @ApiOperation(value = "Assign all iexperiments", notes = "Gives user permission to access all iexperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
     })
@@ -484,23 +484,23 @@ public interface UserResource {
             @ApiResponse(code = 204, message = "If successful, this method returns an empty response body."),
             @ApiResponse(code = 401, message = "If request is not authorized"),
             @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
-            @ApiResponse(code = 404, message = "If user or device type not found")
+            @ApiResponse(code = 404, message = "If user or iexperiment not found")
     })
-    Response allowAllDeviceTypes(
+    Response allowAllIexperiments(
             @ApiParam(name = "id", value = "User identifier.", required = true)
             @PathParam("id")
                     long id);
 
     /**
-     * Removes user permissions to access all device types.
+     * Removes user permissions to access all iexperiments.
      *
      * @param id            user id
      * @return Empty body. Status 204 in case of success, 404 otherwise
      */
     @DELETE
-    @Path("/{id}/devicetype/all")
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    @ApiOperation(value = "Unassign all device types", notes = "Removes user permission to access all device types.")
+    @Path("/{id}/iexperiment/all")
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    @ApiOperation(value = "Unassign all iexperiments", notes = "Removes user permission to access all iexperiments.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header")
     })
@@ -508,9 +508,9 @@ public interface UserResource {
             @ApiResponse(code = 204, message = "If successful, this method returns an empty response body."),
             @ApiResponse(code = 401, message = "If request is not authorized"),
             @ApiResponse(code = 403, message = "If principal doesn't have permissions"),
-            @ApiResponse(code = 404, message = "If user or device type not found.")
+            @ApiResponse(code = 404, message = "If user or iexperiment not found.")
     })
-    Response disallowAllDeviceTypes(
+    Response disallowAllIexperiments(
             @ApiParam(name = "id", value = "User identifier.", required = true)
             @PathParam("id")
                     long id);

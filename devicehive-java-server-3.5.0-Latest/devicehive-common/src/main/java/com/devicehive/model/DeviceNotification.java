@@ -59,9 +59,9 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
     @JsonPolicyDef({NOTIFICATION_TO_CLIENT, NOTIFICATION_TO_DEVICE})
     private Long networkId;
 
-    @SerializedName("deviceTypeId")
+    @SerializedName("iexperimentId")
     @JsonPolicyDef({NOTIFICATION_TO_CLIENT, NOTIFICATION_TO_DEVICE})
-    private Long deviceTypeId;
+    private Long iexperimentId;
 
     @SerializedName("icomponentId")
     @JsonPolicyDef({NOTIFICATION_TO_CLIENT, NOTIFICATION_TO_DEVICE})
@@ -124,12 +124,12 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         this.networkId = networkId;
     }
 
-    public Long getDeviceTypeId() {
-        return deviceTypeId;
+    public Long getIexperimentId() {
+        return iexperimentId;
     }
 
-    public void setDeviceTypeId(Long deviceTypeId) {
-        this.deviceTypeId = deviceTypeId;
+    public void setIexperimentId(Long iexperimentId) {
+        this.iexperimentId = iexperimentId;
     }
 
     public Long getIcomponentId() {
@@ -149,7 +149,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
 
         if (deviceId != null ? !deviceId.equals(message.deviceId) : message.deviceId != null) return false;
         if (networkId != null ? !networkId.equals(message.networkId) : message.networkId != null) return false;
-        if (deviceTypeId != null ? !deviceTypeId.equals(message.deviceTypeId) : message.deviceTypeId != null) return false;
+        if (iexperimentId != null ? !iexperimentId.equals(message.iexperimentId) : message.iexperimentId != null) return false;
         if (icomponentId != null ? !icomponentId.equals(message.icomponentId) : message.icomponentId != null) return false;
         if (id != null ? !id.equals(message.id) : message.id != null) return false;
         if (notification != null ? !notification.equals(message.notification) : message.notification != null)
@@ -166,7 +166,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         result = 31 * result + (notification != null ? notification.hashCode() : 0);
         result = 31 * result + (deviceId != null ? deviceId.hashCode() : 0);
         result = 31 * result + (networkId != null ? networkId.hashCode() : 0);
-        result = 31 * result + (deviceTypeId != null ? deviceTypeId.hashCode() : 0);
+        result = 31 * result + (iexperimentId != null ? iexperimentId.hashCode() : 0);
         result = 31 * result + (icomponentId != null ? icomponentId.hashCode() : 0);
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
@@ -180,7 +180,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
                 ", notification='" + notification + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", networkId='" + networkId + '\'' +
-                ", deviceTypeId='" + deviceTypeId + '\'' +
+                ", iexperimentId='" + iexperimentId + '\'' +
                 ", icomponentId='" + icomponentId + '\'' +
                 ", timestamp=" + timestamp +
                 ", parameters='" + parameters + '\'' +
@@ -211,7 +211,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         portableWriter.writeUTF("notification", notification);
         portableWriter.writeUTF("deviceId", deviceId);
         portableWriter.writeLong("networkId", Objects.nonNull(networkId) ? networkId : 0);
-        portableWriter.writeLong("deviceTypeId", Objects.nonNull(deviceTypeId) ? deviceTypeId : 0);
+        portableWriter.writeLong("iexperimentId", Objects.nonNull(iexperimentId) ? iexperimentId : 0);
         portableWriter.writeLong("icomponentId", Objects.nonNull(icomponentId) ? icomponentId : 0);
         portableWriter.writeLong("timestamp", Objects.nonNull(timestamp) ? timestamp.getTime() :0);
         boolean parametersIsNotNull = Objects.nonNull(parameters) && Objects.nonNull(parameters.getJsonString());
@@ -224,7 +224,7 @@ public class DeviceNotification implements HiveEntity, HazelcastEntity, Portable
         notification = portableReader.readUTF("notification");
         deviceId = portableReader.readUTF("deviceId");
         networkId = portableReader.readLong("networkId");
-        deviceTypeId = portableReader.readLong("deviceTypeId");
+        iexperimentId = portableReader.readLong("iexperimentId");
         icomponentId = portableReader.readLong("icomponentId");
         timestamp = new Date(portableReader.readLong("timestamp"));
         String parametersString = portableReader.readUTF("parameters");

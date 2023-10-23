@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.devicehive.configuration.Constants.DEVICE_ID;
-import static com.devicehive.configuration.Constants.DEVICE_TYPE_ID;
+import static com.devicehive.configuration.Constants.IEXPERIMENT_ID;
 import static com.devicehive.configuration.Constants.ICOMPONENT_ID;
 import static com.devicehive.configuration.Constants.NETWORK_ID;
 
@@ -50,7 +50,7 @@ public class WebSocketRequestProcessor {
     private final SubscriptionHandlers subscriptionHandlers;
     private final DeviceHandlers deviceHandlers;
     private final NetworkHandlers networkHandlers;
-    private final DeviceTypeHandlers deviceTypeHandlers;
+    private final IexperimentHandlers iexperimentHandlers;
     private final IcomponentHandlers icomponentHandlers;
     private final UserHandlers userHandlers;
     private final Gson gson;
@@ -64,7 +64,7 @@ public class WebSocketRequestProcessor {
                                      SubscriptionHandlers subscriptionHandlers,
                                      DeviceHandlers deviceHandlers,
                                      NetworkHandlers networkHandlers,
-                                     DeviceTypeHandlers deviceTypeHandlers,
+                                     IexperimentHandlers iexperimentHandlers,
                                      IcomponentHandlers icomponentHandlers,
                                      UserHandlers userHandlers,
                                      Gson gson) {
@@ -76,7 +76,7 @@ public class WebSocketRequestProcessor {
         this.subscriptionHandlers = subscriptionHandlers;
         this.deviceHandlers = deviceHandlers;
         this.networkHandlers = networkHandlers;
-        this.deviceTypeHandlers = deviceTypeHandlers;
+        this.iexperimentHandlers = iexperimentHandlers;
         this.icomponentHandlers = icomponentHandlers;
         this.userHandlers = userHandlers;
         this.gson = gson;
@@ -86,7 +86,7 @@ public class WebSocketRequestProcessor {
         WebsocketAction action = getAction(request);
         final String deviceId = gson.fromJson(request.get(DEVICE_ID), String.class);
         final Long networkId = gson.fromJson(request.get(NETWORK_ID), Long.class);
-        final Long deviceTypeId = gson.fromJson(request.get(DEVICE_TYPE_ID), Long.class);
+        final Long iexperimentId = gson.fromJson(request.get(IEXPERIMENT_ID), Long.class);
         final Long icomponentId = gson.fromJson(request.get(ICOMPONENT_ID), Long.class);
         
         switch (action) {
@@ -189,23 +189,23 @@ public class WebSocketRequestProcessor {
             case NETWORK_DELETE:
                 networkHandlers.processNetworkDelete(networkId, request, session);
                 break;
-            case DEVICE_TYPE_LIST:
-                deviceTypeHandlers.processDeviceTypeList(request, session);
+            case IEXPERIMENT_LIST:
+                iexperimentHandlers.processIexperimentList(request, session);
                 break;
-            case DEVICE_TYPE_COUNT:
-                deviceTypeHandlers.processDeviceTypeCount(request, session);
+            case IEXPERIMENT_COUNT:
+                iexperimentHandlers.processIexperimentCount(request, session);
                 break;
-            case DEVICE_TYPE_GET:
-                deviceTypeHandlers.processDeviceTypeGet(deviceTypeId, request, session);
+            case IEXPERIMENT_GET:
+                iexperimentHandlers.processIexperimentGet(iexperimentId, request, session);
                 break;
-            case DEVICE_TYPE_INSERT:
-                deviceTypeHandlers.processDeviceTypeInsert(request, session);
+            case IEXPERIMENT_INSERT:
+                iexperimentHandlers.processIexperimentInsert(request, session);
                 break;
-            case DEVICE_TYPE_UPDATE:
-                deviceTypeHandlers.processDeviceTypeUpdate(deviceTypeId, request, session);
+            case IEXPERIMENT_UPDATE:
+                iexperimentHandlers.processIexperimentUpdate(iexperimentId, request, session);
                 break;
-            case DEVICE_TYPE_DELETE:
-                deviceTypeHandlers.processDeviceTypeDelete(deviceTypeId, request, session);
+            case IEXPERIMENT_DELETE:
+                iexperimentHandlers.processIexperimentDelete(iexperimentId, request, session);
                 break;
             case ICOMPONENT_LIST:
                 icomponentHandlers.processIcomponentList(request, session);
@@ -258,23 +258,23 @@ public class WebSocketRequestProcessor {
             case USER_UNASSIGN_NETWORK:
                 userHandlers.processUserUnassignNetwork(request, session);
                 break;
-            case USER_GET_DEVICE_TYPE:
-                userHandlers.processUserGetDeviceType(request, session);
+            case USER_GET_IEXPERIMENT:
+                userHandlers.processUserGetIexperiment(request, session);
                 break;
-            case USER_GET_DEVICE_TYPES:
-                userHandlers.processUserGetDeviceTypes(request, session);
+            case USER_GET_IEXPERIMENTS:
+                userHandlers.processUserGetIexperiments(request, session);
                 break;
-            case USER_ASSIGN_DEVICE_TYPE:
-                userHandlers.processUserAssignDeviceType(request, session);
+            case USER_ASSIGN_IEXPERIMENT:
+                userHandlers.processUserAssignIexperiment(request, session);
                 break;
-            case USER_UNASSIGN_DEVICE_TYPE:
-                userHandlers.processUserUnassignDeviceType(request, session);
+            case USER_UNASSIGN_IEXPERIMENT:
+                userHandlers.processUserUnassignIexperiment(request, session);
                 break;
-            case USER_ALLOW_ALL_DEVICE_TYPES:
-                userHandlers.processUserAllowAllDeviceTypes(request, session);
+            case USER_ALLOW_ALL_IEXPERIMENTS:
+                userHandlers.processUserAllowAllIexperiments(request, session);
                 break;
-            case USER_DISALLOW_ALL_DEVICE_TYPES:
-                userHandlers.processUserDisallowAllDeviceTypes(request, session);
+            case USER_DISALLOW_ALL_IEXPERIMENTS:
+                userHandlers.processUserDisallowAllIexperiments(request, session);
                 break;
             case USER_GET_ICOMPONENT:
                 userHandlers.processUserGetIcomponent(request, session);
@@ -341,12 +341,12 @@ public class WebSocketRequestProcessor {
         NETWORK_GET("network/get"),
         NETWORK_DELETE("network/delete"),
         NETWORK_UPDATE("network/update"),
-        DEVICE_TYPE_LIST("devicetype/list"),
-        DEVICE_TYPE_COUNT("devicetype/count"),
-        DEVICE_TYPE_INSERT("devicetype/insert"),
-        DEVICE_TYPE_GET("devicetype/get"),
-        DEVICE_TYPE_DELETE("devicetype/delete"),
-        DEVICE_TYPE_UPDATE("devicetype/update"),
+        IEXPERIMENT_LIST("iexperiment/list"),
+        IEXPERIMENT_COUNT("iexperiment/count"),
+        IEXPERIMENT_INSERT("iexperiment/insert"),
+        IEXPERIMENT_GET("iexperiment/get"),
+        IEXPERIMENT_DELETE("iexperiment/delete"),
+        IEXPERIMENT_UPDATE("iexperiment/update"),
         ICOMPONENT_LIST("icomponent/list"),
         ICOMPONENT_COUNT("icomponent/count"),
         ICOMPONENT_INSERT("icomponent/insert"),
@@ -364,12 +364,12 @@ public class WebSocketRequestProcessor {
         USER_GET_NETWORK("user/getNetwork"),
         USER_ASSIGN_NETWORK("user/assignNetwork"),
         USER_UNASSIGN_NETWORK("user/unassignNetwork"),
-        USER_GET_DEVICE_TYPE("user/getDeviceType"),
-        USER_GET_DEVICE_TYPES("user/getDeviceTypes"),
-        USER_ASSIGN_DEVICE_TYPE("user/assignDeviceType"),
-        USER_UNASSIGN_DEVICE_TYPE("user/unassignDeviceType"),
-        USER_ALLOW_ALL_DEVICE_TYPES("user/allowAllDeviceTypes"),
-        USER_DISALLOW_ALL_DEVICE_TYPES("user/disallowAllDeviceTypes"),
+        USER_GET_IEXPERIMENT("user/getIexperiment"),
+        USER_GET_IEXPERIMENTS("user/getIexperiments"),
+        USER_ASSIGN_IEXPERIMENT("user/assignIexperiment"),
+        USER_UNASSIGN_IEXPERIMENT("user/unassignIexperiment"),
+        USER_ALLOW_ALL_IEXPERIMENTS("user/allowAllIexperiments"),
+        USER_DISALLOW_ALL_IEXPERIMENTS("user/disallowAllIexperiments"),
         USER_GET_ICOMPONENT("user/getIcomponent"),
         USER_GET_ICOMPONENTS("user/getIcomponents"),
         USER_ASSIGN_ICOMPONENT("user/assignIcomponent"),

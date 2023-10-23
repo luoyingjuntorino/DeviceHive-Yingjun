@@ -73,7 +73,7 @@ public class DeviceResourceImpl implements DeviceResource {
                 && !NAME.equalsIgnoreCase(sortField)
                 && !STATUS.equalsIgnoreCase(sortField)
                 && !NETWORK.equalsIgnoreCase(sortField)
-                && !DEVICE_TYPE.equalsIgnoreCase(sortField)
+                && !IEXPERIMENT.equalsIgnoreCase(sortField)
                 && !ICOMPONENT.equalsIgnoreCase(sortField)) {
             final Response response = ResponseFactory.response(BAD_REQUEST,
                     new ErrorResponse(BAD_REQUEST.getStatusCode(),
@@ -85,7 +85,7 @@ public class DeviceResourceImpl implements DeviceResource {
         HivePrincipal principal = (HivePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if ((!principal.areAllNetworksAvailable() && (principal.getNetworkIds() == null || principal.getNetworkIds().isEmpty())) ||
-                (!principal.areAllDeviceTypesAvailable() && (principal.getDeviceTypeIds() == null || principal.getDeviceTypeIds().isEmpty()))  ||
+                (!principal.areAllIexperimentsAvailable() && (principal.getIexperimentIds() == null || principal.getIexperimentIds().isEmpty()))  ||
                 (!principal.areAllIcomponentsAvailable() && (principal.getIcomponentIds() == null || principal.getIcomponentIds().isEmpty()))) {
             logger.warn("Unable to get list for empty devices");
             final Response response = ResponseFactory.response(Response.Status.OK, Collections.<DeviceVO>emptyList(), JsonPolicyDef.Policy.DEVICE_PUBLISHED);

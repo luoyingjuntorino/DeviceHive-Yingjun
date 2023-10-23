@@ -24,10 +24,10 @@ package com.devicehive.model;
 import com.devicehive.json.strategies.JsonPolicyDef;
 import com.devicehive.model.enums.UserRole;
 import com.devicehive.model.enums.UserStatus;
-import com.devicehive.vo.DeviceTypeVO;
+import com.devicehive.vo.IexperimentVO;
 import com.devicehive.vo.IcomponentVO;
 import com.devicehive.vo.UserVO;
-import com.devicehive.vo.UserWithDeviceTypeVO;
+import com.devicehive.vo.UserWithIexperimentVO;
 import com.devicehive.vo.UserWithIcomponentVO;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.ObjectUtils;
@@ -50,7 +50,7 @@ import static com.devicehive.json.strategies.JsonPolicyDef.Policy.*;
         @NamedQuery(name = "User.hasAccessToNetwork", query = "select count(distinct u) from User u join u.networks n where u.id = :user and n = :network"),
         @NamedQuery(name = "User.hasAccessToDevice", query = "select count(distinct n) from Network n join n.devices d join n.users u where u.id = :user and d.deviceId = :deviceId"),
         @NamedQuery(name = "User.getWithNetworksById", query = "select u from User u left join fetch u.networks where u.id = :id"),
-        @NamedQuery(name = "User.getWithDeviceTypesById", query = "select u from User u left join fetch u.deviceTypes where u.id = :id"),
+        @NamedQuery(name = "User.getWithIexperimentsById", query = "select u from User u left join fetch u.iexperiments where u.id = :id"),
         @NamedQuery(name = "User.getWithIcomponentsById", query = "select u from User u left join fetch u.icomponents where u.id = :id"),
         @NamedQuery(name = "User.deleteById", query = "delete from User u where u.id = :id")
 })
@@ -104,7 +104,7 @@ public class User implements HiveEntity {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
     @JsonPolicyDef({USER_PUBLISHED})
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<DeviceType> deviceTypes;
+    private Set<Iexperiment> iexperiments;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
     @JsonPolicyDef({USER_PUBLISHED})
@@ -130,10 +130,10 @@ public class User implements HiveEntity {
     @JsonPolicyDef({USER_PUBLISHED, USERS_LISTED, USER_SUBMITTED})
     private Boolean introReviewed;
 
-    @Column(name = "all_device_types_available")
-    @SerializedName("allDeviceTypesAvailable")
+    @Column(name = "all_iexperiments_available")
+    @SerializedName("allIexperimentsAvailable")
     @JsonPolicyDef({USER_PUBLISHED, USERS_LISTED, USER_SUBMITTED})
-    private Boolean allDeviceTypesAvailable;
+    private Boolean allIexperimentsAvailable;
 
     @Column(name = "all_icomponents_available")
     @SerializedName("allIcomponentsAvailable")
@@ -210,12 +210,12 @@ public class User implements HiveEntity {
         this.networks = networks;
     }
 
-    public Set<DeviceType> getDeviceTypes() {
-        return deviceTypes;
+    public Set<Iexperiment> getIexperiments() {
+        return iexperiments;
     }
 
-    public void setDeviceTypes(Set<DeviceType> deviceTypes) {
-        this.deviceTypes = deviceTypes;
+    public void setIexperiments(Set<Iexperiment> iexperiments) {
+        this.iexperiments = iexperiments;
     }
 
     public Set<Icomponent> getIcomponents() {
@@ -250,12 +250,12 @@ public class User implements HiveEntity {
         this.introReviewed = introReviewed;
     }
 
-    public Boolean getAllDeviceTypesAvailable() {
-        return allDeviceTypesAvailable;
+    public Boolean getAllIexperimentsAvailable() {
+        return allIexperimentsAvailable;
     }
 
-    public void setAllDeviceTypesAvailable(Boolean allDeviceTypesAvailable) {
-        this.allDeviceTypesAvailable = allDeviceTypesAvailable;
+    public void setAllIexperimentsAvailable(Boolean allIexperimentsAvailable) {
+        this.allIexperimentsAvailable = allIexperimentsAvailable;
     }
 
     public Boolean getAllIcomponentsAvailable() {
@@ -303,7 +303,7 @@ public class User implements HiveEntity {
             vo.setRole(dc.getRole());
             vo.setStatus(dc.getStatus());
             vo.setIntroReviewed(dc.getIntroReviewed());
-            vo.setAllDeviceTypesAvailable(dc.getAllDeviceTypesAvailable());
+            vo.setAllIexperimentsAvailable(dc.getAllIexperimentsAvailable());
             vo.setAllIcomponentsAvailable(dc.getAllIcomponentsAvailable());
         }
         return vo;
@@ -324,13 +324,13 @@ public class User implements HiveEntity {
             vo.setRole(dc.getRole());
             vo.setStatus(dc.getStatus());
             vo.setIntroReviewed(dc.getIntroReviewed());
-            vo.setAllDeviceTypesAvailable(dc.getAllDeviceTypesAvailable());
+            vo.setAllIexperimentsAvailable(dc.getAllIexperimentsAvailable());
             vo.setAllIcomponentsAvailable(dc.getAllIcomponentsAvailable());
         }
         return vo;
     }
 
-    public static User convertToEntity(UserWithDeviceTypeVO dc) {
+    public static User convertToEntity(UserWithIexperimentVO dc) {
         User vo = null;
         if (dc != null) {
             vo = new User();
@@ -344,13 +344,13 @@ public class User implements HiveEntity {
             vo.setRole(dc.getRole());
             vo.setStatus(dc.getStatus());
             vo.setIntroReviewed(dc.getIntroReviewed());
-            vo.setAllDeviceTypesAvailable(dc.getAllDeviceTypesAvailable());
+            vo.setAllIexperimentsAvailable(dc.getAllIexperimentsAvailable());
 
-            vo.setDeviceTypes(new HashSet<>());
+            vo.setIexperiments(new HashSet<>());
 
-            for (DeviceTypeVO deviceTypeVO : dc.getDeviceTypes()) {
-                DeviceType deviceType = DeviceType.convert(deviceTypeVO);
-                vo.getDeviceTypes().add(deviceType);
+            for (IexperimentVO iexperimentVO : dc.getIexperiments()) {
+                Iexperiment iexperiment = Iexperiment.convert(iexperimentVO);
+                vo.getIexperiments().add(iexperiment);
             }
         }
         return vo;

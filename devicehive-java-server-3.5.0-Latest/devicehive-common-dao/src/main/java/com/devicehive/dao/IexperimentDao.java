@@ -21,8 +21,8 @@ package com.devicehive.dao;
  */
 
 import com.devicehive.auth.HivePrincipal;
-import com.devicehive.vo.DeviceTypeVO;
-import com.devicehive.vo.DeviceTypeWithUsersAndDevicesVO;
+import com.devicehive.vo.IexperimentVO;
+import com.devicehive.vo.IexperimentWithUsersAndDevicesVO;
 import com.devicehive.vo.UserVO;
 
 import javax.validation.constraints.NotNull;
@@ -30,31 +30,31 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface DeviceTypeDao {
-    List<DeviceTypeVO> findByName(String name);
+public interface IexperimentDao {
+    List<IexperimentVO> findByName(String name);
 
-    void persist(DeviceTypeVO newDeviceType);
+    void persist(IexperimentVO newIexperiment);
 
-    List<DeviceTypeWithUsersAndDevicesVO> getDeviceTypesByIdsAndUsers(Long idForFiltering, Set<Long> singleton, Set<Long> permittedDeviceTypes);
+    List<IexperimentWithUsersAndDevicesVO> getIexperimentsByIdsAndUsers(Long idForFiltering, Set<Long> singleton, Set<Long> permittedIexperiments);
 
     int deleteById(long id);
 
-    DeviceTypeVO find(@NotNull Long deviceTypeId);
+    IexperimentVO find(@NotNull Long iexperimentId);
 
-    DeviceTypeVO merge(DeviceTypeVO existing);
+    IexperimentVO merge(IexperimentVO existing);
 
-    void assignToDeviceType(DeviceTypeVO deviceType, UserVO user);
+    void assignToIexperiment(IexperimentVO iexperiment, UserVO user);
 
-    List<DeviceTypeVO> list(String name, String namePattern, String sortField, boolean sortOrderAsc, Integer take,
+    List<IexperimentVO> list(String name, String namePattern, String sortField, boolean sortOrderAsc, Integer take,
                          Integer skip, Optional<HivePrincipal> principal);
 
     long count(String name, String namePattern, Optional<HivePrincipal> principal);
 
-    List<DeviceTypeVO> listAll();
+    List<IexperimentVO> listAll();
 
-    Optional<DeviceTypeVO> findFirstByName(String name);
+    Optional<IexperimentVO> findFirstByName(String name);
 
-    Optional<DeviceTypeWithUsersAndDevicesVO> findWithUsers(@NotNull long deviceTypeId);
+    Optional<IexperimentWithUsersAndDevicesVO> findWithUsers(@NotNull long iexperimentId);
 
-    Optional<DeviceTypeVO> findDefault(Set<Long> deviceTypeIds);
+    Optional<IexperimentVO> findDefault(Set<Long> iexperimentIds);
 }

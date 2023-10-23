@@ -58,7 +58,7 @@ public class UserUpdate implements HiveEntity {
     private Boolean introReviewed;
 
     @ApiModelProperty(hidden = true)
-    private Boolean allDeviceTypesAvailable;
+    private Boolean allIexperimentsAvailable;
 
     @ApiModelProperty(hidden = true)
     private Boolean allIcomponentsAvailable;
@@ -111,12 +111,12 @@ public class UserUpdate implements HiveEntity {
         this.introReviewed = introReviewed;
     }
 
-    public Boolean getAllDeviceTypesAvailable() {
-        return allDeviceTypesAvailable;
+    public Boolean getAllIexperimentsAvailable() {
+        return allIexperimentsAvailable;
     }
 
-    public void setAllDeviceTypesAvailable(Boolean allDeviceTypesAvailable) {
-        this.allDeviceTypesAvailable = allDeviceTypesAvailable;
+    public void setAllIexperimentsAvailable(Boolean allIexperimentsAvailable) {
+        this.allIexperimentsAvailable = allIexperimentsAvailable;
     }
 
     public Boolean getAllIcomponentsAvailable() {
@@ -148,8 +148,8 @@ public class UserUpdate implements HiveEntity {
         if (introReviewed != null) {
             result.setIntroReviewed(introReviewed);
         }
-        if (allDeviceTypesAvailable != null) {
-            result.setAllDeviceTypesAvailable(allDeviceTypesAvailable);
+        if (allIexperimentsAvailable != null) {
+            result.setAllIexperimentsAvailable(allIexperimentsAvailable);
         }
         if (allIcomponentsAvailable != null) {
             result.setAllIcomponentsAvailable(allIcomponentsAvailable);

@@ -45,9 +45,9 @@ public class PluginReqisterQuery {
     @QueryParam("networkIds")
     private String networkIds;
 
-    @ApiParam(name = "deviceTypeIds", value = "Device type ids")
-    @QueryParam("deviceTypeIds")
-    private String deviceTypeIds;
+    @ApiParam(name = "iexperimentIds", value = "Iexperiment ids")
+    @QueryParam("iexperimentIds")
+    private String iexperimentIds;
 
     @ApiParam(name = "icomponentIds", value = "Icomponent ids")
     @QueryParam("icomponentIds")
@@ -85,12 +85,12 @@ public class PluginReqisterQuery {
         this.networkIds = networkIds;
     }
 
-    public String getDeviceTypeIds() {
-        return deviceTypeIds;
+    public String getIexperimentIds() {
+        return iexperimentIds;
     }
 
-    public void setDeviceTypeIds(String deviceTypeIds) {
-        this.deviceTypeIds = deviceTypeIds;
+    public void setIexperimentIds(String iexperimentIds) {
+        this.iexperimentIds = iexperimentIds;
     }
 
     public String getIcomponentIds() {
@@ -143,7 +143,7 @@ public class PluginReqisterQuery {
         return request;
     }
 
-    // Filter format <notification/command/command_update>/<networkIDs>/<deviceTypeIDs>/<icomponentIDs>/<deviceID>/<eventNames>
+    // Filter format <notification/command/command_update>/<networkIDs>/<iexperimentIDs>/<icomponentIDs>/<deviceID>/<eventNames>
     // TODO - change to embedded entity for better code readability
     public String constructFilterString() {
         StringJoiner sj = new StringJoiner("/");
@@ -165,8 +165,8 @@ public class PluginReqisterQuery {
             sj.add(ANY);
         }
 
-        if (deviceTypeIds != null && !deviceTypeIds.isEmpty()) {
-            sj.add(deviceTypeIds);
+        if (iexperimentIds != null && !iexperimentIds.isEmpty()) {
+            sj.add(iexperimentIds);
         } else {
             sj.add(ANY);
         }

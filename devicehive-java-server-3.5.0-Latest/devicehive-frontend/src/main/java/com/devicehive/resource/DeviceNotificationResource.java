@@ -221,9 +221,9 @@ public interface DeviceNotificationResource {
             @ApiParam(name = "networkIds", value = "List of network IDs")
             @QueryParam("networkIds")
             String networkIdsString,
-            @ApiParam(name = "deviceTypeIds", value = "List of device type IDs")
-            @QueryParam("deviceTypeIds")
-            String deviceTypeIdsString,
+            @ApiParam(name = "iexperimentIds", value = "List of iexperiment IDs")
+            @QueryParam("iexperimentIds")
+            String iexperimentIdsString,
             @ApiParam(name = "icomponentIds", value = "List of icomponent IDs")
             @QueryParam("icomponentIds")
             String icomponentIdsString,

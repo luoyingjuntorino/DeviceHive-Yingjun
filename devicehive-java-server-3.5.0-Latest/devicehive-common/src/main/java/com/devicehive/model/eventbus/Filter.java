@@ -35,7 +35,7 @@ public class Filter implements Portable {
 
     private Long networkId;
 
-    private Long deviceTypeId;
+    private Long iexperimentId;
 
     private Long icomponentId;
 
@@ -49,9 +49,9 @@ public class Filter implements Portable {
 
     }
 
-    public Filter(Long networkId, Long deviceTypeId, Long icomponentId, String deviceId, String eventName, String name) {
+    public Filter(Long networkId, Long iexperimentId, Long icomponentId, String deviceId, String eventName, String name) {
         this.networkId = networkId;
-        this.deviceTypeId = deviceTypeId;
+        this.iexperimentId = iexperimentId;
         this.icomponentId = icomponentId;
         this.deviceId = deviceId;
         this.eventName = eventName;
@@ -66,12 +66,12 @@ public class Filter implements Portable {
         this.networkId = networkId;
     }
 
-    public Long getDeviceTypeId() {
-        return deviceTypeId;
+    public Long getIexperimentId() {
+        return iexperimentId;
     }
 
-    public void setDeviceTypeId(Long deviceTypeId) {
-        this.deviceTypeId = deviceTypeId;
+    public void setIexperimentId(Long iexperimentId) {
+        this.iexperimentId = iexperimentId;
     }
 
     public Long getIcomponentId() {
@@ -110,7 +110,7 @@ public class Filter implements Portable {
         StringJoiner joiner = new StringJoiner(",");
 
         joiner.add(networkId != null ? networkId.toString() : "*")
-                .add(deviceTypeId != null ? deviceTypeId.toString() : "*")
+                .add(iexperimentId != null ? iexperimentId.toString() : "*")
                 .add(icomponentId != null ? icomponentId.toString() : "*")
                 .add(deviceId != null ? deviceId : "*");
 
@@ -121,7 +121,7 @@ public class Filter implements Portable {
         StringJoiner joiner = new StringJoiner(",");
 
         joiner.add(networkId != null ? networkId.toString() : "*")
-                .add(deviceTypeId != null ? deviceTypeId.toString() : "*")
+                .add(iexperimentId != null ? iexperimentId.toString() : "*")
                 .add(icomponentId != null ? icomponentId.toString() : "*")
                 .add("*");
 
@@ -143,7 +143,7 @@ public class Filter implements Portable {
         if (!(o instanceof Filter)) return false;
         Filter that = (Filter) o;
         return Objects.equals(networkId, that.networkId) &&
-                Objects.equals(deviceTypeId, that.deviceTypeId) &&
+                Objects.equals(iexperimentId, that.iexperimentId) &&
                 Objects.equals(icomponentId, that.icomponentId) &&
                 Objects.equals(deviceId, that.deviceId) &&
                 Objects.equals(eventName, that.eventName) &&
@@ -152,14 +152,14 @@ public class Filter implements Portable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(networkId, deviceTypeId, icomponentId, deviceId, eventName, name);
+        return Objects.hash(networkId, iexperimentId, icomponentId, deviceId, eventName, name);
     }
 
     @Override
     public String toString() {
         return "Filter{" +
                 "networkId=" + networkId +
-                ", deviceTypeId=" + deviceTypeId +
+                ", iexperimentId=" + iexperimentId +
                 ", icomponentId=" + icomponentId +
                 ", deviceId=" + deviceId +
                 ", eventName=" + eventName +
@@ -180,7 +180,7 @@ public class Filter implements Portable {
     @Override
     public void writePortable(PortableWriter writer) throws IOException {
         writer.writeLong("networkId", Objects.nonNull(networkId) ? networkId : 0);
-        writer.writeLong("deviceTypeId", Objects.nonNull(deviceTypeId) ? deviceTypeId : 0);
+        writer.writeLong("iexperimentId", Objects.nonNull(iexperimentId) ? iexperimentId : 0);
         writer.writeLong("icomponentId", Objects.nonNull(icomponentId) ? icomponentId : 0);
         writer.writeUTF("deviceId", deviceId);
         writer.writeUTF("eventName", eventName);
@@ -190,7 +190,7 @@ public class Filter implements Portable {
     @Override
     public void readPortable(PortableReader reader) throws IOException {
         networkId = reader.readLong("networkId");
-        deviceTypeId = reader.readLong("deviceTypeId");
+        iexperimentId = reader.readLong("iexperimentId");
         icomponentId = reader.readLong("icomponentId");
         deviceId = reader.readUTF("deviceId");
         eventName = reader.readUTF("eventName");

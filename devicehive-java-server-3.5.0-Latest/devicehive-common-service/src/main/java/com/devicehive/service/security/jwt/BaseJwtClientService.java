@@ -77,8 +77,8 @@ public class BaseJwtClientService {
                 .ifPresent(networkIds -> jwtUserPayloadBuilder.withNetworkIds(new HashSet<>(networkIds)));
         Optional.ofNullable((ArrayList<Integer>) payloadMap.get(JwtUserPayload.ACTIONS))
                 .ifPresent(actions -> jwtUserPayloadBuilder.withActions(new HashSet<>(actions)));
-        Optional.ofNullable((ArrayList<String>) payloadMap.get(JwtUserPayload.DEVICE_TYPE_IDS))
-                .ifPresent(deviceTypeIds -> jwtUserPayloadBuilder.withDeviceTypeIds(new HashSet<>(deviceTypeIds)));
+        Optional.ofNullable((ArrayList<String>) payloadMap.get(JwtUserPayload.IEXPERIMENT_IDS))
+                .ifPresent(iexperimentIds -> jwtUserPayloadBuilder.withIexperimentIds(new HashSet<>(iexperimentIds)));
         Optional.ofNullable((ArrayList<String>) payloadMap.get(JwtUserPayload.ICOMPONENT_IDS))
                 .ifPresent(icomponentIds -> jwtUserPayloadBuilder.withIcomponentIds(new HashSet<>(icomponentIds)));
 

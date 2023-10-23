@@ -107,16 +107,16 @@ public class DeviceCommandResourceImpl implements DeviceCommandResource {
     }
 
     @Override
-    public void pollMany(final String deviceId, final String networkIdsString, final String deviceTypeIdsString, final String icomponentIdsString,
+    public void pollMany(final String deviceId, final String networkIdsString, final String iexperimentIdsString, final String icomponentIdsString,
             final String namesString, final String timestamp, final long timeout, final int limit, final AsyncResponse asyncResponse)
             throws Exception {
-        poll(timeout, deviceId, networkIdsString, deviceTypeIdsString, icomponentIdsString, namesString, timestamp, false, limit, asyncResponse);
+        poll(timeout, deviceId, networkIdsString, iexperimentIdsString, icomponentIdsString, namesString, timestamp, false, limit, asyncResponse);
     }
 
     private void poll(final long timeout,
                       final String deviceId,
                       final String networkIdsCsv,
-                      final String deviceTypeIdsCsv,
+                      final String iexperimentIdsCsv,
                       final String icomponentIdsCsv,
                       final String namesCsv,
                       final String timestamp,
@@ -145,7 +145,7 @@ public class DeviceCommandResourceImpl implements DeviceCommandResource {
                         .map(n -> gson.fromJson(n, Long.class))
                         .collect(Collectors.toSet())
                 ).orElse(null);
-        Set<Long> deviceTypes = Optional.ofNullable(StringUtils.split(deviceTypeIdsCsv, ','))
+        Set<Long> iexperiments = Optional.ofNullable(StringUtils.split(iexperimentIdsCsv, ','))
                 .map(Arrays::asList)
                 .map(list -> list.stream()
                         .map(dt -> gson.fromJson(dt, Long.class))
@@ -167,7 +167,7 @@ public class DeviceCommandResourceImpl implements DeviceCommandResource {
             }
         };
 
-        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, icomponents, COMMAND_EVENT.name(), names, authentication);
+        Set<Filter> filters = filterService.getFilterList(deviceId, networks, iexperiments, icomponents, COMMAND_EVENT.name(), names, authentication);
 
         if (!filters.isEmpty()) {
             Pair<Long, CompletableFuture<List<DeviceCommand>>> pair = commandService

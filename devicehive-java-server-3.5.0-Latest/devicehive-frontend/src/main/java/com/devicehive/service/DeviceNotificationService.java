@@ -194,7 +194,7 @@ public class DeviceNotificationService {
         notification.setId(Math.abs(new Random().nextInt()));
         notification.setDeviceId(device.getDeviceId());
         notification.setNetworkId(device.getNetworkId());
-        notification.setDeviceTypeId(device.getDeviceTypeId());
+        notification.setIexperimentId(device.getIexperimentId());
         notification.setIcomponentId(device.getIcomponentId());
         if (notificationSubmit.getTimestamp() == null) {
             notification.setTimestamp(timestampService.getDate());

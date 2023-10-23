@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * Actions - if present, represents the set of actions that the principal has permission to execute
  * Subnets - if present, represents the set of ips that the principal has permission to access
  * Networks - if present, represents the set of networks that the principal has permission to access
- * Device types - if present, represents the set of the device types that the principal has permission to access
+ * Iexperiments - if present, represents the set of the iexperiments that the principal has permission to access
  * Icomponents - if present, represents the set of the icomponents that the principal has permission to access
  * Devices - if present, represents the set of the devices that the principal has permission to access
  */
@@ -52,33 +52,33 @@ public class HivePrincipal implements Principal, Portable {
     private UserVO user;
     private Set<HiveAction> actions;
     private Set<Long> networkIds;
-    private Set<Long> deviceTypeIds;
+    private Set<Long> iexperimentIds;
     private Set<Long> icomponentIds;
     private PluginVO plugin;
     private Boolean allNetworksAvailable = false;
-    private Boolean allDeviceTypesAvailable = true;
+    private Boolean allIexperimentsAvailable = true;
     private Boolean allIcomponentsAvailable = true;
 
     public HivePrincipal(UserVO user,
                          Set<HiveAction> actions,
                          Set<Long> networkIds,
-                         Set<Long> deviceTypeIds,
+                         Set<Long> iexperimentIds,
                          Set<Long> icomponentIds,
                          PluginVO plugin,
                          Boolean allNetworksAvailable,
-                         Boolean allDeviceTypesAvailable,
+                         Boolean allIexperimentsAvailable,
                          Boolean allIcomponentsAvailable) {
         this.user = user;
         this.actions = actions;
         this.networkIds = networkIds;
-        this.deviceTypeIds = deviceTypeIds;
+        this.iexperimentIds = iexperimentIds;
         this.icomponentIds = icomponentIds;
         this.plugin = plugin;
         if (allNetworksAvailable != null) {
             this.allNetworksAvailable = allNetworksAvailable;
         }
-        if (allDeviceTypesAvailable != null) {
-            this.allDeviceTypesAvailable = allDeviceTypesAvailable;
+        if (allIexperimentsAvailable != null) {
+            this.allIexperimentsAvailable = allIexperimentsAvailable;
         }
         if (allIcomponentsAvailable != null) {
             this.allIcomponentsAvailable = allIcomponentsAvailable;
@@ -121,12 +121,12 @@ public class HivePrincipal implements Principal, Portable {
         this.networkIds = networkIds;
     }
 
-    public Set<Long> getDeviceTypeIds() {
-        return deviceTypeIds;
+    public Set<Long> getIexperimentIds() {
+        return iexperimentIds;
     }
 
-    public void setDeviceTypeIds(Set<Long> deviceTypeIds) {
-        this.deviceTypeIds = deviceTypeIds;
+    public void setIexperimentIds(Set<Long> iexperimentIds) {
+        this.iexperimentIds = iexperimentIds;
     }
 
     public Set<Long> getIcomponentIds() {
@@ -153,12 +153,12 @@ public class HivePrincipal implements Principal, Portable {
         this.allNetworksAvailable = allNetworksAvailable;
     }
 
-    public Boolean areAllDeviceTypesAvailable() {
-        return allDeviceTypesAvailable;
+    public Boolean areAllIexperimentsAvailable() {
+        return allIexperimentsAvailable;
     }
 
-    public void setAllDeviceTypesAvailable(Boolean allDeviceTypesAvailable) {
-        this.allDeviceTypesAvailable = allDeviceTypesAvailable;
+    public void setAllIexperimentsAvailable(Boolean allIexperimentsAvailable) {
+        this.allIexperimentsAvailable = allIexperimentsAvailable;
     }
 
     public Boolean areAllIcomponentsAvailable() {
@@ -173,8 +173,8 @@ public class HivePrincipal implements Principal, Portable {
         return allNetworksAvailable || networkIds.contains(networkId);
     }
 
-    public boolean hasAccessToDeviceType(long deviceTypeId) {
-        return allDeviceTypesAvailable || deviceTypeIds.contains(deviceTypeId);
+    public boolean hasAccessToIexperiment(long iexperimentId) {
+        return allIexperimentsAvailable || iexperimentIds.contains(iexperimentId);
     }
 
     public boolean hasAccessToIcomponent(long icomponentId) {
@@ -192,8 +192,8 @@ public class HivePrincipal implements Principal, Portable {
         if (networkIds != null) {
             return networkIds.toString();
         }
-        if (deviceTypeIds != null) {
-            return deviceTypeIds.toString();
+        if (iexperimentIds != null) {
+            return iexperimentIds.toString();
         }
         if (icomponentIds != null) {
             return icomponentIds.toString();
@@ -203,7 +203,7 @@ public class HivePrincipal implements Principal, Portable {
     }
 
     public boolean isAuthenticated() {
-        if (user != null || actions != null || networkIds != null || deviceTypeIds != null || icomponentIds != null) {
+        if (user != null || actions != null || networkIds != null || iexperimentIds != null || icomponentIds != null) {
             return true;
         }
         throw new InvalidPrincipalException("Unauthorized");
@@ -230,10 +230,10 @@ public class HivePrincipal implements Principal, Portable {
     public void writePortable(PortableWriter writer) throws IOException {
         // write only required fields for com.devicehive.model.eventbus.Filter
         writer.writeBoolean("allNetworksAvailable", allNetworksAvailable);
-        writer.writeBoolean("allDeviceTypesAvailable", allDeviceTypesAvailable);
+        writer.writeBoolean("allIexperimentsAvailable", allIexperimentsAvailable);
         writer.writeBoolean("allIcomponentsAvailable", allIcomponentsAvailable);
         writer.writeLongArray("networkIds", networkIds != null ? networkIds.stream().mapToLong(Long::longValue).toArray() : new long[0]);
-        writer.writeLongArray("deviceTypeIds", deviceTypeIds != null ? deviceTypeIds.stream().mapToLong(Long::longValue).toArray() : new long[0]);
+        writer.writeLongArray("iexperimentIds", iexperimentIds != null ? iexperimentIds.stream().mapToLong(Long::longValue).toArray() : new long[0]);
         writer.writeLongArray("icomponentIds", icomponentIds != null ? icomponentIds.stream().mapToLong(Long::longValue).toArray() : new long[0]);
     }
 
@@ -241,10 +241,10 @@ public class HivePrincipal implements Principal, Portable {
     public void readPortable(PortableReader reader) throws IOException {
         // read only required fields for com.devicehive.model.eventbus.Filter
         allNetworksAvailable = reader.readBoolean("allNetworksAvailable");
-        allNetworksAvailable = reader.readBoolean("allDeviceTypesAvailable");
+        allNetworksAvailable = reader.readBoolean("allIexperimentsAvailable");
         allNetworksAvailable = reader.readBoolean("allIcomponentsAvailable");
         networkIds = Arrays.stream(reader.readLongArray("networkIds")).boxed().collect(Collectors.toSet());
-        deviceTypeIds = Arrays.stream(reader.readLongArray("deviceTypeIds")).boxed().collect(Collectors.toSet());
+        iexperimentIds = Arrays.stream(reader.readLongArray("iexperimentIds")).boxed().collect(Collectors.toSet());
         icomponentIds = Arrays.stream(reader.readLongArray("icomponentIds")).boxed().collect(Collectors.toSet());
     }
 }

@@ -34,7 +34,7 @@ import com.devicehive.util.HiveValidator;
 import com.devicehive.vo.NetworkVO;
 import com.devicehive.vo.NetworkWithUsersAndDevicesVO;
 import com.devicehive.vo.UserVO;
-import com.devicehive.vo.UserWithDeviceTypeVO;
+import com.devicehive.vo.UserWithIexperimentVO;
 import com.devicehive.vo.UserWithIcomponentVO;
 import com.devicehive.vo.UserWithNetworkVO;
 import org.slf4j.Logger;
@@ -120,15 +120,15 @@ public class BaseUserService {
     }
 
     /**
-     * Retrieves user with device types by id, if there is no device types user has
-     * access to device types will be represented by empty set
+     * Retrieves user with iexperiments by id, if there is no iexperiments user has
+     * access to iexperiments will be represented by empty set
      *
      * @param id user id
-     * @return User model with device types, or null, if there is no such user
+     * @return User model with iexperiments, or null, if there is no such user
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public UserWithDeviceTypeVO findUserWithDeviceType(@NotNull long id) {
-        return userDao.getWithDeviceTypeById(id);
+    public UserWithIexperimentVO findUserWithIexperiment(@NotNull long id) {
+        return userDao.getWithIexperimentById(id);
     }
 
     /**

@@ -65,7 +65,7 @@ public class DeviceService extends BaseDeviceService {
 
     private final DeviceNotificationService deviceNotificationService;
     private final BaseNetworkService networkService;
-    private final DeviceTypeService deviceTypeService;
+    private final IexperimentService iexperimentService;
     private final IcomponentService icomponentService;
     private final UserService userService;
     private final TimestampService timestampService;
@@ -73,7 +73,7 @@ public class DeviceService extends BaseDeviceService {
     @Autowired
     public DeviceService(DeviceNotificationService deviceNotificationService,
                          BaseNetworkService networkService,
-                         DeviceTypeService deviceTypeService,
+                         IexperimentService iexperimentService,
                          IcomponentService icomponentService,
                          UserService userService,
                          TimestampService timestampService,
@@ -82,7 +82,7 @@ public class DeviceService extends BaseDeviceService {
         super(deviceDao, networkService, rpcClient);
         this.deviceNotificationService = deviceNotificationService;
         this.networkService = networkService;
-        this.deviceTypeService = deviceTypeService;
+        this.iexperimentService = iexperimentService;
         this.icomponentService = icomponentService;
         this.userService = userService;
         this.timestampService = timestampService;
@@ -223,17 +223,17 @@ public class DeviceService extends BaseDeviceService {
                     return id;
                 })
                 .orElseGet(() -> networkService.findDefaultNetworkByUserId(user.getId()));
-        Long deviceTypeId = deviceUpdate.getDeviceTypeId()
+        Long iexperimentId = deviceUpdate.getIexperimentId()
                 .map(id -> {
-                    if (!deviceTypeService.isDeviceTypeExists(id)) {
+                    if (!iexperimentService.isIexperimentExists(id)) {
                         throw new IllegalParametersException(Messages.INVALID_REQUEST_PARAMETERS);
                     }
                     return id;
                 }).orElseGet(() -> {
-                    if (principal.areAllDeviceTypesAvailable() || (principal.getDeviceTypeIds() != null && !principal.getDeviceTypeIds().isEmpty())) {
-                        return deviceTypeService.findDefaultDeviceType(principal.getDeviceTypeIds());
+                    if (principal.areAllIexperimentsAvailable() || (principal.getIexperimentIds() != null && !principal.getIexperimentIds().isEmpty())) {
+                        return iexperimentService.findDefaultIexperiment(principal.getIexperimentIds());
                     } else {
-                        throw new ActionNotAllowedException(Messages.NO_ACCESS_TO_DEVICE_TYPE);
+                        throw new ActionNotAllowedException(Messages.NO_ACCESS_TO_IEXPERIMENT);
                     }
                 });
         Long icomponentId = deviceUpdate.getIcomponentId()
@@ -254,7 +254,7 @@ public class DeviceService extends BaseDeviceService {
         if (existingDevice == null) {
             DeviceVO device = deviceUpdate.convertTo(deviceId);
             device.setNetworkId(networkId);
-            device.setDeviceTypeId(deviceTypeId);
+            device.setIexperimentId(iexperimentId);
             device.setIcomponentId(icomponentId);
             if (device.getBlocked() == null) {
                 device.setBlocked(false);
@@ -272,8 +272,8 @@ public class DeviceService extends BaseDeviceService {
             if (deviceUpdate.getNetworkId().isPresent()){
                 existingDevice.setNetworkId(networkId);
             }
-            if (deviceUpdate.getDeviceTypeId().isPresent()){
-                existingDevice.setDeviceTypeId(deviceTypeId);
+            if (deviceUpdate.getIexperimentId().isPresent()){
+                existingDevice.setIexperimentId(iexperimentId);
             }
             if (deviceUpdate.getIcomponentId().isPresent()){
                 existingDevice.setIcomponentId(icomponentId);

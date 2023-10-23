@@ -79,10 +79,10 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
             POST_COMMAND_TO_DEVICE, COMMAND_LISTED})
     private Long networkId;
 
-    @SerializedName("deviceTypeId")
+    @SerializedName("iexperimentId")
     @JsonPolicyDef({COMMAND_FROM_CLIENT, COMMAND_TO_DEVICE, COMMAND_UPDATE_TO_CLIENT, COMMAND_UPDATE_FROM_DEVICE,
             POST_COMMAND_TO_DEVICE, COMMAND_LISTED})
-    private Long deviceTypeId;
+    private Long iexperimentId;
 
     @SerializedName("icomponentId")
     @JsonPolicyDef({COMMAND_FROM_CLIENT, COMMAND_TO_DEVICE, COMMAND_UPDATE_TO_CLIENT, COMMAND_UPDATE_FROM_DEVICE,
@@ -173,12 +173,12 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         this.networkId = networkId;
     }
 
-    public Long getDeviceTypeId() {
-        return deviceTypeId;
+    public Long getIexperimentId() {
+        return iexperimentId;
     }
 
-    public void setDeviceTypeId(Long deviceTypeId) {
-        this.deviceTypeId = deviceTypeId;
+    public void setIexperimentId(Long iexperimentId) {
+        this.iexperimentId = iexperimentId;
     }
 
     public Long getIcomponentId() {
@@ -239,7 +239,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         if (command != null ? !command.equals(message.command) : message.command != null) return false;
         if (deviceId != null ? !deviceId.equals(message.deviceId) : message.deviceId != null) return false;
         if (networkId != null ? !networkId.equals(message.networkId) : message.networkId != null) return false;
-        if (deviceTypeId != null ? !deviceTypeId.equals(message.deviceTypeId) : message.deviceTypeId != null) return false;
+        if (iexperimentId != null ? !iexperimentId.equals(message.iexperimentId) : message.iexperimentId != null) return false;
         if (icomponentId != null ? !icomponentId.equals(message.icomponentId) : message.icomponentId != null) return false;
         if (id != null ? !id.equals(message.id) : message.id != null) return false;
         if (isUpdated != null ? !isUpdated.equals(message.isUpdated) : message.isUpdated != null) return false;
@@ -261,7 +261,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         result1 = 31 * result1 + (userId != null ? userId.hashCode() : 0);
         result1 = 31 * result1 + (deviceId != null ? deviceId.hashCode() : 0);
         result1 = 31 * result1 + (networkId != null ? networkId.hashCode() : 0);
-        result1 = 31 * result1 + (deviceTypeId != null ? deviceTypeId.hashCode() : 0);
+        result1 = 31 * result1 + (iexperimentId != null ? iexperimentId.hashCode() : 0);
         result1 = 31 * result1 + (icomponentId != null ? icomponentId.hashCode() : 0);
         result1 = 31 * result1 + (parameters != null ? parameters.hashCode() : 0);
         result1 = 31 * result1 + (lifetime != null ? lifetime.hashCode() : 0);
@@ -281,7 +281,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
                 ", userId=" + userId +
                 ", deviceId='" + deviceId + '\'' +
                 ", networkId='" + networkId + '\'' +
-                ", deviceTypeId='" + deviceTypeId + '\'' +
+                ", iexperimentId='" + iexperimentId + '\'' +
                 ", icomponentId='" + icomponentId + '\'' +
                 ", parameters=" + parameters +
                 ", lifetime=" + lifetime +
@@ -318,7 +318,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         portableWriter.writeLong("userId", Objects.nonNull(userId) ? userId : 0);
         portableWriter.writeUTF("deviceId", deviceId);
         portableWriter.writeLong("networkId", Objects.nonNull(networkId) ? networkId : 0);
-        portableWriter.writeLong("deviceTypeId", Objects.nonNull(deviceTypeId) ? deviceTypeId : 0);
+        portableWriter.writeLong("iexperimentId", Objects.nonNull(iexperimentId) ? iexperimentId : 0);
         portableWriter.writeLong("icomponentId", Objects.nonNull(icomponentId) ? icomponentId : 0);
         boolean parametersIsNotNull = Objects.nonNull(parameters) && Objects.nonNull(parameters.getJsonString());
         portableWriter.writeUTF("parameters", parametersIsNotNull ? parameters.getJsonString() : null);
@@ -338,7 +338,7 @@ public class DeviceCommand implements HiveEntity, HazelcastEntity, Portable {
         userId = portableReader.readLong("userId");
         deviceId = portableReader.readUTF("deviceId");
         networkId = portableReader.readLong("networkId");
-        deviceTypeId = portableReader.readLong("deviceTypeId");
+        iexperimentId = portableReader.readLong("iexperimentId");
         icomponentId = portableReader.readLong("icomponentId");
         String parametersString = portableReader.readUTF("parameters");
         if (Objects.nonNull(parametersString)) {

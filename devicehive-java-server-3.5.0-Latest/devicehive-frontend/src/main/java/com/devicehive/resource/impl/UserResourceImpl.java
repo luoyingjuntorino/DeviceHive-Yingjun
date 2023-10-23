@@ -25,14 +25,14 @@ import com.devicehive.configuration.Messages;
 import com.devicehive.json.strategies.JsonPolicyDef;
 import com.devicehive.model.ErrorResponse;
 import com.devicehive.model.enums.UserRole;
-import com.devicehive.model.response.UserDeviceTypeResponse;
+import com.devicehive.model.response.UserIexperimentResponse;
 import com.devicehive.model.response.UserIcomponentResponse;
 import com.devicehive.model.response.UserNetworkResponse;
 import com.devicehive.model.updates.UserUpdate;
 import com.devicehive.resource.UserResource;
 import com.devicehive.resource.util.ResponseFactory;
-import com.devicehive.service.BaseDeviceTypeService;
-import com.devicehive.service.DeviceTypeService;
+import com.devicehive.service.BaseIexperimentService;
+import com.devicehive.service.IexperimentService;
 import com.devicehive.service.BaseIcomponentService;
 import com.devicehive.service.IcomponentService;
 import com.devicehive.service.UserService;
@@ -52,7 +52,7 @@ import java.util.Objects;
 
 import static com.devicehive.configuration.Constants.ID;
 import static com.devicehive.configuration.Constants.LOGIN;
-import static com.devicehive.json.strategies.JsonPolicyDef.Policy.DEVICE_TYPES_LISTED;
+import static com.devicehive.json.strategies.JsonPolicyDef.Policy.IEXPERIMENTS_LISTED;
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.ICOMPONENTS_LISTED;
 import static javax.ws.rs.core.Response.Status.*;
 
@@ -62,14 +62,14 @@ public class UserResourceImpl implements UserResource {
     private static final Logger logger = LoggerFactory.getLogger(UserResourceImpl.class);
 
     private final UserService userService;
-    private final DeviceTypeService deviceTypeService;
+    private final IexperimentService iexperimentService;
     private final IcomponentService icomponentService;
     private final HiveValidator hiveValidator;
 
     @Autowired
-    public UserResourceImpl(UserService userService, DeviceTypeService deviceTypeService, IcomponentService icomponentService, HiveValidator hiveValidator) {
+    public UserResourceImpl(UserService userService, IexperimentService iexperimentService, IcomponentService icomponentService, HiveValidator hiveValidator) {
         this.userService = userService;
-        this.deviceTypeService = deviceTypeService;
+        this.iexperimentService = iexperimentService;
         this.icomponentService = icomponentService;
         this.hiveValidator = hiveValidator;
     }
@@ -252,29 +252,29 @@ public class UserResourceImpl implements UserResource {
      * {@inheritDoc}
      */
     @Override
-    public Response getDeviceType(long id, long deviceTypeId) {
-        UserWithDeviceTypeVO existingUser = userService.findUserWithDeviceType(id);
+    public Response getIexperiment(long id, long iexperimentId) {
+        UserWithIexperimentVO existingUser = userService.findUserWithIexperiment(id);
         if (existingUser == null) {
-            logger.error("Can't get device type with id {}: user {} not found", deviceTypeId, id);
+            logger.error("Can't get iexperiment with id {}: user {} not found", iexperimentId, id);
             ErrorResponse errorResponseEntity = new ErrorResponse(NOT_FOUND.getStatusCode(),
                     String.format(Messages.USER_NOT_FOUND, id));
             return ResponseFactory.response(NOT_FOUND, errorResponseEntity);
         }
 
-        if (existingUser.getAllDeviceTypesAvailable()) {
-            DeviceTypeVO deviceTypeVO = deviceTypeService.getWithDevices(deviceTypeId);
-            if (deviceTypeVO != null) {
-                return ResponseFactory.response(OK, UserDeviceTypeResponse.fromDeviceType(deviceTypeVO), JsonPolicyDef.Policy.DEVICE_TYPES_LISTED);
+        if (existingUser.getAllIexperimentsAvailable()) {
+            IexperimentVO iexperimentVO = iexperimentService.getWithDevices(iexperimentId);
+            if (iexperimentVO != null) {
+                return ResponseFactory.response(OK, UserIexperimentResponse.fromIexperiment(iexperimentVO), JsonPolicyDef.Policy.IEXPERIMENTS_LISTED);
             }
         }
 
-        for (DeviceTypeVO deviceType : existingUser.getDeviceTypes()) {
-            if (deviceType.getId() == deviceTypeId) {
-                return ResponseFactory.response(OK, UserDeviceTypeResponse.fromDeviceType(deviceType), JsonPolicyDef.Policy.DEVICE_TYPES_LISTED);
+        for (IexperimentVO iexperiment : existingUser.getIexperiments()) {
+            if (iexperiment.getId() == iexperimentId) {
+                return ResponseFactory.response(OK, UserIexperimentResponse.fromIexperiment(iexperiment), JsonPolicyDef.Policy.IEXPERIMENTS_LISTED);
             }
         }
         ErrorResponse errorResponseEntity = new ErrorResponse(NOT_FOUND.getStatusCode(),
-                String.format(Messages.USER_DEVICE_TYPE_NOT_FOUND, deviceTypeId, id));
+                String.format(Messages.USER_IEXPERIMENT_NOT_FOUND, iexperimentId, id));
         return ResponseFactory.response(NOT_FOUND, errorResponseEntity);
     }
 
@@ -282,24 +282,24 @@ public class UserResourceImpl implements UserResource {
      * {@inheritDoc}
      */
     @Override
-    public void getDeviceTypes(long id, @Suspended final AsyncResponse asyncResponse) {
-        UserWithDeviceTypeVO existingUser = userService.findUserWithDeviceType(id);
+    public void getIexperiments(long id, @Suspended final AsyncResponse asyncResponse) {
+        UserWithIexperimentVO existingUser = userService.findUserWithIexperiment(id);
         if (existingUser == null) {
-            logger.error("Can't get device types for user with id {}: user not found", id);
+            logger.error("Can't get iexperiments for user with id {}: user not found", id);
             ErrorResponse errorResponseEntity = new ErrorResponse(NOT_FOUND.getStatusCode(),
                     String.format(Messages.USER_NOT_FOUND, id));
             asyncResponse.resume(ResponseFactory.response(NOT_FOUND, errorResponseEntity));
         } else {
-            if (existingUser.getAllDeviceTypesAvailable()) {
-                deviceTypeService.listAll().thenApply(deviceTypeVOS -> {
+            if (existingUser.getAllIexperimentsAvailable()) {
+                iexperimentService.listAll().thenApply(iexperimentVOS -> {
                     logger.debug("User list request proceed successfully");
-                    return ResponseFactory.response(OK, deviceTypeVOS, JsonPolicyDef.Policy.DEVICE_TYPES_LISTED);
+                    return ResponseFactory.response(OK, iexperimentVOS, JsonPolicyDef.Policy.IEXPERIMENTS_LISTED);
                 }).thenAccept(asyncResponse::resume);
-            } else if (!existingUser.getAllDeviceTypesAvailable() && (existingUser.getDeviceTypes() == null || existingUser.getDeviceTypes().isEmpty())) {
-                logger.warn("Unable to get list for empty device types");
-                asyncResponse.resume(ResponseFactory.response(OK, Collections.<DeviceTypeVO>emptyList(), DEVICE_TYPES_LISTED));
+            } else if (!existingUser.getAllIexperimentsAvailable() && (existingUser.getIexperiments() == null || existingUser.getIexperiments().isEmpty())) {
+                logger.warn("Unable to get list for empty iexperiments");
+                asyncResponse.resume(ResponseFactory.response(OK, Collections.<IexperimentVO>emptyList(), IEXPERIMENTS_LISTED));
             } else {
-                asyncResponse.resume(ResponseFactory.response(OK, existingUser.getDeviceTypes(), JsonPolicyDef.Policy.DEVICE_TYPES_LISTED));
+                asyncResponse.resume(ResponseFactory.response(OK, existingUser.getIexperiments(), JsonPolicyDef.Policy.IEXPERIMENTS_LISTED));
             }
         }
     }
@@ -308,8 +308,8 @@ public class UserResourceImpl implements UserResource {
      * {@inheritDoc}
      */
     @Override
-    public Response assignDeviceType(long id, long deviceTypeId) {
-        userService.assignDeviceType(id, deviceTypeId);
+    public Response assignIexperiment(long id, long iexperimentId) {
+        userService.assignIexperiment(id, iexperimentId);
         return ResponseFactory.response(NO_CONTENT);
     }
 
@@ -317,20 +317,20 @@ public class UserResourceImpl implements UserResource {
      * {@inheritDoc}
      */
     @Override
-    public Response unassignDeviceType(long id, long deviceTypeId) {
-        userService.unassignDeviceType(id, deviceTypeId);
+    public Response unassignIexperiment(long id, long iexperimentId) {
+        userService.unassignIexperiment(id, iexperimentId);
         return ResponseFactory.response(NO_CONTENT);
     }
 
     @Override
-    public Response allowAllDeviceTypes(long id) {
-        userService.allowAllDeviceTypes(id);
+    public Response allowAllIexperiments(long id) {
+        userService.allowAllIexperiments(id);
         return ResponseFactory.response(NO_CONTENT);
     }
 
     @Override
-    public Response disallowAllDeviceTypes(long id) {
-        userService.disallowAllDeviceTypes(id);
+    public Response disallowAllIexperiments(long id) {
+        userService.disallowAllIexperiments(id);
         return ResponseFactory.response(NO_CONTENT);
     }
 

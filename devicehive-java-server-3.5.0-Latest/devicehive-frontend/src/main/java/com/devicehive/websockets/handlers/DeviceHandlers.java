@@ -127,7 +127,7 @@ public class DeviceHandlers {
 
         WebSocketResponse response = new WebSocketResponse();
         if ((!principal.areAllNetworksAvailable() && (principal.getNetworkIds() == null || principal.getNetworkIds().isEmpty())) ||
-                (!principal.areAllDeviceTypesAvailable() && (principal.getDeviceTypeIds() == null || principal.getDeviceTypeIds().isEmpty())) ||
+                (!principal.areAllIexperimentsAvailable() && (principal.getIexperimentIds() == null || principal.getIexperimentIds().isEmpty())) ||
                 (!principal.areAllIcomponentsAvailable() && (principal.getIcomponentIds() == null || principal.getIcomponentIds().isEmpty()))) {
             logger.warn("Unable to get list for empty devices");
             response.addValue(DEVICES, Collections.<DeviceVO>emptyList(), DEVICES_LISTED);

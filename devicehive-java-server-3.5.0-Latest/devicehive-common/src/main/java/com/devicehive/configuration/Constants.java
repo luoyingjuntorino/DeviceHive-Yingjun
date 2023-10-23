@@ -101,10 +101,10 @@ public class Constants {
     public static final String NETWORK_ID = "networkId";
     public static final String NETWORK_IDS = "networkIds";
     public static final String NETWORK_NAME = "networkName";
-    public static final String DEVICE_TYPE = "deviceType";
-    public static final String DEVICE_TYPES = "deviceTypes";
-    public static final String DEVICE_TYPE_ID = "deviceTypeId";
-    public static final String DEVICE_TYPE_IDS = "deviceTypeIds";
+    public static final String IEXPERIMENT = "iexperiment";
+    public static final String IEXPERIMENTS = "iexperiments";
+    public static final String IEXPERIMENT_ID = "iexperimentId";
+    public static final String IEXPERIMENT_IDS = "iexperimentIds";
     public static final String ICOMPONENT = "icomponent";
     public static final String ICOMPONENTS = "icomponents";
     public static final String ICOMPONENT_ID = "icomponentId";
@@ -126,7 +126,7 @@ public class Constants {
 
     public static final String ANY = "*";
     public static final String GET_NETWORK = "GetNetwork";
-    public static final String GET_DEVICE_TYPE = "GetDeviceType";
+    public static final String GET_IEXPERIMENT = "GetIexperiment";
     public static final String GET_ICOMPONENT = "GetIcomponent";
     public static final String GET_DEVICE = "GetDevice";
     public static final String GET_DEVICE_NOTIFICATION = "GetDeviceNotification";
@@ -141,7 +141,7 @@ public class Constants {
     public static final String MANAGE_USER = "ManageUser";
     public static final String MANAGE_CONFIGURATION = "ManageConfiguration";
     public static final String MANAGE_NETWORK = "ManageNetwork";
-    public static final String MANAGE_DEVICE_TYPE = "ManageDeviceType";
+    public static final String MANAGE_IEXPERIMENT = "ManageIexperiment";
     public static final String MANAGE_ICOMPONENT = "ManageIcomponent";
     public static final String MANAGE_TOKEN = "ManageToken";
     public static final String MANAGE_PLUGIN = "ManagePlugin";

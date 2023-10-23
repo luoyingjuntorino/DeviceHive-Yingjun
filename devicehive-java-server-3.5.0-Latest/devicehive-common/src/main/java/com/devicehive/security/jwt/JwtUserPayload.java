@@ -52,7 +52,7 @@ public class JwtUserPayload extends JwtPayload {
 
     public final static String USER_ID = "u";
     public final static String NETWORK_IDS = "n";
-    public final static String DEVICE_TYPE_IDS = "dt";
+    public final static String IEXPERIMENT_IDS = "dt";
     public final static String ICOMPONENT_IDS = "cp";
     
     //Public claims
@@ -66,20 +66,20 @@ public class JwtUserPayload extends JwtPayload {
     @JsonProperty(NETWORK_IDS)
     private Set<String> networkIds;
 
-    @SerializedName(DEVICE_TYPE_IDS)
-    @JsonProperty(DEVICE_TYPE_IDS)
-    private Set<String> deviceTypeIds;
+    @SerializedName(IEXPERIMENT_IDS)
+    @JsonProperty(IEXPERIMENT_IDS)
+    private Set<String> iexperimentIds;
 
     @SerializedName(ICOMPONENT_IDS)
     @JsonProperty(ICOMPONENT_IDS)
     private Set<String> icomponentIds;
 
     public JwtUserPayload(Long userId, Set<Integer> actions, Set<String> networkIds,
-                       Set<String> deviceTypeIds, Set<String> icomponentIds, Date expiration, Integer tokenType) {
+                       Set<String> iexperimentIds, Set<String> icomponentIds, Date expiration, Integer tokenType) {
         super(actions, expiration, tokenType);
         this.userId = userId;
         this.networkIds = networkIds;
-        this.deviceTypeIds = deviceTypeIds;
+        this.iexperimentIds = iexperimentIds;
         this.icomponentIds = icomponentIds;
     }
 
@@ -99,12 +99,12 @@ public class JwtUserPayload extends JwtPayload {
         this.networkIds = networkIds;
     }
 
-    public Set<String> getDeviceTypeIds() {
-        return deviceTypeIds;
+    public Set<String> getIexperimentIds() {
+        return iexperimentIds;
     }
 
-    public void setDeviceTypeIds(Set<String> deviceTypeIds) {
-        this.deviceTypeIds = deviceTypeIds;
+    public void setIexperimentIds(Set<String> iexperimentIds) {
+        this.iexperimentIds = iexperimentIds;
     }
 
     public Set<String> getIcomponentIds() {
@@ -128,16 +128,16 @@ public class JwtUserPayload extends JwtPayload {
     public static class JwtUserPayloadBuilder extends JwtPayloadBuilder {
         private Long userId;
         private Set<String> networkIds;
-        private Set<String> deviceTypeIds;
+        private Set<String> iexperimentIds;
         private Set<String> icomponentIds;
         
         public JwtUserPayloadBuilder withPublicClaims(Long userId, Set<Integer> actions,
-                                        Set<String> networkIds, Set<String> deviceTypeIds,
+                                        Set<String> networkIds, Set<String> iexperimentIds,
                                         Set<String> icomponentIds) {
             this.userId = userId;
             this.actions = actions;
             this.networkIds = networkIds;
-            this.deviceTypeIds = deviceTypeIds;
+            this.iexperimentIds = iexperimentIds;
             this.icomponentIds = icomponentIds;
             return this;
         }
@@ -146,7 +146,7 @@ public class JwtUserPayload extends JwtPayload {
             this.userId = payload.getUserId();
             this.actions = payload.getActions();
             this.networkIds = payload.getNetworkIds();
-            this.deviceTypeIds = payload.getDeviceTypeIds();
+            this.iexperimentIds = payload.getIexperimentIds();
             this.icomponentIds = payload.getIcomponentIds();
             this.expiration = payload.getExpiration();
             return this;
@@ -167,8 +167,8 @@ public class JwtUserPayload extends JwtPayload {
             return this;
         }
 
-        public JwtUserPayloadBuilder withDeviceTypeIds(Set<String> deviceTypeIds) {
-            this.deviceTypeIds = deviceTypeIds;
+        public JwtUserPayloadBuilder withIexperimentIds(Set<String> iexperimentIds) {
+            this.iexperimentIds = iexperimentIds;
             return this;
         }
 
@@ -188,7 +188,7 @@ public class JwtUserPayload extends JwtPayload {
         }
 
         public JwtUserPayload buildPayload() {
-            return new JwtUserPayload(userId, actions, networkIds, deviceTypeIds, icomponentIds, expiration, tokenType);
+            return new JwtUserPayload(userId, actions, networkIds, iexperimentIds, icomponentIds, expiration, tokenType);
         }
     }
 }

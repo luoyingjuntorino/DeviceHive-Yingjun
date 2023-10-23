@@ -57,8 +57,8 @@ public class RequestHandlersMapper implements HandlersMapper {
     private final ListUserHandler listUserHandler;
     private final CountUserHandler countUserHandler;
     private final ListNetworkHandler listNetworkHandler;
-    private final ListDeviceTypeHandler listDeviceTypeHandler;
-    private final CountDeviceTypeHandler countDeviceTypeHandler;
+    private final ListIexperimentHandler listIexperimentHandler;
+    private final CountIexperimentHandler countIexperimentHandler;
     private final ListIcomponentHandler listIcomponentHandler;
     private final CountIcomponentHandler countIcomponentHandler;
     private final CountNetworkHandler countNetworkHandler;
@@ -85,14 +85,14 @@ public class RequestHandlersMapper implements HandlersMapper {
                                  CommandSearchHandler commandSearchHandler,
                                  CommandsUpdateHandler commandsUpdateHandler,
                                  ListNetworkHandler listNetworkHandler,
-                                 ListDeviceTypeHandler listDeviceTypeHandler,
+                                 ListIexperimentHandler listIexperimentHandler,
                                  ListIcomponentHandler listIcomponentHandler,
                                  DeviceDeleteHandler deviceDeleteHandler,
                                  CommandSubscribeRequestHandler commandSubscribeRequestHandler,
                                  CommandUnsubscribeRequestHandler commandUnsubscribeRequestHandler,
                                  CommandUpdateSubscribeRequestHandler commandUpdateSubscribeRequestHandler,
                                  CountUserHandler countUserHandler,
-                                 CountDeviceTypeHandler countDeviceTypeHandler,
+                                 CountIexperimentHandler countIexperimentHandler,
                                  CountIcomponentHandler countIcomponentHandler,
                                  CountNetworkHandler countNetworkHandler,
                                  CountDeviceHandler countDeviceHandler,
@@ -111,14 +111,14 @@ public class RequestHandlersMapper implements HandlersMapper {
         this.commandSearchHandler = commandSearchHandler;
         this.commandsUpdateHandler = commandsUpdateHandler;
         this.listNetworkHandler = listNetworkHandler;
-        this.listDeviceTypeHandler = listDeviceTypeHandler;
+        this.listIexperimentHandler = listIexperimentHandler;
         this.listIcomponentHandler = listIcomponentHandler;
         this.deviceDeleteHandler = deviceDeleteHandler;
         this.commandSubscribeRequestHandler = commandSubscribeRequestHandler;
         this.commandUnsubscribeRequestHandler = commandUnsubscribeRequestHandler;
         this.commandUpdateSubscribeRequestHandler = commandUpdateSubscribeRequestHandler;
         this.countUserHandler = countUserHandler;
-        this.countDeviceTypeHandler = countDeviceTypeHandler;
+        this.countIexperimentHandler = countIexperimentHandler;
         this.countIcomponentHandler = countIcomponentHandler;
         this.countNetworkHandler = countNetworkHandler;
         this.countDeviceHandler = countDeviceHandler;
@@ -147,8 +147,8 @@ public class RequestHandlersMapper implements HandlersMapper {
                 .put(Action.LIST_USER_REQUEST, listUserHandler)
                 .put(Action.COUNT_USER_REQUEST, countUserHandler)
                 .put(Action.LIST_NETWORK_REQUEST, listNetworkHandler)
-                .put(Action.LIST_DEVICE_TYPE_REQUEST, listDeviceTypeHandler)
-                .put(Action.COUNT_DEVICE_TYPE_REQUEST, countDeviceTypeHandler)
+                .put(Action.LIST_IEXPERIMENT_REQUEST, listIexperimentHandler)
+                .put(Action.COUNT_IEXPERIMENT_REQUEST, countIexperimentHandler)
                 .put(Action.LIST_ICOMPONENT_REQUEST, listIcomponentHandler)
                 .put(Action.COUNT_ICOMPONENT_REQUEST, countIcomponentHandler)
                 .put(Action.COUNT_NETWORK_REQUEST, countNetworkHandler)

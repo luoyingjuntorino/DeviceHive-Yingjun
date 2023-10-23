@@ -98,7 +98,7 @@ public class Plugin implements HiveEntity {
     @JsonPolicyDef({PLUGIN_PUBLISHED, PLUGIN_SUBMITTED, PLUGINS_LISTED})
     private String topicName;
 
-    // Filter format <notification/command/command_update>/<networkIDs>/<deviceTypeIDs>/<icomponentIDs>/<deviceID>/<eventNames>
+    // Filter format <notification/command/command_update>/<networkIDs>/<iexperimentIDs>/<icomponentIDs>/<deviceID>/<eventNames>
     // TODO - change to embedded entity for better code readability
     @Column(name = "filter")
     @SerializedName("filter")

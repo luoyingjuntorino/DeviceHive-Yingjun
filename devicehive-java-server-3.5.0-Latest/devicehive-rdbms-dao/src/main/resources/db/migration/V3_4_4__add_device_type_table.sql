@@ -17,40 +17,40 @@
 -- limitations under the License.
 -- #L%
 ---
--- Create Device Type table
-CREATE TABLE device_type (
+-- Create Iexperiment table
+CREATE TABLE iexperiment (
   id             BIGSERIAL    NOT NULL,
   name           VARCHAR(128) NOT NULL,
   description    VARCHAR(128) NULL,
   entity_version BIGINT       NOT NULL DEFAULT 0
 );
 
-ALTER TABLE device_type ADD CONSTRAINT device_type_pk PRIMARY KEY (id);
-ALTER TABLE device_type ADD CONSTRAINT device_type_name_unique UNIQUE (name);
+ALTER TABLE iexperiment ADD CONSTRAINT iexperiment_pk PRIMARY KEY (id);
+ALTER TABLE iexperiment ADD CONSTRAINT iexperiment_name_unique UNIQUE (name);
 
--- Create User-DeviceType table
-CREATE TABLE user_device_type (
+-- Create User-Iexperiment table
+CREATE TABLE user_iexperiment (
   id             BIGSERIAL NOT NULL,
   user_id        BIGINT    NOT NULL,
-  device_type_id     BIGINT    NOT NULL,
+  iexperiment_id     BIGINT    NOT NULL,
   entity_version BIGINT DEFAULT 0
 );
 
-ALTER TABLE user_device_type ADD CONSTRAINT user_device_type_pk PRIMARY KEY (id);
-ALTER TABLE user_device_type ADD CONSTRAINT user_device_type_user_pk FOREIGN KEY (user_id) REFERENCES dh_user (id);
-ALTER TABLE user_device_type ADD CONSTRAINT user_device_type_device_type_pk FOREIGN KEY (device_type_id) REFERENCES device_type (id);
+ALTER TABLE user_iexperiment ADD CONSTRAINT user_iexperiment_pk PRIMARY KEY (id);
+ALTER TABLE user_iexperiment ADD CONSTRAINT user_iexperiment_user_pk FOREIGN KEY (user_id) REFERENCES dh_user (id);
+ALTER TABLE user_iexperiment ADD CONSTRAINT user_iexperiment_iexperiment_pk FOREIGN KEY (iexperiment_id) REFERENCES iexperiment (id);
 
--- Add device_type column for device table
-ALTER TABLE device ADD COLUMN device_type_id BIGINT NULL;
-ALTER TABLE device ADD CONSTRAINT device_device_type_fk FOREIGN KEY (device_type_id) REFERENCES device_type (id) ON DELETE CASCADE;
-CREATE INDEX device_device_type_id_idx ON device(device_type_id);
+-- Add iexperiment column for device table
+ALTER TABLE device ADD COLUMN iexperiment_id BIGINT NULL;
+ALTER TABLE device ADD CONSTRAINT device_iexperiment_fk FOREIGN KEY (iexperiment_id) REFERENCES iexperiment (id) ON DELETE CASCADE;
+CREATE INDEX device_iexperiment_id_idx ON device(iexperiment_id);
 
--- Default device type
-INSERT INTO device_type (name, description)
+-- Default iexperiment
+INSERT INTO iexperiment (name, description)
   VALUES
-  ('Default Device Type', 'Default DeviceHive device type');
-INSERT INTO user_device_type (user_id, device_type_id) VALUES (1, 1);
-UPDATE device SET device_type_id = 1 WHERE device_id = 'e50d6085-2aba-48e9-b1c3-73c673e414be';
+  ('Default Iexperiment', 'Default DeviceHive iexperiment');
+INSERT INTO user_iexperiment (user_id, iexperiment_id) VALUES (1, 1);
+UPDATE device SET iexperiment_id = 1 WHERE device_id = 'e50d6085-2aba-48e9-b1c3-73c673e414be';
 
 
 -- -- Create Icomponent table

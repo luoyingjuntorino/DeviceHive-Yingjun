@@ -44,13 +44,13 @@ public class CommandEvent extends Event {
     @Override
     public Collection<Filter> getApplicableFilters() {
         Filter deviceFilter = new Filter(command.getNetworkId(),
-                command.getDeviceTypeId(),
+                command.getIexperimentId(),
                 command.getIcomponentId(),
                 command.getDeviceId(),
                 Action.COMMAND_EVENT.name(),
                 null);
         Filter deviceWithNameFilter = new Filter(command.getNetworkId(),
-                command.getDeviceTypeId(),
+                command.getIexperimentId(),
                 command.getIcomponentId(),
                 command.getDeviceId(),
                 Action.COMMAND_EVENT.name(),

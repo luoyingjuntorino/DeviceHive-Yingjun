@@ -21,7 +21,7 @@ package com.devicehive.dao.rdbms;
  */
 
 import com.devicehive.dao.UserDao;
-import com.devicehive.model.DeviceType;
+import com.devicehive.model.Iexperiment;
 import com.devicehive.model.Icomponent;
 import com.devicehive.model.Network;
 import com.devicehive.model.User;
@@ -94,8 +94,8 @@ public class UserDaoRdbmsImpl extends RdbmsGenericDao implements UserDao {
     }
 
     @Override
-    public UserWithDeviceTypeVO getWithDeviceTypeById(long id) {
-        User user = createNamedQuery(User.class, "User.getWithDeviceTypesById", of(CacheConfig.get()))
+    public UserWithIexperimentVO getWithIexperimentById(long id) {
+        User user = createNamedQuery(User.class, "User.getWithIexperimentsById", of(CacheConfig.get()))
                 .setParameter("id", id)
                 .getResultList()
                 .stream().findFirst().orElse(null);
@@ -103,15 +103,15 @@ public class UserDaoRdbmsImpl extends RdbmsGenericDao implements UserDao {
             return null;
         }
         UserVO vo = User.convertToVo(user);
-        UserWithDeviceTypeVO userWithDeviceTypeVO = UserWithDeviceTypeVO.fromUserVO(vo);
+        UserWithIexperimentVO userWithIexperimentVO = UserWithIexperimentVO.fromUserVO(vo);
         //TODO [rafa] change here to bulk fetch data
-        if (user.getDeviceTypes() != null) {
-            for (DeviceType deviceType : user.getDeviceTypes()) {
-                DeviceTypeVO deviceTypeVO = DeviceType.convertDeviceType(deviceType);
-                userWithDeviceTypeVO.getDeviceTypes().add(deviceTypeVO);
+        if (user.getIexperiments() != null) {
+            for (Iexperiment iexperiment : user.getIexperiments()) {
+                IexperimentVO iexperimentVO = Iexperiment.convertIexperiment(iexperiment);
+                userWithIexperimentVO.getIexperiments().add(iexperimentVO);
             }
         }
-        return userWithDeviceTypeVO;
+        return userWithIexperimentVO;
     }
 
     @Override
@@ -177,36 +177,36 @@ public class UserDaoRdbmsImpl extends RdbmsGenericDao implements UserDao {
     }
 
     @Override
-    public void unassignDeviceType(@NotNull UserVO existingUser, @NotNull long deviceTypeId) {
-        createNamedQuery(DeviceType.class, "DeviceType.findWithUsers", of(CacheConfig.refresh()))
-                .setParameter("id", deviceTypeId)
+    public void unassignIexperiment(@NotNull UserVO existingUser, @NotNull long iexperimentId) {
+        createNamedQuery(Iexperiment.class, "Iexperiment.findWithUsers", of(CacheConfig.refresh()))
+                .setParameter("id", iexperimentId)
                 .getResultList()
                 .stream().findFirst()
-                .ifPresent(existingDeviceType -> {
+                .ifPresent(existingIexperiment -> {
                     User usr = new User();
                     usr.setId(existingUser.getId());
-                    existingDeviceType.getUsers().remove(usr);
-                    merge(existingDeviceType);
+                    existingIexperiment.getUsers().remove(usr);
+                    merge(existingIexperiment);
                 });
     }
 
     @Override
-    public UserVO allowAllDeviceTypes(UserWithDeviceTypeVO existingUser) {
+    public UserVO allowAllIexperiments(UserWithIexperimentVO existingUser) {
         User entity = User.convertToEntity(existingUser);
-        entity.setAllDeviceTypesAvailable(true);
-        //TODO - add single named query to avoid cycling through all device types
-        for (DeviceType dt: entity.getDeviceTypes()) {
-            unassignDeviceType(existingUser, dt.getId());
+        entity.setAllIexperimentsAvailable(true);
+        //TODO - add single named query to avoid cycling through all iexperiments
+        for (Iexperiment dt: entity.getIexperiments()) {
+            unassignIexperiment(existingUser, dt.getId());
         }
-        entity.setDeviceTypes(Collections.EMPTY_SET);
+        entity.setIexperiments(Collections.EMPTY_SET);
         User merge = super.merge(entity);
         return User.convertToVo(merge);
     }
 
     @Override
-    public UserVO disallowAllDeviceTypes(UserVO existingUser) {
+    public UserVO disallowAllIexperiments(UserVO existingUser) {
         User entity = User.convertToEntity(existingUser);
-        entity.setAllDeviceTypesAvailable(false);
+        entity.setAllIexperimentsAvailable(false);
         User merge = super.merge(entity);
         return User.convertToVo(merge);
     }

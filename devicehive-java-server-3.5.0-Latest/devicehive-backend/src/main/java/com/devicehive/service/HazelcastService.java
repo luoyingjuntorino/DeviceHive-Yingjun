@@ -98,7 +98,7 @@ public class HazelcastService {
 
     public <T extends HazelcastEntity> Collection<T> find(String deviceId,
                                                           Collection<Long> networkIds,
-                                                          Collection<Long> deviceTypeIds,
+                                                          Collection<Long> iexperimentIds,
                                                           Collection<Long> icomponentIds,
                                                           Collection<String> names,
                                                           Integer take,
@@ -107,7 +107,7 @@ public class HazelcastService {
                                                           boolean returnUpdated,
                                                           String status,
                                                           Class<T> entityClass) {
-        final Predicate filters = hazelcastHelper.prepareFilters(deviceId, networkIds, deviceTypeIds, icomponentIds, names,
+        final Predicate filters = hazelcastHelper.prepareFilters(deviceId, networkIds, iexperimentIds, icomponentIds, names,
                 timestampSt, timestampEnd, returnUpdated, status, entityClass);
         return find(filters, take, entityClass);
     }

@@ -29,30 +29,30 @@ import com.google.gson.JsonObject;
 import java.lang.reflect.Modifier;
 import java.util.Optional;
 
-public class CountDeviceTypeRequest extends Body {
+public class CountIexperimentRequest extends Body {
 
     private String name;
     private String namePattern;
     private Optional<HivePrincipal> principal;
 
-    public CountDeviceTypeRequest() {
-        super(Action.COUNT_DEVICE_TYPE_REQUEST);
+    public CountIexperimentRequest() {
+        super(Action.COUNT_IEXPERIMENT_REQUEST);
     }
 
-    public CountDeviceTypeRequest(String name, String namePattern, Optional<HivePrincipal> principal) {
-        super(Action.COUNT_DEVICE_TYPE_REQUEST);
+    public CountIexperimentRequest(String name, String namePattern, Optional<HivePrincipal> principal) {
+        super(Action.COUNT_IEXPERIMENT_REQUEST);
         this.name = name;
         this.namePattern = namePattern;
         this.principal = principal;
     }
 
-    public static CountDeviceTypeRequest createCountDeviceTypeRequest(JsonObject request) {
-        CountDeviceTypeRequest countDeviceTypeRequest = new GsonBuilder()
+    public static CountIexperimentRequest createCountIexperimentRequest(JsonObject request) {
+        CountIexperimentRequest countIexperimentRequest = new GsonBuilder()
                 .excludeFieldsWithModifiers(Modifier.PROTECTED)
                 .create()
-                .fromJson(request, CountDeviceTypeRequest.class);
+                .fromJson(request, CountIexperimentRequest.class);
 
-        return countDeviceTypeRequest;
+        return countIexperimentRequest;
     }
 
     public String getName() {

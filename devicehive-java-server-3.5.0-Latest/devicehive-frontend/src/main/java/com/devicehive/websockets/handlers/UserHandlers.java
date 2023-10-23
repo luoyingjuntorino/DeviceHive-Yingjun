@@ -26,14 +26,14 @@ import com.devicehive.configuration.Messages;
 import com.devicehive.exceptions.HiveException;
 import com.devicehive.messages.handler.WebSocketClientHandler;
 import com.devicehive.model.enums.UserRole;
-import com.devicehive.model.response.UserDeviceTypeResponse;
+import com.devicehive.model.response.UserIexperimentResponse;
 import com.devicehive.model.response.UserIcomponentResponse;
 import com.devicehive.model.response.UserNetworkResponse;
 import com.devicehive.model.rpc.CountUserRequest;
 import com.devicehive.model.rpc.ListUserRequest;
 import com.devicehive.model.updates.UserUpdate;
-import com.devicehive.service.BaseDeviceTypeService;
-import com.devicehive.service.DeviceTypeService;
+import com.devicehive.service.BaseIexperimentService;
+import com.devicehive.service.IexperimentService;
 import com.devicehive.service.BaseIcomponentService;
 import com.devicehive.service.IcomponentService;
 import com.devicehive.service.UserService;
@@ -65,7 +65,7 @@ public class UserHandlers {
     private static final Logger logger = LoggerFactory.getLogger(UserHandlers.class);
 
     private final UserService userService;
-    private final DeviceTypeService deviceTypeService;
+    private final IexperimentService iexperimentService;
     private final IcomponentService icomponentService;
     private final HiveValidator hiveValidator;
     private final WebSocketClientHandler clientHandler;
@@ -73,13 +73,13 @@ public class UserHandlers {
 
     @Autowired
     public UserHandlers(UserService userService,
-                        DeviceTypeService deviceTypeService,
+                        IexperimentService iexperimentService,
                         IcomponentService icomponentService,
                         HiveValidator hiveValidator,
                         WebSocketClientHandler clientHandler,
                         Gson gson) {
         this.userService = userService;
-        this.deviceTypeService = deviceTypeService;
+        this.iexperimentService = iexperimentService;
         this.icomponentService = icomponentService;
         this.hiveValidator = hiveValidator;
         this.clientHandler = clientHandler;
@@ -331,133 +331,133 @@ public class UserHandlers {
     }
 
     @HiveWebsocketAuth
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'GET_DEVICE_TYPE')")
-    public void processUserGetDeviceType(JsonObject request, WebSocketSession session) {
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'GET_IEXPERIMENT')")
+    public void processUserGetIexperiment(JsonObject request, WebSocketSession session) {
         Long userId = gson.fromJson(request.get(USER_ID), Long.class);
         if (userId == null) {
             logger.error(Messages.USER_ID_REQUIRED);
             throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        Long deviceTypeId = gson.fromJson(request.get(DEVICE_TYPE_ID), Long.class);
-        if (deviceTypeId == null) {
-            logger.error(Messages.DEVICE_TYPE_ID_REQUIRED);
-            throw new HiveException(Messages.DEVICE_TYPE_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        Long iexperimentId = gson.fromJson(request.get(IEXPERIMENT_ID), Long.class);
+        if (iexperimentId == null) {
+            logger.error(Messages.IEXPERIMENT_ID_REQUIRED);
+            throw new HiveException(Messages.IEXPERIMENT_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        UserWithDeviceTypeVO existingUser = userService.findUserWithDeviceType(userId);
+        UserWithIexperimentVO existingUser = userService.findUserWithIexperiment(userId);
         if (existingUser == null) {
-            logger.error("Can't get device type with id {}: user {} not found", deviceTypeId, userId);
+            logger.error("Can't get iexperiment with id {}: user {} not found", iexperimentId, userId);
             throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
         }
 
-        for (DeviceTypeVO deviceType : existingUser.getDeviceTypes()) {
-            if (deviceTypeId.equals(deviceType.getId())) {
+        for (IexperimentVO iexperiment : existingUser.getIexperiments()) {
+            if (iexperimentId.equals(iexperiment.getId())) {
                 WebSocketResponse response = new WebSocketResponse();
-                response.addValue(DEVICE_TYPE, UserDeviceTypeResponse.fromDeviceType(deviceType), DEVICE_TYPES_LISTED);
+                response.addValue(IEXPERIMENT, UserIexperimentResponse.fromIexperiment(iexperiment), IEXPERIMENTS_LISTED);
                 clientHandler.sendMessage(request, response, session);
                 return;
             }
         }
 
         clientHandler.sendErrorResponse(request, NOT_FOUND.getStatusCode(),
-                String.format(Messages.USER_DEVICE_TYPE_NOT_FOUND, deviceTypeId, userId), session);
+                String.format(Messages.USER_IEXPERIMENT_NOT_FOUND, iexperimentId, userId), session);
     }
 
     @HiveWebsocketAuth
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    public void processUserGetDeviceTypes(JsonObject request, WebSocketSession session) {
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    public void processUserGetIexperiments(JsonObject request, WebSocketSession session) {
         Long userId = gson.fromJson(request.get(USER_ID), Long.class);
         if (userId == null) {
             logger.error(Messages.USER_ID_REQUIRED);
             throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        final UserWithDeviceTypeVO existingUser = userService.findUserWithDeviceType(userId);
+        final UserWithIexperimentVO existingUser = userService.findUserWithIexperiment(userId);
         if (existingUser == null) {
-            logger.error("Can't get device types for user with id {}: user not found", userId);
+            logger.error("Can't get iexperiments for user with id {}: user not found", userId);
             throw new HiveException(String.format(Messages.USER_NOT_FOUND, userId), NOT_FOUND.getStatusCode());
         }
 
         final WebSocketResponse response = new WebSocketResponse();
-        if (existingUser.getAllDeviceTypesAvailable()) {
-            deviceTypeService.listAll().thenAccept(dt -> {
-                logger.debug("Device types list request proceed successfully");
-                response.addValue(DEVICE_TYPES, dt, DEVICE_TYPES_LISTED);
+        if (existingUser.getAllIexperimentsAvailable()) {
+            iexperimentService.listAll().thenAccept(dt -> {
+                logger.debug("Iexperiments list request proceed successfully");
+                response.addValue(IEXPERIMENTS, dt, IEXPERIMENTS_LISTED);
                 clientHandler.sendMessage(request, response, session);
             });
         } else {
-            if (!existingUser.getAllDeviceTypesAvailable() && (existingUser.getDeviceTypes() == null || existingUser.getDeviceTypes().isEmpty())) {
-                logger.warn("Unable to get list for empty device types");
-                response.addValue(DEVICE_TYPES, Collections.emptyList(), DEVICE_TYPES_LISTED);
+            if (!existingUser.getAllIexperimentsAvailable() && (existingUser.getIexperiments() == null || existingUser.getIexperiments().isEmpty())) {
+                logger.warn("Unable to get list for empty iexperiments");
+                response.addValue(IEXPERIMENTS, Collections.emptyList(), IEXPERIMENTS_LISTED);
             } else {
-                response.addValue(DEVICE_TYPES, existingUser.getDeviceTypes(), DEVICE_TYPES_LISTED);
+                response.addValue(IEXPERIMENTS, existingUser.getIexperiments(), IEXPERIMENTS_LISTED);
             }
             clientHandler.sendMessage(request, response, session);
         }
     }
 
     @HiveWebsocketAuth
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    public void processUserAssignDeviceType(JsonObject request, WebSocketSession session) {
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    public void processUserAssignIexperiment(JsonObject request, WebSocketSession session) {
         Long userId = gson.fromJson(request.get(USER_ID), Long.class);
         if (userId == null) {
             logger.error(Messages.USER_ID_REQUIRED);
             throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        Long deviceTypeId = gson.fromJson(request.get(DEVICE_TYPE_ID), Long.class);
-        if (deviceTypeId == null) {
-            logger.error(Messages.DEVICE_TYPE_ID_REQUIRED);
-            throw new HiveException(Messages.DEVICE_TYPE_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        Long iexperimentId = gson.fromJson(request.get(IEXPERIMENT_ID), Long.class);
+        if (iexperimentId == null) {
+            logger.error(Messages.IEXPERIMENT_ID_REQUIRED);
+            throw new HiveException(Messages.IEXPERIMENT_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        userService.assignDeviceType(userId, deviceTypeId);
+        userService.assignIexperiment(userId, iexperimentId);
         clientHandler.sendMessage(request, new WebSocketResponse(), session);
     }
 
     @HiveWebsocketAuth
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    public void processUserUnassignDeviceType(JsonObject request, WebSocketSession session) {
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    public void processUserUnassignIexperiment(JsonObject request, WebSocketSession session) {
         Long userId = gson.fromJson(request.get(USER_ID), Long.class);
         if (userId == null) {
             logger.error(Messages.USER_ID_REQUIRED);
             throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        Long deviceTypeId = gson.fromJson(request.get(DEVICE_TYPE_ID), Long.class);
-        if (deviceTypeId == null) {
-            logger.error(Messages.DEVICE_TYPE_ID_REQUIRED);
-            throw new HiveException(Messages.DEVICE_TYPE_ID_REQUIRED, BAD_REQUEST.getStatusCode());
+        Long iexperimentId = gson.fromJson(request.get(IEXPERIMENT_ID), Long.class);
+        if (iexperimentId == null) {
+            logger.error(Messages.IEXPERIMENT_ID_REQUIRED);
+            throw new HiveException(Messages.IEXPERIMENT_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        userService.unassignDeviceType(userId, deviceTypeId);
+        userService.unassignIexperiment(userId, iexperimentId);
         clientHandler.sendMessage(request, new WebSocketResponse(), session);
     }
 
     @HiveWebsocketAuth
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    public void processUserAllowAllDeviceTypes(JsonObject request, WebSocketSession session) {
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    public void processUserAllowAllIexperiments(JsonObject request, WebSocketSession session) {
         Long userId = gson.fromJson(request.get(USER_ID), Long.class);
         if (userId == null) {
             logger.error(Messages.USER_ID_REQUIRED);
             throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        userService.allowAllDeviceTypes(userId);
+        userService.allowAllIexperiments(userId);
         clientHandler.sendMessage(request, new WebSocketResponse(), session);
     }
 
     @HiveWebsocketAuth
-    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_DEVICE_TYPE')")
-    public void processUserDisallowAllDeviceTypes(JsonObject request, WebSocketSession session) {
+    @PreAuthorize("isAuthenticated() and hasPermission(null, 'MANAGE_IEXPERIMENT')")
+    public void processUserDisallowAllIexperiments(JsonObject request, WebSocketSession session) {
         Long userId = gson.fromJson(request.get(USER_ID), Long.class);
         if (userId == null) {
             logger.error(Messages.USER_ID_REQUIRED);
             throw new HiveException(Messages.USER_ID_REQUIRED, BAD_REQUEST.getStatusCode());
         }
 
-        userService.disallowAllDeviceTypes(userId);
+        userService.disallowAllIexperiments(userId);
         clientHandler.sendMessage(request, new WebSocketResponse(), session);
     }
 

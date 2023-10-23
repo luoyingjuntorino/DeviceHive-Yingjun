@@ -23,23 +23,23 @@ package com.devicehive.model.updates;
 
 import com.devicehive.json.strategies.JsonPolicyDef;
 import com.devicehive.model.HiveEntity;
-import com.devicehive.vo.DeviceTypeVO;
+import com.devicehive.vo.IexperimentVO;
 
 import javax.validation.constraints.Size;
 import java.util.Optional;
 
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.*;
 
-public class DeviceTypeUpdate implements HiveEntity {
+public class IexperimentUpdate implements HiveEntity {
 
     private static final long serialVersionUID = -4134073649300446791L;
 
     @Size(min = 1, max = 128, message = "Field name cannot be empty. The length of name should not be more than 128 symbols.")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, DEVICE_TYPES_LISTED, DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, IEXPERIMENTS_LISTED, IEXPERIMENT_PUBLISHED})
     private String name;
 
     @Size(max = 128, message = "The length of description should not be more than 128 symbols.")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, DEVICE_TYPES_LISTED, DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, IEXPERIMENTS_LISTED, IEXPERIMENT_PUBLISHED})
     private String description;
 
     public Optional<String> getName() {
@@ -58,11 +58,11 @@ public class DeviceTypeUpdate implements HiveEntity {
         this.description = description;
     }
 
-    public DeviceTypeVO convertTo() {
-        DeviceTypeVO deviceTypeVO = new DeviceTypeVO();
-        deviceTypeVO.setName(name);
-        deviceTypeVO.setDescription(description);
+    public IexperimentVO convertTo() {
+        IexperimentVO iexperimentVO = new IexperimentVO();
+        iexperimentVO.setName(name);
+        iexperimentVO.setDescription(description);
         
-        return deviceTypeVO;
+        return iexperimentVO;
     }
 }

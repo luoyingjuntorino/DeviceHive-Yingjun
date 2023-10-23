@@ -35,21 +35,21 @@ import java.util.stream.Collectors;
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.*;
 
 @Entity
-@Table(name = "device_type")
+@Table(name = "iexperiment")
 @NamedQueries({
-        @NamedQuery(name = "DeviceType.findAll", query = "select t from DeviceType t"),
-        @NamedQuery(name = "DeviceType.findByName", query = "select t from DeviceType t where t.name = :name"),
-        @NamedQuery(name = "DeviceType.findWithUsers", query = "select t from DeviceType t left join fetch t.users where t.id = :id"),
-        @NamedQuery(name = "DeviceType.findOrderedByIdWithPermission", query = "select t from DeviceType t " +
-                "where (t.id in :permittedDeviceTypes or :permittedDeviceTypes is null) order by t.id"),
-        @NamedQuery(name = "DeviceType.deleteById", query = "delete from DeviceType t where t.id = :id"),
-        @NamedQuery(name = "DeviceType.getWithDevices", query = "select t from DeviceType t left join fetch t.devices where t.id = :id"),
-        @NamedQuery(name = "DeviceType.getDeviceTypesByIdsAndUsers", query = "select t from DeviceType t left outer join t.users u left join fetch t.devices d " +
-                "where t.id in :deviceTypeIds and (u.id = :userId or :userId is null) and (t.id in :permittedDeviceTypes or :permittedDeviceTypes is null)")
+        @NamedQuery(name = "Iexperiment.findAll", query = "select t from Iexperiment t"),
+        @NamedQuery(name = "Iexperiment.findByName", query = "select t from Iexperiment t where t.name = :name"),
+        @NamedQuery(name = "Iexperiment.findWithUsers", query = "select t from Iexperiment t left join fetch t.users where t.id = :id"),
+        @NamedQuery(name = "Iexperiment.findOrderedByIdWithPermission", query = "select t from Iexperiment t " +
+                "where (t.id in :permittedIexperiments or :permittedIexperiments is null) order by t.id"),
+        @NamedQuery(name = "Iexperiment.deleteById", query = "delete from Iexperiment t where t.id = :id"),
+        @NamedQuery(name = "Iexperiment.getWithDevices", query = "select t from Iexperiment t left join fetch t.devices where t.id = :id"),
+        @NamedQuery(name = "Iexperiment.getIexperimentsByIdsAndUsers", query = "select t from Iexperiment t left outer join t.users u left join fetch t.devices d " +
+                "where t.id in :iexperimentIds and (u.id = :userId or :userId is null) and (t.id in :permittedIexperiments or :permittedIexperiments is null)")
 })
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class DeviceType implements HiveEntity {
+public class Iexperiment implements HiveEntity {
 
     // private static final long serialVersionUID = -4534503697839217385L;
     private static final long serialVersionUID = -4534583697839217385L;
@@ -57,7 +57,7 @@ public class DeviceType implements HiveEntity {
     @SerializedName("id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonPolicyDef({DEVICE_PUBLISHED, USER_PUBLISHED, DEVICE_TYPES_LISTED, DEVICE_TYPE_PUBLISHED, DEVICE_TYPE_SUBMITTED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, USER_PUBLISHED, IEXPERIMENTS_LISTED, IEXPERIMENT_PUBLISHED, IEXPERIMENT_SUBMITTED})
     private Long id;
 
     @SerializedName("name")
@@ -65,24 +65,24 @@ public class DeviceType implements HiveEntity {
     @NotNull(message = "name field cannot be null.")
     @Size(min = 1, max = 128, message = "Field cannot be empty. The length of name should not be more than 128 " +
             "symbols.")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, DEVICE_TYPES_LISTED, DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, IEXPERIMENTS_LISTED, IEXPERIMENT_PUBLISHED})
     private String name;
 
     @SerializedName("description")
     @Column
     @Size(max = 128, message = "The length of description should not be more than 128 symbols.")
-    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, DEVICE_TYPES_LISTED, DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({DEVICE_PUBLISHED, DEVICE_SUBMITTED, USER_PUBLISHED, IEXPERIMENTS_LISTED, IEXPERIMENT_PUBLISHED})
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_device_type", joinColumns = {@JoinColumn(name = "device_type_id", nullable = false,
+    @JoinTable(name = "user_iexperiment", joinColumns = {@JoinColumn(name = "iexperiment_id", nullable = false,
             updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "user_id", nullable = false, updatable = false)})
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<User> users;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "deviceType")
-    @JsonPolicyDef({DEVICE_TYPE_PUBLISHED})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "iexperiment")
+    @JsonPolicyDef({IEXPERIMENT_PUBLISHED})
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Device> devices;
 
@@ -147,9 +147,9 @@ public class DeviceType implements HiveEntity {
             return false;
         }
 
-        DeviceType deviceType = (DeviceType) o;
+        Iexperiment iexperiment = (Iexperiment) o;
 
-        return !(id != null ? !id.equals(deviceType.id) : deviceType.id != null);
+        return !(id != null ? !id.equals(iexperiment.id) : iexperiment.id != null);
 
     }
 
@@ -160,36 +160,36 @@ public class DeviceType implements HiveEntity {
 
     @Override
     public String toString() {
-        return "DeviceType{" +
+        return "Iexperiment{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }
 
-    public static DeviceTypeVO convertDeviceType(DeviceType deviceType) {
-        if (deviceType != null) {
-            DeviceTypeVO vo = new DeviceTypeVO();
-            vo.setId(deviceType.getId());
-            vo.setName(deviceType.getName());
-            vo.setDescription(deviceType.getDescription());
-            vo.setEntityVersion(deviceType.getEntityVersion());
+    public static IexperimentVO convertIexperiment(Iexperiment iexperiment) {
+        if (iexperiment != null) {
+            IexperimentVO vo = new IexperimentVO();
+            vo.setId(iexperiment.getId());
+            vo.setName(iexperiment.getName());
+            vo.setDescription(iexperiment.getDescription());
+            vo.setEntityVersion(iexperiment.getEntityVersion());
             return vo;
         }
         return null;
     }
 
-    public static DeviceTypeWithUsersAndDevicesVO convertWithDevicesAndUsers(DeviceType deviceType) {
-        if (deviceType != null) {
-            DeviceTypeVO vo1 = convertDeviceType(deviceType);
-            DeviceTypeWithUsersAndDevicesVO vo = new DeviceTypeWithUsersAndDevicesVO(vo1);
-            if (deviceType.getUsers() != null) {
-                vo.setUsers(deviceType.getUsers().stream().map(User::convertToVo).collect(Collectors.toSet()));
+    public static IexperimentWithUsersAndDevicesVO convertWithDevicesAndUsers(Iexperiment iexperiment) {
+        if (iexperiment != null) {
+            IexperimentVO vo1 = convertIexperiment(iexperiment);
+            IexperimentWithUsersAndDevicesVO vo = new IexperimentWithUsersAndDevicesVO(vo1);
+            if (iexperiment.getUsers() != null) {
+                vo.setUsers(iexperiment.getUsers().stream().map(User::convertToVo).collect(Collectors.toSet()));
             } else {
                 vo.setUsers(Collections.emptySet());
             }
-            if (deviceType.getDevices() != null) {
-                Set<DeviceVO> deviceList = deviceType.getDevices().stream().map(Device::convertToVo).collect(Collectors.toSet());
+            if (iexperiment.getDevices() != null) {
+                Set<DeviceVO> deviceList = iexperiment.getDevices().stream().map(Device::convertToVo).collect(Collectors.toSet());
                 vo.setDevices(deviceList);
             } else {
                 vo.setDevices(Collections.emptySet());
@@ -199,14 +199,14 @@ public class DeviceType implements HiveEntity {
         return null;
     }
 
-    public static DeviceType convert(DeviceTypeVO vo) {
+    public static Iexperiment convert(IexperimentVO vo) {
         if (vo != null) {
-            DeviceType deviceType = new DeviceType();
-            deviceType.setId(vo.getId());
-            deviceType.setName(vo.getName());
-            deviceType.setDescription(vo.getDescription());
-            deviceType.setEntityVersion(vo.getEntityVersion());
-            return deviceType;
+            Iexperiment iexperiment = new Iexperiment();
+            iexperiment.setId(vo.getId());
+            iexperiment.setName(vo.getName());
+            iexperiment.setDescription(vo.getDescription());
+            iexperiment.setEntityVersion(vo.getEntityVersion());
+            return iexperiment;
         }
         return null;
     }

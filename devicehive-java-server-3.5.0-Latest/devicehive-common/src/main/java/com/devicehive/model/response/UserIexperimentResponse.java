@@ -22,31 +22,31 @@ package com.devicehive.model.response;
 
 import com.devicehive.json.strategies.JsonPolicyDef;
 import com.devicehive.model.HiveEntity;
-import com.devicehive.vo.DeviceTypeVO;
+import com.devicehive.vo.IexperimentVO;
 import com.google.gson.annotations.SerializedName;
 
-import static com.devicehive.json.strategies.JsonPolicyDef.Policy.DEVICE_TYPES_LISTED;
+import static com.devicehive.json.strategies.JsonPolicyDef.Policy.IEXPERIMENTS_LISTED;
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.USER_PUBLISHED;
 
 //TODO: javadoc
-public class UserDeviceTypeResponse implements HiveEntity {
+public class UserIexperimentResponse implements HiveEntity {
 
     private static final long serialVersionUID = 4328590211197574009L;
-    @SerializedName("deviceType")
-    @JsonPolicyDef({USER_PUBLISHED, DEVICE_TYPES_LISTED})
-    private DeviceTypeVO deviceType;
+    @SerializedName("iexperiment")
+    @JsonPolicyDef({USER_PUBLISHED, IEXPERIMENTS_LISTED})
+    private IexperimentVO iexperiment;
 
-    public static UserDeviceTypeResponse fromDeviceType(DeviceTypeVO deviceType) {
-        UserDeviceTypeResponse result = new UserDeviceTypeResponse();
-        result.setDeviceType(deviceType);
+    public static UserIexperimentResponse fromIexperiment(IexperimentVO iexperiment) {
+        UserIexperimentResponse result = new UserIexperimentResponse();
+        result.setIexperiment(iexperiment);
         return result;
     }
 
-    public DeviceTypeVO getDeviceType() {
-        return deviceType;
+    public IexperimentVO getIexperiment() {
+        return iexperiment;
     }
 
-    public void setDeviceType(DeviceTypeVO deviceType) {
-        this.deviceType = deviceType;
+    public void setIexperiment(IexperimentVO iexperiment) {
+        this.iexperiment = iexperiment;
     }
 }

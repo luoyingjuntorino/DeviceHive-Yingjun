@@ -25,19 +25,19 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Set;
 
-import static com.devicehive.json.strategies.JsonPolicyDef.Policy.DEVICE_TYPE_PUBLISHED;
+import static com.devicehive.json.strategies.JsonPolicyDef.Policy.IEXPERIMENT_PUBLISHED;
 
-public class DeviceTypeWithUsersAndDevicesVO extends DeviceTypeVO {
+public class IexperimentWithUsersAndDevicesVO extends IexperimentVO {
 
     @ApiModelProperty(hidden = true)
     private Set<UserVO> users;
 
-    @JsonPolicyDef({DEVICE_TYPE_PUBLISHED})
+    @JsonPolicyDef({IEXPERIMENT_PUBLISHED})
     private Set<DeviceVO> devices;
 
-    public DeviceTypeWithUsersAndDevicesVO() {}
+    public IexperimentWithUsersAndDevicesVO() {}
 
-    public DeviceTypeWithUsersAndDevicesVO(DeviceTypeVO vo) {
+    public IexperimentWithUsersAndDevicesVO(IexperimentVO vo) {
         setId(vo.getId());
         setName(vo.getName());
         setDescription(vo.getDescription());

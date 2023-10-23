@@ -22,7 +22,7 @@ package com.devicehive.dao;
 
 import com.devicehive.vo.NetworkVO;
 import com.devicehive.vo.UserVO;
-import com.devicehive.vo.UserWithDeviceTypeVO;
+import com.devicehive.vo.UserWithIexperimentVO;
 import com.devicehive.vo.UserWithIcomponentVO;
 import com.devicehive.vo.UserWithNetworkVO;
 
@@ -39,7 +39,7 @@ public interface UserDao {
 
     UserWithNetworkVO getWithNetworksById(long id);
 
-    UserWithDeviceTypeVO getWithDeviceTypeById(long id);
+    UserWithIexperimentVO getWithIexperimentById(long id);
 
     UserWithIcomponentVO getWithIcomponentById(long id);
 
@@ -53,11 +53,11 @@ public interface UserDao {
 
     void unassignNetwork(@NotNull UserVO existingUser, @NotNull long networkId);
 
-    void unassignDeviceType(@NotNull UserVO existingUser, @NotNull long deviceId);
+    void unassignIexperiment(@NotNull UserVO existingUser, @NotNull long deviceId);
 
-    UserVO allowAllDeviceTypes(@NotNull UserWithDeviceTypeVO existingUser);
+    UserVO allowAllIexperiments(@NotNull UserWithIexperimentVO existingUser);
 
-    UserVO disallowAllDeviceTypes(@NotNull UserVO existingUser);
+    UserVO disallowAllIexperiments(@NotNull UserVO existingUser);
 
     void unassignIcomponent(@NotNull UserVO existingUser, @NotNull long deviceId);
 

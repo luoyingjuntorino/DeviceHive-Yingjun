@@ -80,9 +80,9 @@ public class UserVO implements HiveEntity {
     @JsonPolicyDef({USER_PUBLISHED, USERS_LISTED, USER_SUBMITTED})
     private Boolean introReviewed;
 
-    @SerializedName("allDeviceTypesAvailable")
+    @SerializedName("allIexperimentsAvailable")
     @JsonPolicyDef({USER_PUBLISHED, USERS_LISTED, USER_SUBMITTED})
-    private Boolean allDeviceTypesAvailable;
+    private Boolean allIexperimentsAvailable;
 
     @SerializedName("allIcomponentsAvailable")
     @JsonPolicyDef({USER_PUBLISHED, USERS_LISTED, USER_SUBMITTED})
@@ -176,12 +176,12 @@ public class UserVO implements HiveEntity {
         this.introReviewed = introReviewed;
     }
 
-    public Boolean getAllDeviceTypesAvailable() {
-        return allDeviceTypesAvailable;
+    public Boolean getAllIexperimentsAvailable() {
+        return allIexperimentsAvailable;
     }
 
-    public void setAllDeviceTypesAvailable(Boolean allDeviceTypesAvailable) {
-        this.allDeviceTypesAvailable = allDeviceTypesAvailable;
+    public void setAllIexperimentsAvailable(Boolean allIexperimentsAvailable) {
+        this.allIexperimentsAvailable = allIexperimentsAvailable;
     }
 
     public Boolean getAllIcomponentsAvailable() {

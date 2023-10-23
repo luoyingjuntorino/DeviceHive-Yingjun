@@ -162,16 +162,16 @@ public class DeviceNotificationResourceImpl implements DeviceNotificationResourc
     }
 
     @Override
-    public void pollMany(final long timeout, String deviceIdsString, String networkIdsString, final String deviceTypeIdsString, final String icomponentIdsString,
+    public void pollMany(final long timeout, String deviceIdsString, String networkIdsString, final String iexperimentIdsString, final String icomponentIdsString,
                          final String namesString, final String timestamp, final AsyncResponse asyncResponse)
             throws Exception {
-        poll(timeout, deviceIdsString, networkIdsString, deviceTypeIdsString, icomponentIdsString, namesString, timestamp, asyncResponse);
+        poll(timeout, deviceIdsString, networkIdsString, iexperimentIdsString, icomponentIdsString, namesString, timestamp, asyncResponse);
     }
 
     private void poll(final long timeout,
                       final String deviceId,
                       final String networkIdsCsv,
-                      final String deviceTypeIdsCsv,
+                      final String iexperimentIdsCsv,
                       final String icomponentIdsCsv,
                       final String namesCsv,
                       final String timestamp,
@@ -198,7 +198,7 @@ public class DeviceNotificationResourceImpl implements DeviceNotificationResourc
                         .map(n -> gson.fromJson(n, Long.class))
                         .collect(Collectors.toSet())
                 ).orElse(null);
-        Set<Long> deviceTypes = Optional.ofNullable(StringUtils.split(deviceTypeIdsCsv, ','))
+        Set<Long> iexperiments = Optional.ofNullable(StringUtils.split(iexperimentIdsCsv, ','))
                 .map(Arrays::asList)
                 .map(list -> list.stream()
                         .map(dt -> gson.fromJson(dt, Long.class))
@@ -220,7 +220,7 @@ public class DeviceNotificationResourceImpl implements DeviceNotificationResourc
             }
         };
 
-        Set<Filter> filters = filterService.getFilterList(deviceId, networks, deviceTypes, icomponents, NOTIFICATION_EVENT.name(), names, authentication);
+        Set<Filter> filters = filterService.getFilterList(deviceId, networks, iexperiments, icomponents, NOTIFICATION_EVENT.name(), names, authentication);
 
         if (!filters.isEmpty()) {
             Pair<Long, CompletableFuture<List<DeviceNotification>>> pair = notificationService

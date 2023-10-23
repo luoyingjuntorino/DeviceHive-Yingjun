@@ -27,36 +27,36 @@ import java.util.Set;
 
 import static com.devicehive.json.strategies.JsonPolicyDef.Policy.USER_PUBLISHED;
 
-public class UserWithDeviceTypeVO extends UserVO {
+public class UserWithIexperimentVO extends UserVO {
 
     @JsonPolicyDef({USER_PUBLISHED})
-    private Set<DeviceTypeVO> deviceTypes;
+    private Set<IexperimentVO> iexperiments;
 
-    public Set<DeviceTypeVO> getDeviceTypes() {
-        return deviceTypes;
+    public Set<IexperimentVO> getIexperiments() {
+        return iexperiments;
     }
 
-    public void setDeviceTypes(Set<DeviceTypeVO> deviceTypes) {
-        this.deviceTypes = deviceTypes;
+    public void setIexperiments(Set<IexperimentVO> iexperiments) {
+        this.iexperiments = iexperiments;
     }
 
-    public static UserWithDeviceTypeVO fromUserVO(UserVO dc) {
-        UserWithDeviceTypeVO vo = null;
+    public static UserWithIexperimentVO fromUserVO(UserVO dc) {
+        UserWithIexperimentVO vo = null;
         if (dc != null) {
-            vo = new UserWithDeviceTypeVO();
+            vo = new UserWithIexperimentVO();
             vo.setData(dc.getData());
             vo.setId(dc.getId());
             vo.setData(dc.getData());
             vo.setLastLogin(dc.getLastLogin());
             vo.setLogin(dc.getLogin());
             vo.setLoginAttempts(dc.getLoginAttempts());
-            vo.setDeviceTypes(new HashSet<>());
+            vo.setIexperiments(new HashSet<>());
             vo.setPasswordHash(dc.getPasswordHash());
             vo.setPasswordSalt(dc.getPasswordSalt());
             vo.setRole(dc.getRole());
             vo.setStatus(dc.getStatus());
             vo.setIntroReviewed(dc.getIntroReviewed());
-            vo.setAllDeviceTypesAvailable(dc.getAllDeviceTypesAvailable());
+            vo.setAllIexperimentsAvailable(dc.getAllIexperimentsAvailable());
         }
 
         return vo;

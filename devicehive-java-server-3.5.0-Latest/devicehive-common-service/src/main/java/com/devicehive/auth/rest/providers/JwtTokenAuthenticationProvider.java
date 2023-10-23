@@ -102,8 +102,8 @@ public class JwtTokenAuthenticationProvider implements AuthenticationProvider {
                         throw new BadCredentialsException("Unauthorized: user is not active");
                     }
                     principal.setUser(userVO);
-                    if (!userVO.getAllDeviceTypesAvailable()) {
-                        principal.setAllDeviceTypesAvailable(false);
+                    if (!userVO.getAllIexperimentsAvailable()) {
+                        principal.setAllIexperimentsAvailable(false);
                     }
                     if (!userVO.getAllIcomponentsAvailable()) {
                         principal.setAllIcomponentsAvailable(false);
@@ -119,14 +119,14 @@ public class JwtTokenAuthenticationProvider implements AuthenticationProvider {
                     }
                 }
 
-                Set<String> deviceTypeIds = userJwtPayload.getDeviceTypeIds();
-                if (deviceTypeIds != null) {
-                    if (deviceTypeIds.contains("*")) {
-                        principal.setAllDeviceTypesAvailable(true);
-                    } else if (userVO != null && userVO.getAllDeviceTypesAvailable()) {
-                        principal.setAllDeviceTypesAvailable(true);
+                Set<String> iexperimentIds = userJwtPayload.getIexperimentIds();
+                if (iexperimentIds != null) {
+                    if (iexperimentIds.contains("*")) {
+                        principal.setAllIexperimentsAvailable(true);
+                    } else if (userVO != null && userVO.getAllIexperimentsAvailable()) {
+                        principal.setAllIexperimentsAvailable(true);
                     } else {
-                        principal.setDeviceTypeIds(deviceTypeIds.stream().map(Long::valueOf).collect(Collectors.toSet()));
+                        principal.setIexperimentIds(iexperimentIds.stream().map(Long::valueOf).collect(Collectors.toSet()));
                     }
                 }
 
@@ -164,11 +164,11 @@ public class JwtTokenAuthenticationProvider implements AuthenticationProvider {
                         principal.setNetworkIds(userWithNetworksVO.getNetworks().stream()
                                 .map(NetworkVO::getId).collect(Collectors.toSet()));
 
-                        UserWithDeviceTypeVO userWithDeviceTypeVO = userService.findUserWithDeviceType(existingPlugin.getUserId());
-                        if (!userWithDeviceTypeVO.getAllDeviceTypesAvailable()) {
-                            principal.setAllDeviceTypesAvailable(false);
-                            principal.setDeviceTypeIds(userWithDeviceTypeVO.getDeviceTypes().stream()
-                                    .map(DeviceTypeVO::getId).collect(Collectors.toSet()));
+                        UserWithIexperimentVO userWithIexperimentVO = userService.findUserWithIexperiment(existingPlugin.getUserId());
+                        if (!userWithIexperimentVO.getAllIexperimentsAvailable()) {
+                            principal.setAllIexperimentsAvailable(false);
+                            principal.setIexperimentIds(userWithIexperimentVO.getIexperiments().stream()
+                                    .map(IexperimentVO::getId).collect(Collectors.toSet()));
                         }
 
                         UserWithIcomponentVO userWithIcomponentVO = userService.findUserWithIcomponent(existingPlugin.getUserId());

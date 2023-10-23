@@ -42,7 +42,7 @@ public class SubscriptionInfo {
     private Set<Long> networkIds;
 
     @JsonPolicyDef(SUBSCRIPTIONS_LISTED)
-    private Set<Long> deviceTypeIds;
+    private Set<Long> iexperimentIds;
 
     @JsonPolicyDef(SUBSCRIPTIONS_LISTED)
     private Set<Long> icomponentIds;
@@ -53,12 +53,12 @@ public class SubscriptionInfo {
     @JsonPolicyDef(SUBSCRIPTIONS_LISTED)
     private Date timestamp;
 
-    public SubscriptionInfo(Long subscriptionId, String type, String deviceId, Set<Long> networkIds, Set<Long> deviceTypeIds, Set<Long> icomponentIds, Set<String> names, Date timestamp) {
+    public SubscriptionInfo(Long subscriptionId, String type, String deviceId, Set<Long> networkIds, Set<Long> iexperimentIds, Set<Long> icomponentIds, Set<String> names, Date timestamp) {
         this.subscriptionId = subscriptionId;
         this.type = type;
         this.deviceId = deviceId;
         this.networkIds = networkIds;
-        this.deviceTypeIds = deviceTypeIds;
+        this.iexperimentIds = iexperimentIds;
         this.icomponentIds = icomponentIds;
         this.names = names;
         this.timestamp = timestamp;
@@ -100,12 +100,12 @@ public class SubscriptionInfo {
         this.networkIds = networkIds;
     }
 
-    public Set<Long> getDeviceTypeIds() {
-        return deviceTypeIds;
+    public Set<Long> getIexperimentIds() {
+        return iexperimentIds;
     }
 
-    public void setDeviceTypeIds(Set<Long> deviceTypeIds) {
-        this.deviceTypeIds = deviceTypeIds;
+    public void setIexperimentIds(Set<Long> iexperimentIds) {
+        this.iexperimentIds = iexperimentIds;
     }
 
     public Set<Long> getIcomponentIds() {
@@ -155,7 +155,7 @@ public class SubscriptionInfo {
                 ", type='" + type + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", networkIds=" + networkIds +
-                ", deviceTypeIds=" + deviceTypeIds +
+                ", iexperimentIds=" + iexperimentIds +
                 ", icomponentIds=" + icomponentIds +
                 ", names=" + names +
                 ", timestamp=" + timestamp +

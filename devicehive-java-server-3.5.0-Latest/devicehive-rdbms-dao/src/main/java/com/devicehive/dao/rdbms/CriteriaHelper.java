@@ -71,7 +71,7 @@ public class CriteriaHelper {
         return predicates.toArray(new Predicate[predicates.size()]);
     }
 
-    public static Predicate[] deviceTypeListPredicates(CriteriaBuilder cb, Root<DeviceType> from, Optional<String> nameOpt, Optional<String> namePatternOpt, Optional<HivePrincipal> principalOpt) {
+    public static Predicate[] iexperimentListPredicates(CriteriaBuilder cb, Root<Iexperiment> from, Optional<String> nameOpt, Optional<String> namePatternOpt, Optional<HivePrincipal> principalOpt) {
         List<Predicate> predicates = new LinkedList<>();
 
         nameOpt.ifPresent(name ->
@@ -85,17 +85,17 @@ public class CriteriaHelper {
 
             return ofNullable(user);
         }).ifPresent(user -> {
-            if (!user.isAdmin() && !user.getAllDeviceTypesAvailable()) {
+            if (!user.isAdmin() && !user.getAllIexperimentsAvailable()) {
                 User usr = User.convertToEntity(user);
                 predicates.add(from.join("users").in(usr));
             }
         });
 
         principalOpt.flatMap(principal -> {
-            Set<Long> deviceTypes = principal.getDeviceTypeIds();
+            Set<Long> iexperiments = principal.getIexperimentIds();
 
-            return ofNullable(deviceTypes);
-        }).ifPresent(deviceTypes -> predicates.add(from.<Long>get("id").in(deviceTypes)));
+            return ofNullable(iexperiments);
+        }).ifPresent(iexperiments -> predicates.add(from.<Long>get("id").in(iexperiments)));
 
         return predicates.toArray(new Predicate[predicates.size()]);
     }
@@ -252,7 +252,7 @@ public class CriteriaHelper {
     private static List<Predicate> deviceCountPrincipalPredicates(CriteriaBuilder cb, Root<Device> from, Optional<HivePrincipal> principal) {
         final List<Predicate> predicates = new LinkedList<>();
         final Join<Device, Network> networkJoin = from.join("network", JoinType.LEFT);
-        final Join<Device, DeviceType> deviceTypeJoin = from.join("deviceType", JoinType.LEFT);
+        final Join<Device, Iexperiment> iexperimentJoin = from.join("iexperiment", JoinType.LEFT);
         final Join<Device, Icomponent> icomponentJoin = from.join("icomponent", JoinType.LEFT);
         principal.ifPresent(p -> {
             UserVO user = p.getUser();
@@ -268,8 +268,8 @@ public class CriteriaHelper {
                 predicates.add(networkJoin.<Long>get("id").in(p.getNetworkIds()));
             }
 
-            if (p.getDeviceTypeIds() != null) {
-                predicates.add(deviceTypeJoin.<Long>get("id").in(p.getDeviceTypeIds()));
+            if (p.getIexperimentIds() != null) {
+                predicates.add(iexperimentJoin.<Long>get("id").in(p.getIexperimentIds()));
             }
 
             if (p.getIcomponentIds() != null) {
@@ -284,7 +284,7 @@ public class CriteriaHelper {
     private static List<Predicate> deviceSpecificPrincipalPredicates(CriteriaBuilder cb, Root<Device> from, Optional<HivePrincipal> principal) {
         final List<Predicate> predicates = new LinkedList<>();
         final Join<Device, Network> networkJoin = (Join) from.fetch("network", JoinType.LEFT);
-        final Join<Device, DeviceType> deviceTypeJoin = (Join) from.fetch("deviceType", JoinType.LEFT);
+        final Join<Device, Iexperiment> iexperimentJoin = (Join) from.fetch("iexperiment", JoinType.LEFT);
         final Join<Device, Icomponent> icomponentJoin = (Join) from.fetch("icomponent", JoinType.LEFT);
         principal.ifPresent(p -> {
             UserVO user = p.getUser();
@@ -300,8 +300,8 @@ public class CriteriaHelper {
                 predicates.add(networkJoin.<Long>get("id").in(p.getNetworkIds()));
             }
 
-            if (p.getDeviceTypeIds() != null) {
-                predicates.add(deviceTypeJoin.<Long>get("id").in(p.getDeviceTypeIds()));
+            if (p.getIexperimentIds() != null) {
+                predicates.add(iexperimentJoin.<Long>get("id").in(p.getIexperimentIds()));
             }
 
             if (p.getIcomponentIds() != null) {

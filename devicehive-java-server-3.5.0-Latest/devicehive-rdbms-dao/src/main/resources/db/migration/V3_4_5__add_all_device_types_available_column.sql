@@ -18,8 +18,8 @@
 -- #L%
 ---
 
--- Add allDeviceTypesAvailable column to users
-ALTER TABLE dh_user ADD COLUMN all_device_types_available BOOLEAN DEFAULT TRUE;
+-- Add allIexperimentsAvailable column to users
+ALTER TABLE dh_user ADD COLUMN all_iexperiments_available BOOLEAN DEFAULT TRUE;
 
--- Set allDeviceTypesAvailable to true if it is null
-UPDATE dh_user SET all_device_types_available = TRUE WHERE all_device_types_available IS NULL;
+-- Set allIexperimentsAvailable to true if it is null
+UPDATE dh_user SET all_iexperiments_available = TRUE WHERE all_iexperiments_available IS NULL;

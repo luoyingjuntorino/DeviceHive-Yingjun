@@ -46,7 +46,7 @@ public class JwtCheckPermissionsHelper {
         Set<HiveAction> permittedActions = hivePrincipal.getActions();
         return checkActionAllowed(action, permittedActions)
                 && checkNetworksAllowed(hivePrincipal, action, targetDomainObject)
-                && checkDeviceTypesAllowed(hivePrincipal, action, targetDomainObject)
+                && checkIexperimentsAllowed(hivePrincipal, action, targetDomainObject)
                 && checkIcomponentsAllowed(hivePrincipal, action, targetDomainObject)
                 && checkDeviceIdsAllowed(hivePrincipal, targetDomainObject);
     }
@@ -66,10 +66,10 @@ public class JwtCheckPermissionsHelper {
         return true;
     }
 
-    private boolean checkDeviceTypesAllowed(HivePrincipal principal, HiveAction action, Object targetDomainObject) {
-        if (principal.areAllDeviceTypesAvailable()) return true;
-        else if (targetDomainObject instanceof Long && action.getValue().contains("DeviceType")) {
-            return principal.getDeviceTypeIds() != null && principal.getDeviceTypeIds().contains(targetDomainObject);
+    private boolean checkIexperimentsAllowed(HivePrincipal principal, HiveAction action, Object targetDomainObject) {
+        if (principal.areAllIexperimentsAvailable()) return true;
+        else if (targetDomainObject instanceof Long && action.getValue().contains("Iexperiment")) {
+            return principal.getIexperimentIds() != null && principal.getIexperimentIds().contains(targetDomainObject);
         }
         return true;
     }
@@ -90,46 +90,46 @@ public class JwtCheckPermissionsHelper {
                 return plugin.getTopicName().equals(targetDomainObject);
             }
 
-            if (principal.areAllDeviceTypesAvailable() && principal.areAllNetworksAvailable() && principal.areAllIcomponentsAvailable()) {
+            if (principal.areAllIexperimentsAvailable() && principal.areAllNetworksAvailable() && principal.areAllIcomponentsAvailable()) {
                 return true;
             }
 
             final Set<Long> networks = principal.getNetworkIds();
-            final Set<Long> deviceTypes = principal.getDeviceTypeIds();
+            final Set<Long> iexperiments = principal.getIexperimentIds();
             final Set<Long> icomponents = principal.getIcomponentIds();
             DeviceVO device = deviceService.findByIdWithPermissionsCheck((String) targetDomainObject, principal);
             //TODO: add combinations of logic about icomponent
             if (device == null) {
                 return false;
             }
-            // if (principal.areAllNetworksAvailable() && deviceTypes != null) {
-            //     return deviceTypes.contains(device.getDeviceTypeId());
+            // if (principal.areAllNetworksAvailable() && iexperiments != null) {
+            //     return iexperiments.contains(device.getIexperimentId());
             // }
-            // if (principal.areAllDeviceTypesAvailable() && networks != null) {
+            // if (principal.areAllIexperimentsAvailable() && networks != null) {
             //     return networks.contains(device.getNetworkId());
             // }
             //..........................................below codes had modified
-            if (principal.areAllIcomponentsAvailable() && deviceTypes != null && networks != null) {
-                return deviceTypes.contains(device.getDeviceTypeId()) && networks.contains(device.getNetworkId());
+            if (principal.areAllIcomponentsAvailable() && iexperiments != null && networks != null) {
+                return iexperiments.contains(device.getIexperimentId()) && networks.contains(device.getNetworkId());
             }
-            if (principal.areAllIcomponentsAvailable() && principal.areAllDeviceTypesAvailable() && networks != null) {
+            if (principal.areAllIcomponentsAvailable() && principal.areAllIexperimentsAvailable() && networks != null) {
                 return networks.contains(device.getNetworkId());
             }
-            if (principal.areAllIcomponentsAvailable() && principal.areAllNetworksAvailable() && deviceTypes != null) {
-                return deviceTypes.contains(device.getDeviceTypeId());
+            if (principal.areAllIcomponentsAvailable() && principal.areAllNetworksAvailable() && iexperiments != null) {
+                return iexperiments.contains(device.getIexperimentId());
             }
-            if (principal.areAllDeviceTypesAvailable() && icomponents != null && networks != null) {
+            if (principal.areAllIexperimentsAvailable() && icomponents != null && networks != null) {
                 return networks.contains(device.getNetworkId()) && icomponents.contains(device.getIcomponentId());
             }
-            if (principal.areAllNetworksAvailable() && icomponents != null && deviceTypes != null) {
-                return deviceTypes.contains(device.getDeviceTypeId()) && icomponents.contains(device.getIcomponentId());
+            if (principal.areAllNetworksAvailable() && icomponents != null && iexperiments != null) {
+                return iexperiments.contains(device.getIexperimentId()) && icomponents.contains(device.getIcomponentId());
             }
-            if (principal.areAllNetworksAvailable() && principal.areAllDeviceTypesAvailable() && icomponents != null) {
+            if (principal.areAllNetworksAvailable() && principal.areAllIexperimentsAvailable() && icomponents != null) {
                 return icomponents.contains(device.getIcomponentId());
             }
             //..........................................above codes had modified
-            if (networks != null && deviceTypes != null && icomponents != null) {
-                return networks.contains(device.getNetworkId()) && deviceTypes.contains(device.getDeviceTypeId()) && icomponents.contains(device.getIcomponentId());
+            if (networks != null && iexperiments != null && icomponents != null) {
+                return networks.contains(device.getNetworkId()) && iexperiments.contains(device.getIexperimentId()) && icomponents.contains(device.getIcomponentId());
             }
 
             return false;

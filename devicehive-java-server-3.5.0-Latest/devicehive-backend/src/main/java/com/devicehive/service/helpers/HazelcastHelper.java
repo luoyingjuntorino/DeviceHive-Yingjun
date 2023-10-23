@@ -49,14 +49,14 @@ public class HazelcastHelper {
     }
 
     public <T extends HazelcastEntity> Predicate prepareFilters(String deviceId, Collection<Long> networkIds,
-            Collection<Long> deviceTypeIds, Collection<Long> icomponentIds, Collection<String> names, Date timestampSt, Date timestampEnd,
+            Collection<Long> iexperimentIds, Collection<Long> icomponentIds, Collection<String> names, Date timestampSt, Date timestampEnd,
             boolean returnUpdated, String status, Class<T> entityClass) {
         Set<String> deviceIdSet = deviceId != null ? Collections.singleton(deviceId) : null;
-        return prepareFilters(null, deviceIdSet, networkIds, deviceTypeIds, icomponentIds, names, timestampSt, timestampEnd, returnUpdated, status, entityClass);
+        return prepareFilters(null, deviceIdSet, networkIds, iexperimentIds, icomponentIds, names, timestampSt, timestampEnd, returnUpdated, status, entityClass);
     }
 
     private <T extends HazelcastEntity> Predicate prepareFilters(Long id, Collection<String> deviceIds, Collection<Long> networkIds,
-            Collection<Long> deviceTypeIds, Collection<Long> icomponentIds, Collection<String> names, Date timestampSt, Date timestampEnd,
+            Collection<Long> iexperimentIds, Collection<Long> icomponentIds, Collection<String> names, Date timestampSt, Date timestampEnd,
             boolean returnUpdated, String status, Class<T> entityClass) {
         final List<Predicate> predicates = new ArrayList<>();
         if (id != null) {
@@ -71,8 +71,8 @@ public class HazelcastHelper {
             predicates.add(Predicates.in(NETWORK_IDS.getField(), networkIds.toArray(new Long[networkIds.size()])));
         }
 
-        if (deviceTypeIds != null && !deviceTypeIds.isEmpty()) {
-            predicates.add(Predicates.in(DEVICE_TYPE_IDS.getField(), deviceTypeIds.toArray(new Long[deviceTypeIds.size()])));
+        if (iexperimentIds != null && !iexperimentIds.isEmpty()) {
+            predicates.add(Predicates.in(IEXPERIMENT_IDS.getField(), iexperimentIds.toArray(new Long[iexperimentIds.size()])));
         }
 
         if (icomponentIds != null && !icomponentIds.isEmpty()) {

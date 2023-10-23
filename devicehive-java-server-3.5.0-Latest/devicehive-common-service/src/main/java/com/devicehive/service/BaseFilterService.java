@@ -25,7 +25,7 @@ import com.devicehive.auth.HivePrincipal;
 import com.devicehive.exceptions.HiveException;
 import com.devicehive.model.enums.UserRole;
 import com.devicehive.model.eventbus.Filter;
-import com.devicehive.model.rpc.ListDeviceTypeRequest;
+import com.devicehive.model.rpc.ListIexperimentRequest;
 import com.devicehive.model.rpc.ListIcomponentRequest;
 import com.devicehive.model.rpc.ListNetworkRequest;
 import com.devicehive.vo.*;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.devicehive.configuration.Messages.ACCESS_DENIED;
-import static com.devicehive.configuration.Messages.DEVICE_TYPES_NOT_FOUND;
+import static com.devicehive.configuration.Messages.IEXPERIMENTS_NOT_FOUND;
 import static com.devicehive.configuration.Messages.ICOMPONENTS_NOT_FOUND;
 import static com.devicehive.configuration.Messages.NETWORKS_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
@@ -54,23 +54,23 @@ public class BaseFilterService {
 
     private final BaseDeviceService deviceService;
     private final BaseNetworkService networkService;
-    private final BaseDeviceTypeService deviceTypeService;
+    private final BaseIexperimentService iexperimentService;
     private final BaseIcomponentService icomponentService;
 
     @Autowired
     public BaseFilterService(BaseDeviceService deviceService,
                              BaseNetworkService networkService,
-                             BaseDeviceTypeService deviceTypeService,
+                             BaseIexperimentService iexperimentService,
                              BaseIcomponentService icomponentService) {
         this.deviceService = deviceService;
         this.networkService = networkService;
-        this.deviceTypeService = deviceTypeService;
+        this.iexperimentService = iexperimentService;
         this.icomponentService = icomponentService;
     }
 
     public Set<Filter> getFilterList(String deviceId,
                                      Set<Long> networks,
-                                     Set<Long> deviceTypes,
+                                     Set<Long> iexperiments,
                                      Set<Long> icomponents,
                                      String eventName,
                                      Set<String> names,
@@ -89,17 +89,17 @@ public class BaseFilterService {
         } else {
             networks = principal.getNetworkIds();
         }
-        if (deviceTypes != null && !deviceTypes.isEmpty()) {
-            Set<DeviceTypeWithUsersAndDevicesVO> actualDeviceTypes = deviceTypes.stream()
-                    .map(deviceTypeService::getWithDevices).filter(Objects::nonNull).collect(Collectors.toSet());
-            if (actualDeviceTypes.size() != deviceTypes.size()) {
+        if (iexperiments != null && !iexperiments.isEmpty()) {
+            Set<IexperimentWithUsersAndDevicesVO> actualIexperiments = iexperiments.stream()
+                    .map(iexperimentService::getWithDevices).filter(Objects::nonNull).collect(Collectors.toSet());
+            if (actualIexperiments.size() != iexperiments.size()) {
                 if (UserRole.CLIENT.equals(principal.getUser().getRole())) {
                     throw new HiveException(ACCESS_DENIED, SC_FORBIDDEN);
                 }
-                throw new HiveException(String.format(DEVICE_TYPES_NOT_FOUND, deviceTypes), SC_NOT_FOUND);
+                throw new HiveException(String.format(IEXPERIMENTS_NOT_FOUND, iexperiments), SC_NOT_FOUND);
             }
         } else {
-            deviceTypes = principal.getDeviceTypeIds();
+            iexperiments = principal.getIexperimentIds();
         }
 
         if (icomponents != null && !icomponents.isEmpty()) {
@@ -116,20 +116,20 @@ public class BaseFilterService {
         }
 
         if ((networks != null && !networks.isEmpty() || principal.areAllNetworksAvailable())
-                && (deviceTypes != null && !deviceTypes.isEmpty() || principal.areAllDeviceTypesAvailable())
+                && (iexperiments != null && !iexperiments.isEmpty() || principal.areAllIexperimentsAvailable())
                 && (icomponents != null && !icomponents.isEmpty() || principal.areAllIcomponentsAvailable())) {
             Set<Filter> filters;
             if (deviceId != null) {
                 DeviceVO device = deviceService.findByIdWithPermissionsCheckIfExists(deviceId, principal);
                 if (names != null) {
                     filters = names.stream().map(name ->
-                            new Filter(device.getNetworkId(), device.getDeviceTypeId(), device.getIcomponentId(), deviceId, eventName, name))
+                            new Filter(device.getNetworkId(), device.getIexperimentId(), device.getIcomponentId(), deviceId, eventName, name))
                             .collect(Collectors.toSet());
                 } else {
-                    filters = Collections.singleton(new Filter(device.getNetworkId(), device.getDeviceTypeId(), device.getIcomponentId(), deviceId, eventName, null));
+                    filters = Collections.singleton(new Filter(device.getNetworkId(), device.getIexperimentId(), device.getIcomponentId(), deviceId, eventName, null));
                 }
             } else {
-                if (networks == null && deviceTypes == null && icomponents == null) {
+                if (networks == null && iexperiments == null && icomponents == null) {
                     if (names != null) {
                         filters = names.stream().map(name ->
                                 new Filter(null, null, null, null, eventName, name))
@@ -144,11 +144,11 @@ public class BaseFilterService {
                         networks = networkService.list(listNetworkRequest).join()
                                 .stream().map(NetworkVO::getId).collect(Collectors.toSet());
                     }
-                    if (deviceTypes == null) {
-                        ListDeviceTypeRequest listDeviceTypeRequest = new ListDeviceTypeRequest();
-                        listDeviceTypeRequest.setPrincipal(Optional.of(principal));
-                        deviceTypes = deviceTypeService.list(listDeviceTypeRequest).join()
-                                .stream().map(DeviceTypeVO::getId).collect(Collectors.toSet());
+                    if (iexperiments == null) {
+                        ListIexperimentRequest listIexperimentRequest = new ListIexperimentRequest();
+                        listIexperimentRequest.setPrincipal(Optional.of(principal));
+                        iexperiments = iexperimentService.list(listIexperimentRequest).join()
+                                .stream().map(IexperimentVO::getId).collect(Collectors.toSet());
                     }
                     if (icomponents == null) {
                         ListIcomponentRequest listIcomponentRequest = new ListIcomponentRequest();
@@ -156,18 +156,18 @@ public class BaseFilterService {
                         icomponents = icomponentService.list(listIcomponentRequest).join()
                                 .stream().map(IcomponentVO::getId).collect(Collectors.toSet());
                     }
-                    final Set<Long> finalDeviceTypes = deviceTypes;
+                    final Set<Long> finalIexperiments = iexperiments;
                     final Set<Long> finalIcomponents = icomponents;
                     filters = networks.stream()
-                            .flatMap(network -> finalDeviceTypes.stream()
-                            .flatMap(deviceType -> finalIcomponents.stream()
+                            .flatMap(network -> finalIexperiments.stream()
+                            .flatMap(iexperiment -> finalIcomponents.stream()
                             .flatMap(icomponent ->{
                                 if (names != null && !names.isEmpty()) {
                                     return names.stream().map(name ->
-                                            new Filter(network, deviceType, icomponent, null, eventName, name)
+                                            new Filter(network, iexperiment, icomponent, null, eventName, name)
                                     );
                                 } else {
-                                    return Stream.of(new Filter(network, deviceType, icomponent, null, eventName, null));
+                                    return Stream.of(new Filter(network, iexperiment, icomponent, null, eventName, null));
                                 }
                             })))
                             .collect(Collectors.toSet());

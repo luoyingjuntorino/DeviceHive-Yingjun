@@ -25,13 +25,13 @@ import com.devicehive.auth.HivePrincipal;
 import com.devicehive.configuration.Messages;
 import com.devicehive.json.strategies.JsonPolicyDef;
 import com.devicehive.model.ErrorResponse;
-import com.devicehive.model.updates.DeviceTypeUpdate;
-import com.devicehive.resource.DeviceTypeResource;
+import com.devicehive.model.updates.IexperimentUpdate;
+import com.devicehive.resource.IexperimentResource;
 import com.devicehive.resource.util.ResponseFactory;
-import com.devicehive.service.BaseDeviceTypeService;
-import com.devicehive.service.DeviceTypeService;
-import com.devicehive.vo.DeviceTypeVO;
-import com.devicehive.vo.DeviceTypeWithUsersAndDevicesVO;
+import com.devicehive.service.BaseIexperimentService;
+import com.devicehive.service.IexperimentService;
+import com.devicehive.vo.IexperimentVO;
+import com.devicehive.vo.IexperimentWithUsersAndDevicesVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,19 +45,19 @@ import java.util.Collections;
 
 import static com.devicehive.configuration.Constants.ID;
 import static com.devicehive.configuration.Constants.NAME;
-import static com.devicehive.json.strategies.JsonPolicyDef.Policy.DEVICE_TYPES_LISTED;
+import static com.devicehive.json.strategies.JsonPolicyDef.Policy.IEXPERIMENTS_LISTED;
 import static javax.ws.rs.core.Response.Status.*;
 
 @Service
-public class DeviceTypeResourceImpl implements DeviceTypeResource {
+public class IexperimentResourceImpl implements IexperimentResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeviceTypeResourceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(IexperimentResourceImpl.class);
 
-    private final DeviceTypeService deviceTypeService;
+    private final IexperimentService iexperimentService;
 
     @Autowired
-    public DeviceTypeResourceImpl(DeviceTypeService deviceTypeService) {
-        this.deviceTypeService = deviceTypeService;
+    public IexperimentResourceImpl(IexperimentService iexperimentService) {
+        this.iexperimentService = iexperimentService;
     }
 
     /**
@@ -67,10 +67,10 @@ public class DeviceTypeResourceImpl implements DeviceTypeResource {
     public void list(String name, String namePattern, String sortField, String sortOrder, Integer take, Integer skip,
                      @Suspended final AsyncResponse asyncResponse) {
 
-        logger.debug("Device type list requested");
+        logger.debug("Iexperiment list requested");
 
         if (sortField != null && !ID.equalsIgnoreCase(sortField) && !NAME.equalsIgnoreCase(sortField)) {
-            logger.error("Unable to proceed device type list request. Invalid sortField");
+            logger.error("Unable to proceed iexperiment list request. Invalid sortField");
             final Response response = ResponseFactory.response(BAD_REQUEST,
                     new ErrorResponse(BAD_REQUEST.getStatusCode(),
                             Messages.INVALID_REQUEST_PARAMETERS));
@@ -80,28 +80,28 @@ public class DeviceTypeResourceImpl implements DeviceTypeResource {
         }
         HivePrincipal principal = (HivePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (!principal.areAllDeviceTypesAvailable() && (principal.getDeviceTypeIds() == null || principal.getDeviceTypeIds().isEmpty())) {
-            logger.warn("Unable to get list for empty device types");
-            final Response response = ResponseFactory.response(OK, Collections.<DeviceTypeVO>emptyList(), DEVICE_TYPES_LISTED);
+        if (!principal.areAllIexperimentsAvailable() && (principal.getIexperimentIds() == null || principal.getIexperimentIds().isEmpty())) {
+            logger.warn("Unable to get list for empty iexperiments");
+            final Response response = ResponseFactory.response(OK, Collections.<IexperimentVO>emptyList(), IEXPERIMENTS_LISTED);
             asyncResponse.resume(response);
         } else {
-            deviceTypeService.list(name, namePattern, sortField, sortOrder, take, skip, principal)
-                    .thenApply(deviceTypes -> {
-                        logger.debug("Device type list request proceed successfully.");
-                        return ResponseFactory.response(OK, deviceTypes, DEVICE_TYPES_LISTED);
+            iexperimentService.list(name, namePattern, sortField, sortOrder, take, skip, principal)
+                    .thenApply(iexperiments -> {
+                        logger.debug("Iexperiment list request proceed successfully.");
+                        return ResponseFactory.response(OK, iexperiments, IEXPERIMENTS_LISTED);
                     }).thenAccept(asyncResponse::resume);
         }
     }
 
     @Override
     public void count(String name, String namePattern, AsyncResponse asyncResponse) {
-        logger.debug("Device type count requested");
+        logger.debug("Iexperiment count requested");
         HivePrincipal principal = (HivePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        deviceTypeService.count(name, namePattern, principal)
+        iexperimentService.count(name, namePattern, principal)
                 .thenApply(count -> {
-                    logger.debug("Device type count request proceed successfully.");
-                    return ResponseFactory.response(OK, count, DEVICE_TYPES_LISTED);
+                    logger.debug("Iexperiment count request proceed successfully.");
+                    return ResponseFactory.response(OK, count, IEXPERIMENTS_LISTED);
                 }).thenAccept(asyncResponse::resume);
     }
 
@@ -110,35 +110,35 @@ public class DeviceTypeResourceImpl implements DeviceTypeResource {
      */
     @Override
     public Response get(long id) {
-        logger.debug("Device type get requested.");
-        DeviceTypeWithUsersAndDevicesVO existing = deviceTypeService.getWithDevices(id);
+        logger.debug("Iexperiment get requested.");
+        IexperimentWithUsersAndDevicesVO existing = iexperimentService.getWithDevices(id);
         if (existing == null) {
-            logger.error("Device type with id =  {} does not exists", id);
+            logger.error("Iexperiment with id =  {} does not exists", id);
             return ResponseFactory.response(Response.Status.NOT_FOUND, new ErrorResponse(NOT_FOUND.getStatusCode(),
-                    String.format(Messages.DEVICE_TYPE_NOT_FOUND, id)));
+                    String.format(Messages.IEXPERIMENT_NOT_FOUND, id)));
         }
-        return ResponseFactory.response(OK, existing, JsonPolicyDef.Policy.DEVICE_TYPE_PUBLISHED);
+        return ResponseFactory.response(OK, existing, JsonPolicyDef.Policy.IEXPERIMENT_PUBLISHED);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Response insert(DeviceTypeUpdate deviceType) {
-        logger.debug("Device type insert requested");
-        DeviceTypeVO result = deviceTypeService.create(deviceType.convertTo());
-        logger.debug("New device type has been created");
-        return ResponseFactory.response(CREATED, result, JsonPolicyDef.Policy.DEVICE_TYPE_SUBMITTED);
+    public Response insert(IexperimentUpdate iexperiment) {
+        logger.debug("Iexperiment insert requested");
+        IexperimentVO result = iexperimentService.create(iexperiment.convertTo());
+        logger.debug("New iexperiment has been created");
+        return ResponseFactory.response(CREATED, result, JsonPolicyDef.Policy.IEXPERIMENT_SUBMITTED);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Response update(DeviceTypeUpdate deviceTypeToUpdate, long id) {
-        logger.debug("Device type update requested. Id : {}", id);
-        deviceTypeService.update(id, deviceTypeToUpdate);
-        logger.debug("Device type has been updated successfully. Id : {}", id);
+    public Response update(IexperimentUpdate iexperimentToUpdate, long id) {
+        logger.debug("Iexperiment update requested. Id : {}", id);
+        iexperimentService.update(id, iexperimentToUpdate);
+        logger.debug("Iexperiment has been updated successfully. Id : {}", id);
         return ResponseFactory.response(NO_CONTENT);
     }
 
@@ -147,14 +147,14 @@ public class DeviceTypeResourceImpl implements DeviceTypeResource {
      */
     @Override
     public Response delete(long id, boolean force) {
-        logger.debug("Device type delete requested");
-        boolean isDeleted = deviceTypeService.delete(id, force);
+        logger.debug("Iexperiment delete requested");
+        boolean isDeleted = iexperimentService.delete(id, force);
         if (!isDeleted) {
-            logger.error(String.format(Messages.DEVICE_TYPE_NOT_FOUND, id));
+            logger.error(String.format(Messages.IEXPERIMENT_NOT_FOUND, id));
             return ResponseFactory.response(NOT_FOUND,
-                    new ErrorResponse(NOT_FOUND.getStatusCode(), String.format(Messages.DEVICE_TYPE_NOT_FOUND, id)));
+                    new ErrorResponse(NOT_FOUND.getStatusCode(), String.format(Messages.IEXPERIMENT_NOT_FOUND, id)));
         }
-        logger.debug("Device type with id = {} does not exists any more.", id);
+        logger.debug("Iexperiment with id = {} does not exists any more.", id);
         return ResponseFactory.response(NO_CONTENT);
     }
 }

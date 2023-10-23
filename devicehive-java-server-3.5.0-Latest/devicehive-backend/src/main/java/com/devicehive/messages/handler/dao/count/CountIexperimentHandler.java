@@ -20,8 +20,8 @@ package com.devicehive.messages.handler.dao.count;
  * #L%
  */
 
-import com.devicehive.dao.DeviceTypeDao;
-import com.devicehive.model.rpc.CountDeviceTypeRequest;
+import com.devicehive.dao.IexperimentDao;
+import com.devicehive.model.rpc.CountIexperimentRequest;
 import com.devicehive.model.rpc.CountResponse;
 import com.devicehive.shim.api.Request;
 import com.devicehive.shim.api.Response;
@@ -30,21 +30,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CountDeviceTypeHandler implements RequestHandler {
+public class CountIexperimentHandler implements RequestHandler {
 
-    private DeviceTypeDao deviceTypeDao;
+    private IexperimentDao iexperimentDao;
 
     @Autowired
-    public void setDeviceTypeDao(DeviceTypeDao deviceTypeDao) {
-        this.deviceTypeDao = deviceTypeDao;
+    public void setIexperimentDao(IexperimentDao iexperimentDao) {
+        this.iexperimentDao = iexperimentDao;
     }
 
     @Override
     public Response handle(Request request) {
 
-        final CountDeviceTypeRequest req = (CountDeviceTypeRequest) request.getBody();
+        final CountIexperimentRequest req = (CountIexperimentRequest) request.getBody();
 
-        final long count = deviceTypeDao.count(req.getName(), req.getNamePattern(), req.getPrincipal());
+        final long count = iexperimentDao.count(req.getName(), req.getNamePattern(), req.getPrincipal());
 
         final CountResponse countResponse = new CountResponse(count);
 

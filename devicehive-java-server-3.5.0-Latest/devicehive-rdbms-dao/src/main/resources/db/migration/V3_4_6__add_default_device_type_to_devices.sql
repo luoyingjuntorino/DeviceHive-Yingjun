@@ -17,4 +17,4 @@
 -- limitations under the License.
 -- #L%
 ---
-UPDATE device SET device_type_id = 1 WHERE device_type_id IS NULL;
+UPDATE device SET iexperiment_id = 1 WHERE iexperiment_id IS NULL;

@@ -116,7 +116,7 @@ public class BaseNetworkService {
     public NetworkWithUsersAndDevicesVO getWithDevices(@NotNull Long networkId) {
         HivePrincipal principal = (HivePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Set<Long> permittedNetworks = principal.getNetworkIds();
-        Set<Long> permittedDeviceTypes = principal.getDeviceTypeIds();
+        Set<Long> permittedIexperiments = principal.getIexperimentIds();
         Set<Long> permittedIcomponents = principal.getIcomponentIds();
 
         Optional<NetworkWithUsersAndDevicesVO> result = of(principal)
@@ -132,9 +132,9 @@ public class BaseNetworkService {
                             Collections.singleton(networkId), permittedNetworks);
                     return found.stream().findFirst();
                 }).map(network -> {
-                    if (permittedDeviceTypes != null && !permittedDeviceTypes.isEmpty()  && permittedIcomponents != null && !permittedIcomponents.isEmpty()) {
+                    if (permittedIexperiments != null && !permittedIexperiments.isEmpty()  && permittedIcomponents != null && !permittedIcomponents.isEmpty()) {
                         Set<DeviceVO> allowed = network.getDevices().stream()
-                                .filter(device -> permittedDeviceTypes.contains(device.getDeviceTypeId()) && permittedIcomponents.contains(device.getIcomponentId()))
+                                .filter(device -> permittedIexperiments.contains(device.getIexperimentId()) && permittedIcomponents.contains(device.getIcomponentId()))
                                 .collect(Collectors.toSet());
                         network.setDevices(allowed);
                     }
