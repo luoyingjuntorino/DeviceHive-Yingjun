@@ -1,0 +1,2 @@
+notepad "$env:USERPROFILE/.wslconfig"
+wsl --shutdown
