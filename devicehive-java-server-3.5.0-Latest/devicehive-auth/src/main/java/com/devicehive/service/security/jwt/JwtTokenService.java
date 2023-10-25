@@ -87,6 +87,8 @@ public class JwtTokenService {
             userService.refreshUserLoginData(user);
 
             Set<NetworkVO> networks = userWithNetwork.getNetworks();
+            Set<IexperimentVO> iexperiments = userWithIexperiment.getIexperiments();
+            Set<IcomponentVO> icomponents = userWithIcomponent.getIcomponents();
             if (!networks.isEmpty()) {
                 networks.forEach(network -> {
                     networkIds.add(network.getId().toString());
@@ -94,24 +96,21 @@ public class JwtTokenService {
             }
             if (userWithIexperiment.getAllIexperimentsAvailable()) {
                 iexperimentIds.add("*");
-            } else {
-                Set<IexperimentVO> iexperiments = userWithIexperiment.getIexperiments();
-                if (!iexperiments.isEmpty()) {
-                    iexperiments.forEach(iexperiment -> {
-                        iexperimentIds.add(iexperiment.getId().toString());
+            } 
+            if (!iexperiments.isEmpty()) { 
+                iexperiments.forEach(iexperiment -> {
+                    iexperimentIds.add(iexperiment.getId().toString());
                     });
-                }
             }
             if (userWithIcomponent.getAllIcomponentsAvailable()) {
                 icomponentIds.add("*");
-            } else {
-                Set<IcomponentVO> icomponents = userWithIcomponent.getIcomponents();
-                if (!icomponents.isEmpty()) {
-                    icomponents.forEach(icomponent -> {
-                        icomponentIds.add(icomponent.getId().toString());
+            } 
+            if (!icomponents.isEmpty()) {
+                icomponents.forEach(icomponent -> {
+                    icomponentIds.add(icomponent.getId().toString());
                     });
-                }
             }
+            
             actions = getIdSet(getClientHiveActions());
         }
 

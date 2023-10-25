@@ -1,7 +1,7 @@
 version: "3"
 services:
   dh_plugin:
-    image: devicehive/devicehive-plugin:${DH_TAG:-3.5.0}
+    image: yingjunluo/devicehive-plugin:latest
     ports:
       - "${DH_PLUGIN_PORT:-8110}:8110"
     links:
@@ -30,7 +30,7 @@ services:
       HC_MEMBERS: hazelcast
       HC_GROUP_NAME: ${HC_GROUP_NAME:-dev}
       HC_GROUP_PASSWORD: ${HC_GROUP_PASSWORD:-dev-pass}
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET: ${JWT_SECRET:-devicehive}
       SPRING_PROFILES_ACTIVE: ${DH_PLUGIN_SPRING_PROFILES_ACTIVE:-ws-kafka-proxy}
 
   wsproxyext:
