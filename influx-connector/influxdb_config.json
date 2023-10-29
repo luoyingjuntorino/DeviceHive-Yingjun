@@ -1,0 +1,9 @@
+{
+    "url": "http://localhost:8086",
+    "token": "FAJAw3GAnDDEJe7inzqEfBOPSDE6CimObKf0stTW6B6aEuv05NZw5bSE0QgJZQmpGUC_7b16v4QLcLIJR41mKw==",
+    "org": "polito",
+    "bucket": ["iot"],
+    "measurement": ["PC"],
+    "tag":["test"],
+    "fields": ["gpuTemperature", "cpuUsage"]
+}

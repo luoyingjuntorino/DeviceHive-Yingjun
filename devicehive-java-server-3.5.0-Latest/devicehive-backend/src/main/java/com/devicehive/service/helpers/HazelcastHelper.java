@@ -36,16 +36,16 @@ import static com.devicehive.model.enums.SearchableField.*;
 public class HazelcastHelper {
 
     public <T extends HazelcastEntity> Predicate prepareFilters(final Long id, final String deviceId, Class<T> entityClass) {
-        return prepareFilters(id, null, false, null);
+        return prepareFilters(id, Collections.singleton(deviceId), null, null, null, null, null, null, false, null, entityClass);
     }
 
     public <T extends HazelcastEntity> Predicate prepareFilters(final Long id, final String deviceId, final boolean returnUpdated, Class<T> entityClass) {
-        return prepareFilters(id, null, returnUpdated, null);
+        return prepareFilters(id, Collections.singleton(deviceId), null, null, null, null, null, null, returnUpdated, null, entityClass);
     }
 
     public <T extends HazelcastEntity> Predicate prepareFilters(Collection<String> deviceIds, Collection<String> names,
             Date timestampSt, Date timestampEnd, boolean returnUpdated, String status, Class<T> entityClass) {
-        return prepareFilters(null, deviceIds, null, null, returnUpdated, status, entityClass);
+        return prepareFilters(null, deviceIds, null, null, null, names, timestampSt, timestampEnd, returnUpdated, status, entityClass);
     }
 
     public <T extends HazelcastEntity> Predicate prepareFilters(String deviceId, Collection<Long> networkIds,

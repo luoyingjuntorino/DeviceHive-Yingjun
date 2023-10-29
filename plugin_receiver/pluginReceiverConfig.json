@@ -1,0 +1,5 @@
+{   "url": "ws://localhost/plugin/proxy",
+    "auth_url": "http://localhost:80/auth/rest/token",
+    "topic_name": "plugin_topic_05c00373-6968-4278-aef7-88c954ce2b01",
+    "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7ImEiOlswXSwiZSI6MjAxNDMyNjAwMDAwMCwidCI6MCwidSI6MSwibiI6WyIqIl0sImR0IjpbIioiXSwiY3AiOlsiKiJdfX0.vCyRX-NFW-rJ3ChXEpbqRA1ugQezStitk--Xh-m7TH8"
+}

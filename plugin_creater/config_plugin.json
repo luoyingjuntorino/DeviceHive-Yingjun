@@ -1,0 +1,12 @@
+{
+  "login": "dhadmin",
+  "password": "dhadmin_#911",
+  "auth_url": "http://localhost:80/auth/rest/token",
+  "listNetwork_url": "http://localhost:80/api/rest/network",
+  "createPlugin_url": "http://localhost:80/plugin/rest/plugin",
+  "plugin_data": 
+    {
+      "name": "plugin_with_Networkids",
+      "description": "2023_10_26_23_55"
+    }
+}
