@@ -8,5 +8,6 @@
     {
       "name": "plugin_with_Networkids",
       "description": "2023_10_26_23_55"
-    }
+    },
+  "InfluxPluginName":"PLUGIN_INFLUXDB"
 }

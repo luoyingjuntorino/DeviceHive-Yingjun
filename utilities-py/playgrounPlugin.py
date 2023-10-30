@@ -15,16 +15,18 @@ logger.setLevel('DEBUG')
 # url = 'wss://playground.devicehive.com/plugin/proxy'
 url = 'ws://localhost/plugin/proxy'
 topic_name = 'plugin_topic_2f08f84f-8947-4507-bfa6-2846984faac5'
-plugin_access_token = 'eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7ImEiOlsxNl0sImUiOjE2OTg1OTY1NjAyNDksInQiOjEsInRwYyI6InBsdWdpbl90b3BpY18yZjA4Zjg0Zi04OTQ3LTQ1MDctYmZhNi0yODQ2OTg0ZmFhYzUifX0.2xSizDcrK6hGDJGn7lFA3naTfrMV1lWeLAtUSwjAReQ'
+auth_url = 'http://localhost:80/api/rest'
+access_token = 'eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7ImEiOlswXSwiZSI6MjAxNDMyNjAwMDAwMCwidCI6MSwidSI6MSwibiI6WyIqIl0sImR0IjpbIioiXSwiY3AiOlsiKiJdfX0.v0F4bnnIwVRn6qCuukhAp0uXUgrQgGJ54HlghBTAWlg'
+
 
 
 class SimpleHandler(Handler):
     # def handle_connect(self):
     #     print('Successfully connected')
 
-    def handle_event(self, event):
-        print(event.action)
-        print(type(event.data))
+    # def handle_event(self, event):
+    #     print(event.action)
+    #     print(type(event.data))
 
     # def handle_command_insert(self, command):
     #     print(command.command)
@@ -46,7 +48,9 @@ class SimpleHandler(Handler):
         
 def main():
     p = Plugin(SimpleHandler)
-    p.connect(url, topic_name, plugin_access_token=plugin_access_token)
+    p.connect(url, topic_name, auth_url=auth_url,
+               access_token=access_token)
+    
 
 
 if __name__ == '__main__':
