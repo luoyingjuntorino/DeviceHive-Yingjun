@@ -1,0 +1,13 @@
+{
+  "login": "dhadmin",
+  "password": "dhadmin_#911",
+  "base_url": "http://localhost:80/api/rest",
+  "auth_url": "http://localhost:80/auth/rest/token",
+  "listNetwork_url": "http://localhost:80/api/rest/network",
+  "createPlugin_url": "http://localhost:80/plugin/rest/plugin",
+  "InfluxPluginName": "PLUGIN_INFLUXDB",
+  "InfluxPluginTopic": "plugin_topic_e11a6723-6fac-4f81-b683-8b8693cc46a8",
+  "ListenPluginName":"PluginListener",
+  "ListenPluginTopic":"plugin_topic_082c8bb5-107a-414a-b45e-304439b7fabe",
+  "proxyEndpoint": "ws://localhost/plugin/proxy"
+}
