@@ -14,7 +14,7 @@ logger.setLevel('DEBUG')
 
 # url = 'wss://playground.devicehive.com/plugin/proxy'
 url = 'ws://localhost/plugin/proxy'
-topic_name = 'plugin_topic_2f08f84f-8947-4507-bfa6-2846984faac5'
+topic_name = 'plugin_topic_918fc126-0ab7-408d-a297-41ff5c6b3470'
 auth_url = 'http://localhost:80/api/rest'
 access_token = 'eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7ImEiOlswXSwiZSI6MjAxNDMyNjAwMDAwMCwidCI6MSwidSI6MSwibiI6WyIqIl0sImR0IjpbIioiXSwiY3AiOlsiKiJdfX0.v0F4bnnIwVRn6qCuukhAp0uXUgrQgGJ54HlghBTAWlg'
 
@@ -45,6 +45,7 @@ class SimpleHandler(Handler):
     def handle_notification(self, notification):
         print(notification.parameters)
         print(notification.notification)
+        print(notification.device_id)
         
 def main():
     p = Plugin(SimpleHandler)

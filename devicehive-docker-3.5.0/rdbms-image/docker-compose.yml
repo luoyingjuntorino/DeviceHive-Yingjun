@@ -41,39 +41,6 @@ services:
     ports:
       - "5050:80"
 
-  # dh_plugin:
-  #     image: yingjunluo/devicehive-plugin:latest
-  #     ports:
-  #       - "${DH_PLUGIN_PORT:-8110}:8110"
-  #     links:
-  #       - "postgres"
-  #       - "kafka"
-  #       - "zookeeper"
-  #       - "dh_frontend"
-  #       - "dh_auth"
-  #       - "wsproxy"
-  #     restart: unless-stopped
-  #     environment:
-  #       DH_ZK_ADDRESS: ${DH_ZK_ADDRESS:-zookeeper}
-  #       DH_ZK_PORT: ${DH_ZK_PORT:-2181}
-  #       DH_KAFKA_BOOTSTRAP_SERVERS: ${DH_KAFKA_BOOTSTRAP_SERVERS:-kafka:9092}
-  #       DH_POSTGRES_ADDRESS: ${DH_POSTGRES_ADDRESS:-postgres}
-  #       DH_POSTGRES_PORT: ${DH_POSTGRES_PORT:-5432}
-  #       DH_POSTGRES_USERNAME: ${DH_POSTGRES_USERNAME:-postgres}
-  #       DH_POSTGRES_PASSWORD: ${DH_POSTGRES_PASSWORD:-mysecretpassword}
-  #       DH_POSTGRES_DB: ${DH_POSTGRES_DB:-postgres}
-  #       DH_RPC_CLIENT_RES_CONS_THREADS: ${DH_RPC_CLIENT_RES_CONS_THREADS:-3}
-  #       DH_LOG_LEVEL: ${DH_LOG_LEVEL:-INFO}
-  #       ROOT_LOG_LEVEL: ${ROOT_LOG_LEVEL:-WARN}
-  #       DH_WS_PROXY: wsproxy:3000
-  #       DH_PROXY_PLUGIN_CONNECT: ${DH_PROXY_PLUGIN_CONNECT:-ws://localhost/plugin/proxy}
-  #       DH_AUTH_URL: http://dh_auth:8090/auth/rest
-  #       HC_MEMBERS: hazelcast
-  #       HC_GROUP_NAME: ${HC_GROUP_NAME:-dev}
-  #       HC_GROUP_PASSWORD: ${HC_GROUP_PASSWORD:-dev-pass}
-  #       JWT_SECRET: ${JWT_SECRET:-devicehive}
-  #       SPRING_PROFILES_ACTIVE: ${DH_PLUGIN_SPRING_PROFILES_ACTIVE:-ws-kafka-proxy}
-        
   wsproxy:
     image: devicehive/devicehive-ws-proxy:${DH_WS_PROXY_TAG:-1.1.0}
     links:
@@ -186,9 +153,114 @@ services:
     links:
       - "dh_auth"
       - "dh_frontend"
+      - "dh_plugin"
+      - "wsproxyext"
+      - mqtt_broker1
+      - mqtt_broker2
     ports:
       - "80:8080"
+      - "1883:1883"
+    volumes:
+      - "./nginx-mqtt-brokers.conf:/etc/nginx/stream.d/nginx-mqtt-brokers.conf:ro,Z"
+    
     restart: unless-stopped
+
+  dh_plugin:
+    image: yingjunluo/devicehive-plugin:latest
+    ports:
+      - "${DH_PLUGIN_PORT:-8110}:8110"
+    links:
+      - "postgres"
+      - "kafka"
+      - "zookeeper"
+      - "dh_frontend"
+      - "dh_auth"
+      - "wsproxy"
+    restart: unless-stopped
+    environment:
+      DH_ZK_ADDRESS: ${DH_ZK_ADDRESS:-zookeeper}
+      DH_ZK_PORT: ${DH_ZK_PORT:-2181}
+      DH_KAFKA_BOOTSTRAP_SERVERS: ${DH_KAFKA_BOOTSTRAP_SERVERS:-kafka:9092}
+      DH_POSTGRES_ADDRESS: ${DH_POSTGRES_ADDRESS:-postgres}
+      DH_POSTGRES_PORT: ${DH_POSTGRES_PORT:-5432}
+      DH_POSTGRES_USERNAME: ${DH_POSTGRES_USERNAME:-postgres}
+      DH_POSTGRES_PASSWORD: ${DH_POSTGRES_PASSWORD:-mysecretpassword}
+      DH_POSTGRES_DB: ${DH_POSTGRES_DB:-postgres}
+      DH_RPC_CLIENT_RES_CONS_THREADS: ${DH_RPC_CLIENT_RES_CONS_THREADS:-3}
+      DH_LOG_LEVEL: ${DH_LOG_LEVEL:-INFO}
+      ROOT_LOG_LEVEL: ${ROOT_LOG_LEVEL:-WARN}
+      DH_WS_PROXY: wsproxy:3000
+      DH_PROXY_PLUGIN_CONNECT: ${DH_PROXY_PLUGIN_CONNECT:-ws://localhost/plugin/proxy}
+      DH_AUTH_URL: http://dh_auth:8090/auth/rest
+      HC_MEMBERS: hazelcast
+      HC_GROUP_NAME: ${HC_GROUP_NAME:-dev}
+      HC_GROUP_PASSWORD: ${HC_GROUP_PASSWORD:-dev-pass}
+      JWT_SECRET: ${JWT_SECRET:-devicehive}
+      SPRING_PROFILES_ACTIVE: ${DH_PLUGIN_SPRING_PROFILES_ACTIVE:-ws-kafka-proxy}
+
+  wsproxyext:
+    image: devicehive/devicehive-ws-proxy:${DH_WS_PROXY_TAG:-1.1.0}
+    links:
+      - "dh_auth"
+      - "dh_plugin"
+      - "kafka"
+    restart: unless-stopped
+    environment:
+      KAFKA.KAFKA_HOSTS: ${DH_KAFKA_BOOTSTRAP_SERVERS:-kafka:9092}
+      PLUGIN_MANAGER.AUTH_SERVICE_ENDPOINT: http://dh_auth:8090/auth/rest
+      PLUGIN_MANAGER.PLUGIN_MANAGEMENT_SERVICE_ENDPOINT: http://dh_plugin:8110/plugin/rest
+      PROXY.ENABLE_PLUGIN_MANAGER: 'true'
+      PROXY.WEB_SOCKET_SERVER_HOST: 'wsproxyext'
+
+  kafka-cleanup:
+    image: wurstmeister/kafka:1.0.0
+    links:
+      - "zookeeper"
+      - "kafka"
+    restart: unless-stopped
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    command: bash -c 'while true; do echo "Starting cleanup at $$(date)"; PLUGIN_TOPICS_COUNT=$$(kafka-run-class.sh kafka.admin.TopicCommand --zookeeper $${KAFKA_ZOOKEEPER_CONNECT} --list | fgrep -c plugin_topic_); if [ $${PLUGIN_TOPICS_COUNT} -ge 50 ]; then echo "Found $${PLUGIN_TOPICS_COUNT} topics, cleaning"; kafka-run-class.sh kafka.admin.TopicCommand --zookeeper $${KAFKA_ZOOKEEPER_CONNECT} --list | fgrep plugin_topic_ | sort -R | xargs -r -n1 kafka-run-class.sh kafka.admin.TopicCommand --zookeeper $${KAFKA_ZOOKEEPER_CONNECT} --delete --topic; else echo "Found $${PLUGIN_TOPICS_COUNT} topics, not cleaning"; fi; echo "Cleanup ended at $$(date)"; sleep 10m; done'
+
+  mqtt_broker1:
+    image: devicehive/devicehive-mqtt:1.1.0
+    links:
+      - dh_frontend
+      - redis
+    restart: unless-stopped
+    environment:
+      - BROKER.WS_SERVER_URL=ws://dh_frontend:8080/api/websocket
+      - BROKER.REDIS_SERVER_HOST=redis
+      - BROKER.REDIS_SERVER_PORT=6379
+      - BROKER.ENABLE_PM=false
+  
+  mqtt_broker2:
+    image: devicehive/devicehive-mqtt:1.1.0
+    links:
+      - dh_frontend
+      - redis
+    restart: unless-stopped
+    environment:
+      - BROKER.WS_SERVER_URL=ws://dh_frontend:8080/api/websocket
+      - BROKER.REDIS_SERVER_HOST=redis
+      - BROKER.REDIS_SERVER_PORT=6379
+      - BROKER.ENABLE_PM=false
+  
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+
+  plugin_initial:
+    image: yingjunluo/plugin_initial
+    container_name: plugin_initial
+    restart: unless-stopped
+    links:
+      - "dh_proxy"
+    ports:
+      - "80"
+    volumes:
+      - setting:/plugin_initial
 
 volumes:
   devicehive-db:
+  setting:
