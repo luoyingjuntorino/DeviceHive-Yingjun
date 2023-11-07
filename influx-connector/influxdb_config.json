@@ -4,6 +4,5 @@
     "org": "polito",
     "bucket": ["iot"],
     "measurement": ["PC"],
-    "tag":["test"],
-    "fields": ["gpuTemperature", "cpuUsage"]
+    "tag":["use_case1"]
 }

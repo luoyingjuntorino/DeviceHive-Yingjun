@@ -1,7 +1,10 @@
 import json
 import time
+import pytz
 import psutil
-from influxdb_client import InfluxDBClient, Point
+import GPUtil
+from datetime import datetime
+from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from influxdb_client.client.write_api import ASYNCHRONOUS
 
@@ -10,24 +13,19 @@ def write_data(url, token, org, bucket, measurement, tag):
         with client.write_api(write_options=ASYNCHRONOUS) as write_api:
             try:
                 while True:
-                    cpu_percent_per_cpu = psutil.cpu_percent(interval=1, percpu=True)
-                    
-                    for cpu, usage in enumerate(cpu_percent_per_cpu):
-                        data_point = Point(measurement).tag("use_case", tag[0]).tag("sensor_id", f"cpu{cpu}").field("value", usage)
-                        data_point = {
+                    data = {
                         "measurement": measurement[0], 
                         "tags": {
-                            "use_case": "use_case1", 
-                            "sensor_name": f"cpu{cpu}"
+                            "use_case": tag, 
+                            "sensor_name": "gpu_t_sensor"
                         },
                         "fields": {
-                            "value":float(usage)
+                            "value":float(GPUtil.getGPUs()[0].temperature)
                         }
                     }
-                        write_api.write(bucket=bucket[0], record=data_point)
-
+                    write_api.write(bucket=bucket[0], record=data)
                     time.sleep(5)
-            except KeyboardInterrupt:
+            except KeyboardInterrupt:  
                 print("Exiting the loop.")
 
 if __name__ == "__main__":
@@ -43,5 +41,5 @@ if __name__ == "__main__":
             config['org'],
             config['bucket'],
             config['measurement'],
-            config['tag']
+            'use_case2'
             )
