@@ -1,0 +1,38 @@
+{
+    "info": "catalog of useCases",
+    "useCases": {
+        "powerskin": {
+            "useCase name": "powerskin",
+            "valid period": {
+                "start": "01-01-2022",
+                "end": "01-12-2022"
+            },
+            "linked sensors": [
+                "TT01",
+                "TT02"
+            ],
+            "linked users": [
+                "dhadmin",
+                "dhuser01",
+                "dhuser02"
+            ],
+            "status": "stopped"
+        },
+        "TC1": {
+            "useCase name": "TC1",
+            "valid period": {
+                "start": "01-01-2023",
+                "end": "01-12-2023"
+            },
+            "linked sensors": [
+                "DHT22",
+                "DHT11"
+            ],
+            "linked users": [
+                "dhadmin",
+                "dhuser01"
+            ],
+            "status": "running"
+        }
+    }
+}

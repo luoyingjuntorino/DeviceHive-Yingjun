@@ -1,0 +1,3 @@
+requests
+devicehive
+devicehive_plugin
