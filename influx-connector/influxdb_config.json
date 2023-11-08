@@ -1,8 +1,9 @@
 {
-    "url": "http://localhost:8086",
-    "token": "FAJAw3GAnDDEJe7inzqEfBOPSDE6CimObKf0stTW6B6aEuv05NZw5bSE0QgJZQmpGUC_7b16v4QLcLIJR41mKw==",
-    "org": "polito",
-    "bucket": ["iot"],
-    "measurement": ["PC"],
-    "tag":["use_case1"]
+    "influx_endPoint": "http://localhost:8086",
+    "influx_token": "FAJAw3GAnDDEJe7inzqEfBOPSDE6CimObKf0stTW6B6aEuv05NZw5bSE0QgJZQmpGUC_7b16v4QLcLIJR41mKw==",
+    "influx_org": "polito",
+    "influx_bucket": ["iot"],
+    "influx_measurement": ["PC"],
+    "timezone": "Europe/Rome",
+    "sub_directory": "exported_csv"
 }
