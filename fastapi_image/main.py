@@ -1,7 +1,8 @@
-from fastapi import FastAPI, File, UploadFile, APIRouter, Form
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi import FastAPI, File, UploadFile, APIRouter, Form, HTTPException, status
+from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from datetime import datetime
 import pymongo
+import zipfly
 import os
 
 app = FastAPI()
@@ -42,11 +43,35 @@ async def upload_image(image: UploadFile = File(...),
         "message": "Image uploaded and saved as {}".format(file_name),
         "description": description,  # metadata of image
         "file_path": file_path
+
     })
 
 @app.get("/download_images", tags=["image"], description="maybe we have to specify time range, how to do with iamge's meta data?")
-def download_images():
-    zip_file_path = "images.zip"  # 请替换为实际的ZIP文件路径
-    if not os.path.exists(zip_file_path):
-        return "ZIP file not found."
-    return FileResponse(zip_file_path, media_type="application/zip", headers={"Content-Disposition": "attachment; filename=images.zip"})
+async def download_images():
+        zip_file_path = "images.zip"  # 请替换为实际的ZIP文件路径
+        if not os.path.exists(zip_file_path):
+            return "ZIP file not found."
+        return FileResponse(zip_file_path, media_type="application/zip", headers={"Content-Disposition": "attachment; filename=images.zip"})
+
+# @app.get("/downloadStreaming_images", tags=["image"], description="maybe we have to specify a time range, how to do with image's metadata?")
+# async def download_images():
+#     zip_file_path = "images.zip"  # 替换为实际的 ZIP 文件路径
+#     if not os.path.exists(zip_file_path):
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+#     paths ={'fs': zip_file_path}
+            
+#     zfly = zipfly.ZipFly(paths=paths)
+#     generator = zfly.generator()
+#     return StreamingResponse(
+#         iter(generator),
+#         media_type="application/x-zip-compressed",
+#         headers={"Content-Disposition": "attachment; filename=images.zip"}
+#     )
+    # else:
+    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    # return StreamingResponse(
+    #     content=generate(),
+    #     media_type="application/zip",
+    #     headers={"Content-Disposition": "attachment; filename=images.zip"}
+    # )

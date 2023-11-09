@@ -14,8 +14,6 @@ class QueryParams(BaseModel):
     start_time: str
     stop_time: str
 
-
-
 @app.get("/")
 def welcome():
     return "welcome"
@@ -56,11 +54,9 @@ async def get_dataframe(query_params: QueryParams):
 
     Manager = Query_influx(config, query_params.query_type, query_params.sensor_ids, query_params.start_time, query_params.stop_time)
     df = Manager.query_pro()
-    # df.to_csv(os.path.join('exported_csv', 'fastapi.csv'), index=False)
-    # return Manager.apply_tz_convert()
     return JSONResponse(content=df.to_json(orient='records'))
-    # return {"message": "CSV file generated successfully"}
-    # return DataFrameResponse(data=df)
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="localhost", port=8000)
